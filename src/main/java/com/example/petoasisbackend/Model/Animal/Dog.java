@@ -15,11 +15,12 @@ public class Dog {
     @JoinColumn(name = "animal_id")
     private Animal animal;
 
+    @Column(nullable = false)
     private boolean isMuzzleRequired;
-
+    @Column(nullable = false)
     private Byte barkingLevel;
 
-    @Column(length = 48, nullable = true)
+    @Column(length = 48)
     private String favoriteToy;
 
     @ManyToOne

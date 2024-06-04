@@ -9,6 +9,6 @@ public class CatBreed {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer breedId;
 
-    @Column(length = 48, unique = true)
+    @Column(length = 48, unique = true, nullable = false)
     private String breedName;
 }

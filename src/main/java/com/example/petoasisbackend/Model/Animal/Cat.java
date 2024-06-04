@@ -10,15 +10,18 @@ public class Cat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long catId;
 
+
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "animal_id")
     private Animal animal;
 
+    @Column(nullable = false)
     private Boolean isDeclawed;
 
+    @Column(nullable = false)
     private Byte vocalizationLevel;
 
-    @Column(length = 48, nullable = true)
+    @Column(length = 48)
     private String favoriteTreat;
 
     @ManyToOne
