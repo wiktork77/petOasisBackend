@@ -1,0 +1,33 @@
+#POST http://localhost:8080/animals/add
+#Content-Type: application/json
+#
+#{
+#  "name": "Wiktor",
+#  "weight": 2.32,
+#  "height": 1.42,
+#  "length": 0.94,
+#  "isNeutered": false,
+#  "description": "wiktor is a good person",
+#  "gender": "M",
+#  "enjoysPetting": true,
+#  "healthStatus": {
+#    "healthId": 1
+#  },
+#  "availabilityStatus": {
+#    "availabilityId": 1
+#  }
+#}
+
+###
+#DELETE http://localhost:8080/animals/delete/2
+
+
+###
+
+PUT http://localhost:8080/animals/update/1
+Content-Type: application/json
+
+{
+  "name": "Bartek",
+  "description": "Bartek is a bad guy"
+}
