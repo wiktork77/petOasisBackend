@@ -1,11 +1,15 @@
 package com.example.petoasisbackend.Model.Animal;
 
 
+import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import jakarta.persistence.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 
 @Entity
+@Data
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,21 +43,13 @@ public class Animal {
     private String pictureURL;
 
 
-    public Animal(Long animalId, String name, LocalDate birthDate, Float weight, Float height, Float length, Byte age, Boolean isNeutered, String description, Character gender, Boolean enjoysPetting, Float rating, String pictureURL) {
-        this.animalId = animalId;
-        this.name = name;
-        this.birthDate = birthDate;
-        this.weight = weight;
-        this.height = height;
-        this.length = length;
-        this.age = age;
-        this.isNeutered = isNeutered;
-        this.description = description;
-        this.gender = gender;
-        this.enjoysPetting = enjoysPetting;
-        this.rating = rating;
-        this.pictureURL = pictureURL;
-    }
+    @ManyToOne
+    @JoinColumn(name = "health_id")
+    private HealthStatus healthStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "availability_id")
+    private AvailabilityStatus availabilityStatus;
 
     public Animal() {}
 }

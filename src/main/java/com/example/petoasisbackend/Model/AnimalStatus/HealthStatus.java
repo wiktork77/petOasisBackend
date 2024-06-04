@@ -10,6 +10,6 @@ public class HealthStatus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer healthId;
 
-    @Column(length = 64)
+    @Column(length = 64, unique = true)
     private String healthStatus;
 }
