@@ -1,6 +1,10 @@
-POST http://localhost:8080/badge/add
-Content-Type: application/json
+#POST http://localhost:8080/badge/add
+#Content-Type: application/json
+#
+#{
+#  "badgeName": "xD"
+#}
+###
+#DELETE http://localhost:8080/badge/delete/Dobry
 
-{
-  "badgeName": "Dobry"
-}
+#POST http://localhost:8080/badge/assign/4/xD

@@ -3,11 +3,16 @@ package com.example.petoasisbackend.Model.Animal;
 
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
+import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -57,17 +62,23 @@ public class Animal {
     private AvailabilityStatus availabilityStatus;
 
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.REMOVE)
+    private Set<AnimalBadge> animalBadges;
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Animal animal = (Animal) o;
-        return Objects.equals(name, animal.name) && Objects.equals(birthDate, animal.birthDate) && Objects.equals(weight, animal.weight) && Objects.equals(height, animal.height) && Objects.equals(length, animal.length) && Objects.equals(age, animal.age) && Objects.equals(isNeutered, animal.isNeutered) && Objects.equals(description, animal.description) && Objects.equals(gender, animal.gender) && Objects.equals(enjoysPetting, animal.enjoysPetting) && Objects.equals(rating, animal.rating) && Objects.equals(pictureURL, animal.pictureURL) && Objects.equals(healthStatus, animal.healthStatus) && Objects.equals(availabilityStatus, animal.availabilityStatus);
+        return Objects.equals(animalId, animal.animalId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, birthDate, weight, height, length, age, isNeutered, description, gender, enjoysPetting, rating, pictureURL, healthStatus, availabilityStatus);
+        return Objects.hash(animalId);
     }
 
     public void inheritFromOtherAnimal(Animal other) {

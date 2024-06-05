@@ -1,11 +1,11 @@
-#POST http://localhost:8080/breeds/dog/add
+#POST http://localhost:8080/breeds/cat/add
 #Content-Type: application/json
 #
 #{
-#  "breedName": "Piesekkggk"
+#  "breedName": "Koteczek"
 #}
 ###
 #PUT http://localhost:8080/breeds/dog/update/Labrador/a b c d e f g
 
 ###
-DELETE http://localhost:8080/breeds/dog/delete/a b c d e f g
+#DELETE http://localhost:8080/breeds/dog/delete/a b c d e f g

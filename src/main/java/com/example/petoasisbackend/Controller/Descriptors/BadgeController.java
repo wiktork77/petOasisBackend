@@ -2,6 +2,7 @@ package com.example.petoasisbackend.Controller.Descriptors;
 
 
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
+import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.Badge;
 import com.example.petoasisbackend.Service.BadgeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class BadgeController {
         return badgeService.getBadges();
     }
 
+    @GetMapping("/getAllAssigned")
+    public List<AnimalBadge> getAllAssigned() {
+        return badgeService.getAssignedBadges();
+    }
+
     @PostMapping("/add")
     public ResponseEntity<String> add(@RequestBody Badge badge) {
         try {
@@ -31,6 +37,27 @@ public class BadgeController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping("/assign/{animalId}/{badgeName}")
+    public ResponseEntity<String> assignBadge(@PathVariable Long animalId, @PathVariable String badgeName) {
+        try {
+            badgeService.assignBadge(animalId, badgeName);
+            return new ResponseEntity<>("Successfully assigned " + badgeName + " to animal with id " + animalId, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/cancel/{animalId}/{badgeName}")
+    public ResponseEntity<String> cancelBadge(@PathVariable Long animalId, @PathVariable String badgeName) {
+        try {
+            badgeService.cancelBadge(animalId, badgeName);
+            return new ResponseEntity<>("Successfully cancelled " + badgeName + " from animal with id " + animalId, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 
     @DeleteMapping("/delete/{name}")
     public ResponseEntity<String> delete(@PathVariable String name) {
