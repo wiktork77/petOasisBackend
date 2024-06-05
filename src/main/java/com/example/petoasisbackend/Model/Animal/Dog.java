@@ -1,12 +1,13 @@
 package com.example.petoasisbackend.Model.Animal;
 
 
-import com.example.petoasisbackend.Model.AnimalBreed.CatBreed;
 import com.example.petoasisbackend.Model.AnimalBreed.DogBreed;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
-public class Dog {
+@Data
+public class Dog implements Searchable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dogId;
@@ -16,7 +17,7 @@ public class Dog {
     private Animal animal;
 
     @Column(nullable = false)
-    private boolean isMuzzleRequired;
+    private Boolean isMuzzleRequired;
     @Column(nullable = false)
     private Byte barkingLevel;
 
@@ -26,4 +27,20 @@ public class Dog {
     @ManyToOne
     @JoinColumn(name = "breed_id")
     private DogBreed dogBreed;
+
+    public void inheritFromOtherDog(Dog other) {
+        if (other.animal != null)
+            this.animal.inheritFromOtherAnimal(other.animal);
+
+        if (other.isMuzzleRequired != null)
+            this.isMuzzleRequired = other.isMuzzleRequired;
+
+        if (other.barkingLevel != null)
+            this.barkingLevel = other.barkingLevel;
+
+        this.favoriteToy = other.favoriteToy;
+
+        if (other.dogBreed != null)
+            this.dogBreed = other.dogBreed;
+    }
 }

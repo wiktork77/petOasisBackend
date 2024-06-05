@@ -1,0 +1,6 @@
+POST http://localhost:8080/badge/add
+Content-Type: application/json
+
+{
+  "badgeName": "Dobry"
+}

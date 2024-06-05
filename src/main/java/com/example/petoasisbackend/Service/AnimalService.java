@@ -27,8 +27,6 @@ public class AnimalService {
     public Animal addAnimal(Animal animal) {
         AvailabilityStatus availabilityStatus = animal.getAvailabilityStatus();
         HealthStatus healthStatus = animal.getHealthStatus();
-        System.out.println(availabilityStatus);
-        System.out.println(healthStatus);
         if (availabilityStatus != null && !availabilityStatusRepository.existsById(availabilityStatus.getAvailabilityId())) {
             throw new IllegalArgumentException("Availability status doesnt exist");
         }

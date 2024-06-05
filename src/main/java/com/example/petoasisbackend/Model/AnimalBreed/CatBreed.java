@@ -2,8 +2,10 @@ package com.example.petoasisbackend.Model.AnimalBreed;
 
 
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity
+@Data
 public class CatBreed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,0 +1,42 @@
+#POST http://localhost:8080/dogs/add
+#Content-Type: application/json
+#
+#{
+#  "animal": {
+#    "name": "Marcinek",
+#    "weight": 2.22,
+#    "height": 1.22,
+#    "length": 12.21,
+#    "description": "good boy",
+#    "gender": "K",
+#    "enjoysPetting": true,
+#    "healthStatus": {
+#      "healthId": 2
+#    },
+#    "availabilityStatus": {
+#      "availabilityId": 1
+#    }
+#  },
+#  "dog": {
+#    "isMuzzleRequired": false,
+#    "barkingLevel": 42,
+#    "dogBreed": {
+#      "breedId": 2
+#    }
+#  }
+#}
+
+###
+
+#DELETE http://localhost:8080/dogs/delete/2
+
+
+#PUT http://localhost:8080/dogs/update/3
+#Content-Type: application/json
+#
+#{
+#  "isMuzzleRequired": true,
+#  "animal": {
+#    "gender": "M"
+#  }
+#}
