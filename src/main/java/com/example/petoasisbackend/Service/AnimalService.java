@@ -1,14 +1,16 @@
 package com.example.petoasisbackend.Service;
 
 import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Model.Animal.Cat;
+import com.example.petoasisbackend.Model.Animal.Dog;
+import com.example.petoasisbackend.Model.Animal.Searchable;
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
-import com.example.petoasisbackend.Repository.AnimalRepository;
-import com.example.petoasisbackend.Repository.AvailabilityStatusRepository;
-import com.example.petoasisbackend.Repository.HealthStatusRepository;
+import com.example.petoasisbackend.Repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -19,9 +21,18 @@ public class AnimalService {
     private AvailabilityStatusRepository availabilityStatusRepository;
     @Autowired
     private HealthStatusRepository healthStatusRepository;
+    @Autowired
+    private CatRepository catRepository;
+    @Autowired
+    private DogRepository dogRepository;
 
-    public List<Animal> getAnimals() {
-        return animalRepository.findAll();
+    public List<Searchable> getAnimals() {
+        ArrayList<Searchable> animals = new ArrayList<>();
+        List<Cat> cats = catRepository.findAll();
+        List<Dog> dogs = dogRepository.findAll();
+        animals.addAll(cats);
+        animals.addAll(dogs);
+        return animals;
     }
 
     public Animal addAnimal(Animal animal) {

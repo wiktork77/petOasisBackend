@@ -4,6 +4,7 @@ package com.example.petoasisbackend.Model.Animal;
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
+import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -62,10 +63,11 @@ public class Animal {
     private AvailabilityStatus availabilityStatus;
 
 
-    @JsonIgnore
     @OneToMany(mappedBy = "animal", cascade = CascadeType.REMOVE)
     private Set<AnimalBadge> animalBadges;
 
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.REMOVE)
+    private Set<AnimalComment> animalComment;
 
 
     @Override

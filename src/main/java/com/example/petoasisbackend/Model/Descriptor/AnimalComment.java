@@ -8,8 +8,9 @@ import lombok.Data;
 
 @Entity
 @Data
-@IdClass(AnimalBadgeId.class)
-public class AnimalBadge {
+@IdClass(AnimalCommentId.class)
+public class AnimalComment {
+
     @Id
     @ManyToOne
     @JsonIgnore
@@ -18,6 +19,15 @@ public class AnimalBadge {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "badge_id", referencedColumnName = "badgeId")
-    private Badge badge;
+    @JoinColumn(name = "comment_id", referencedColumnName = "commentId")
+    private Comment comment;
+
+
+    @Override
+    public String toString() {
+        return "AnimalComment{" +
+                "animal=" + animal +
+                ", comment=" + comment +
+                '}';
+    }
 }
