@@ -43,7 +43,7 @@ public class Animal {
     @Column(length = 1024, nullable = false)
     private String description;
 
-    @Column(nullable = false)
+    @Column(length = 1, nullable = false)
     private String gender;
 
     @Column(nullable = false)
