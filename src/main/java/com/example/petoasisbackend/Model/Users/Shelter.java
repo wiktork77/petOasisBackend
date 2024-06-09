@@ -14,12 +14,6 @@ public class Shelter {
     @JoinColumn(name = "system_user_id")
     private GeneralSystemUser generalSystemUser;
 
-    @Column(length = 48, nullable = false, unique = true)
-    private String login;
-
-    @Column(length = 128, nullable = false)
-    private String password;
-
     @Column(length = 96, nullable = false, unique = true)
     private String name;
 
@@ -33,4 +27,22 @@ public class Shelter {
     private String email;
 
     private Float rating;
+
+    public void inheritFromOtherShelter(Shelter other) {
+        if (other.generalSystemUser != null) {
+            this.generalSystemUser.inheritFromOtherGeneralSystemUser(other.generalSystemUser);
+        }
+        if (other.name != null) {
+            this.name = other.name;
+        }
+        if (other.address != null) {
+            this.address = other.address;
+        }
+        this.website = other.website;
+
+        if (other.email != null) {
+            this.email = other.email;
+        }
+        this.rating = other.rating;
+    }
 }

@@ -4,6 +4,4 @@ import com.example.petoasisbackend.Model.Users.Person;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PersonRepository extends JpaRepository<Person, Long> {
-    boolean existsByLogin(String login);
-    Person getPersonByLogin(String login);
 }

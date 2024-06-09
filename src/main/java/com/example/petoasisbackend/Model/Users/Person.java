@@ -17,12 +17,6 @@ public class Person {
     @JoinColumn(name = "system_user_id")
     private GeneralSystemUser generalSystemUser;
 
-    @Column(length = 48, nullable = false, unique = true)
-    private String login;
-
-    @Column(length = 128, nullable = false)
-    private String password;
-
     @Column(length = 32, nullable = false)
     private String name;
 
@@ -40,5 +34,26 @@ public class Person {
 
     @Column(length = 64)
     private String address;
+
+
+    public void inheritFromOtherPerson(Person other) {
+        if (other.generalSystemUser != null) {
+            this.generalSystemUser.inheritFromOtherGeneralSystemUser(other.generalSystemUser);
+        }
+        if (other.name != null) {
+            this.name = other.name;
+        }
+        if (other.surname != null) {
+            this.surname = other.surname;
+        }
+        if (other.birthDate != null) {
+            this.birthDate = other.birthDate;
+        }
+        if (other.email != null) {
+            this.email = other.email;
+        }
+        this.gender = other.gender;
+        this.address = other.address;
+    }
 
 }

@@ -70,6 +70,11 @@ public class Animal {
     private Set<AnimalComment> animalComment;
 
 
+    private String type;
+
+    private Long parentId;
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
