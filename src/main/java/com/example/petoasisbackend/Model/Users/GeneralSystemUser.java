@@ -4,6 +4,8 @@ package com.example.petoasisbackend.Model.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Objects;
+
 @Entity
 @Data
 public class GeneralSystemUser {
@@ -41,5 +43,18 @@ public class GeneralSystemUser {
             this.phoneNumber = other.phoneNumber;
         }
         this.pictureUrl = other.pictureUrl;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GeneralSystemUser that = (GeneralSystemUser) o;
+        return Objects.equals(login, that.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(login);
     }
 }

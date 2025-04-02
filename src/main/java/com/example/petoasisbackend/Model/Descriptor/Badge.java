@@ -17,7 +17,7 @@ public class Badge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer badgeId;
 
-    @Column(length = 48)
+    @Column(length = 64)
     private String badgeName;
 
     @JsonIgnore

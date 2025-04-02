@@ -5,6 +5,7 @@ import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
+import com.example.petoasisbackend.Model.Users.Shelter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -73,6 +74,10 @@ public class Animal {
     private String type;
 
     private Long parentId;
+
+    @ManyToOne
+    @JoinColumn(name = "shelter_id")
+    private Shelter home;
 
 
     @Override

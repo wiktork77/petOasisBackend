@@ -1,7 +1,11 @@
 package com.example.petoasisbackend.Model.Users;
 
+import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.Set;
 
 @Entity
 @Data
@@ -27,6 +31,9 @@ public class Shelter {
     private String email;
 
     private Float rating;
+
+    @OneToMany(mappedBy = "home", cascade = CascadeType.REMOVE)
+    private Set<Animal> animals;
 
     public void inheritFromOtherShelter(Shelter other) {
         if (other.generalSystemUser != null) {

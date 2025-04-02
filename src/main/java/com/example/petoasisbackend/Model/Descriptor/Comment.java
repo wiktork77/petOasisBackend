@@ -19,7 +19,7 @@ public class Comment {
     @JoinColumn(name = "person_id")
     private Person author;
 
-    @Column(length = 1024, nullable = false)
+    @Column(length = 2048, nullable = false)
     private String content;
 
     private LocalDate date;

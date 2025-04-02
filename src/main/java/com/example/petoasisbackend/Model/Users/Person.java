@@ -1,10 +1,14 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
+import com.example.petoasisbackend.Model.Descriptor.FavoriteAnimals;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Data
@@ -36,6 +40,10 @@ public class Person {
     private String address;
 
 
+    @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
+    private Set<FavoriteAnimals> favoriteAnimals;
+
+
     public void inheritFromOtherPerson(Person other) {
         if (other.generalSystemUser != null) {
             this.generalSystemUser.inheritFromOtherGeneralSystemUser(other.generalSystemUser);
@@ -56,4 +64,16 @@ public class Person {
         this.address = other.address;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(personId, person.personId) && Objects.equals(generalSystemUser, person.generalSystemUser);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(personId, generalSystemUser);
+    }
 }

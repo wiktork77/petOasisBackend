@@ -30,6 +30,28 @@ public class WalkService {
         return walkStatusRepository.save(status);
     }
 
+
+    public Walk addWalk(Walk walk) {
+        return walkRepository.save(walk);
+    }
+
+    public Walk removeWalk(Long id) {
+        Walk walk = walkRepository.getReferenceById(id);
+        walkRepository.delete(walk);
+        return walk;
+    }
+
+    public Walk updateWalkStatus(Long walkId, String status) {
+        if (!walkStatusRepository.existsByStatus(status)) {
+            throw new IllegalArgumentException(status + " walk status doesnt exist!");
+        }
+        Walk walk = walkRepository.getReferenceById(walkId);
+        WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(status);
+        walk.setWalkStatus(walkStatus);
+        walkRepository.save(walk);
+        return walk;
+    }
+
     public WalkStatus deleteWalkStatus(String statusName) {
         if (!walkStatusRepository.existsByStatus(statusName)) {
             throw new IllegalArgumentException(statusName + " walk status doesnt exist!");
