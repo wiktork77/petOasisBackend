@@ -1,8 +1,6 @@
 package com.example.petoasisbackend.Model.Users;
 
 
-import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
-import com.example.petoasisbackend.Model.Descriptor.FavoriteAnimals;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -38,11 +36,6 @@ public class Person {
 
     @Column(length = 64)
     private String address;
-
-
-    @OneToMany(mappedBy = "person", cascade = CascadeType.REMOVE)
-    private Set<FavoriteAnimals> favoriteAnimals;
-
 
     public void inheritFromOtherPerson(Person other) {
         if (other.generalSystemUser != null) {

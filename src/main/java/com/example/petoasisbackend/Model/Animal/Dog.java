@@ -18,6 +18,7 @@ public class Dog implements Searchable {
 
     @Column(nullable = false)
     private Boolean isMuzzleRequired;
+
     @Column(nullable = false)
     private Byte barkingLevel;
 
