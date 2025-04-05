@@ -5,13 +5,16 @@ import com.example.petoasisbackend.Model.Activity.Walk;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkRepository;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class WalkService {
+    @Autowired
     private WalkStatusRepository walkStatusRepository;
+    @Autowired
     private WalkRepository walkRepository;
 
     public List<WalkStatus> getWalkStatuses() {
