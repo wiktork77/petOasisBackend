@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.Service;
 
+import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Animal.Dog;
@@ -25,6 +26,14 @@ public class AnimalService {
     private CatRepository catRepository;
     @Autowired
     private DogRepository dogRepository;
+
+
+    public Animal getAnimal(Long id) throws AnimalDoesntExistException {
+        if (!animalRepository.existsById(id)) {
+            throw new AnimalDoesntExistException("Cannot get animal with id '" + id + "'" + " because it doesn't exist");
+        }
+        return animalRepository.findById(id).get();
+    }
 
     public List<Searchable> getAnimals() {
         ArrayList<Searchable> animals = new ArrayList<>();

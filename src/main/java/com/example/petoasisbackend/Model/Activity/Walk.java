@@ -9,6 +9,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Data
@@ -33,7 +35,17 @@ public class Walk {
     @JoinColumn(name = "status_id")
     private WalkStatus walkStatus;
 
-    private LocalDate startTime;
+    private LocalDateTime startTime;
 
-    private LocalDate endTime;
+    private LocalDateTime endTime;
+
+    public Walk(Animal pupil, Person caretaker, Shelter supervisor, LocalDateTime startTime, LocalDateTime endTime) {
+        this.pupil = pupil;
+        this.caretaker = caretaker;
+        this.supervisor = supervisor;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    public Walk() {}
 }

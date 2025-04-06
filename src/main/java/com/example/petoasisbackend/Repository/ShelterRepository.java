@@ -9,5 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ShelterRepository extends JpaRepository<Shelter, Long> {
     boolean existsByName(String name);
+
+    boolean existsByShelterId(Long id);
     Shelter getShelterByName(String name);
+
 }

@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Service;
 
 
+import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
@@ -23,17 +24,24 @@ public class ShelterService {
         return shelterRepository.findAll();
     }
 
-    public Shelter getShelterByLogin(String login) {
+    public Shelter getShelterById(Long id) throws ShelterDoesntExistException {
+        if (!shelterRepository.existsByShelterId(id)) {
+            throw new ShelterDoesntExistException("Shelter with id '" + id + "' doesnt exist!");
+        }
+        return shelterRepository.findById(id).get();
+    }
+
+    public Shelter getShelterByLogin(String login) throws ShelterDoesntExistException {
         if (!systemUserRepository.existsByLogin(login)) {
-            throw new IllegalArgumentException("Shelter with login " + login + " doesnt exist!");
+            throw new ShelterDoesntExistException("Shelter with login '" + login + "' doesnt exist!");
         }
         GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
         return shelterRepository.getReferenceById(gsu.getParentId());
     }
 
-    public Shelter getShelterByName(String name) {
+    public Shelter getShelterByName(String name) throws ShelterDoesntExistException {
         if (!shelterRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Shelter with name " + name + " doesnt exist!");
+            throw new ShelterDoesntExistException("Shelter with name '" + name + "' doesnt exist!");
         }
         return shelterRepository.getShelterByName(name);
     }

@@ -1,15 +1,24 @@
 package com.example.petoasisbackend.Controller.Activity;
 
 
+import com.example.petoasisbackend.DTO.Activity.WalkAddDTO;
 import com.example.petoasisbackend.Exception.Walk.WalkDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
 import com.example.petoasisbackend.Model.Activity.Walk;
+import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.Model.Users.Person;
+import com.example.petoasisbackend.Model.Users.Shelter;
+import com.example.petoasisbackend.Service.AnimalService;
+import com.example.petoasisbackend.Service.PersonService;
+import com.example.petoasisbackend.Service.ShelterService;
 import com.example.petoasisbackend.Service.WalkService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +26,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @RestController
@@ -24,19 +35,49 @@ import java.util.List;
 public class WalkController {
     @Autowired
     private WalkService walkService;
+    @Autowired
+    private ShelterService shelterService;
+    @Autowired
+    private AnimalService animalService;
+    @Autowired
+    private PersonService personService;
 
     @Operation(summary = "Get ALL walks, irrespective of status")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned list of all walks",
+                    content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = Walk.class))
+                    )
+                    ),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @GetMapping("/getAll")
     public List<Walk> getAllWalks() {return walkService.getWalks();}
 
 
     @Operation(summary = "Add a new walk")
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody Walk walk) {
+    public ResponseEntity<String> add(@RequestBody WalkAddDTO walk) {
         try {
-            walkService.addWalk(walk);
+            Animal pupil = animalService.getAnimal(walk.getAnimalId());
+            Person caretaker = personService.getPersonById(walk.getPersonId());
+            Shelter supervisor = shelterService.getShelterById(walk.getShelterId());
+
+            Walk newWalk = new Walk(
+                    pupil,
+                    caretaker,
+                    supervisor,
+                    walk.getStartTime(),
+                    walk.getEndTime()
+            );
+
+            walkService.addWalk(newWalk);
+
             return new ResponseEntity<>(" walk successfully added!", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

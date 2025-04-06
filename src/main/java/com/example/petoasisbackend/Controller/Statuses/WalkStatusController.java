@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.Controller.Statuses;
 
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatusDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
@@ -42,10 +43,48 @@ public class WalkStatusController {
             }
     )
     @GetMapping("/getAll")
-    public List<WalkStatus> getAllStatuses() {
-        return walkStatusService.getWalkStatuses();
+    public ResponseEntity<Object> getAllStatuses() {
+        try {
+            List<WalkStatus> statuses = walkStatusService.getWalkStatuses();
+            return ResponseEntity.ok(statuses);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+
+    @Operation(summary = "Get walk status with given id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned walk status with given id",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(implementation = WalkStatus.class)
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Couldn't find walk status with given id", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get status because walk status with id '11' doesnt exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            }
+    )
+    @GetMapping("/get/{id}")
+    public ResponseEntity<Object> getWalkStatus(@PathVariable Integer id) {
+        try {
+            WalkStatus status = walkStatusService.getWalkStatusById(id);
+            return ResponseEntity.ok(status);
+        } catch (WalkStatusDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
 
     @Operation(summary = "Add a new status that a walk can have")
     @ApiResponses(
@@ -66,7 +105,7 @@ public class WalkStatusController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> addStatus(@RequestBody WalkStatus walkStatus) {
+    public ResponseEntity<Object> addStatus(@RequestBody WalkStatusDTO walkStatus) {
         try {
             WalkStatus status = walkStatusService.addWalkStatus(walkStatus);
             return new ResponseEntity<>(status, HttpStatus.CREATED);
@@ -83,21 +122,21 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
                             mediaType = "text/plain"
                     )),
-                    @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                    @ApiResponse(responseCode = "404", description = "Status with given id not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot delete status because 'statusName' walk status doesnt exist"
+                                            value = "Cannot delete status because walk status with id '223' doesnt exist"
                                     )
                             }
                     )),
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{name}")
-    public ResponseEntity<Object> removeStatus(@PathVariable String name) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> removeStatus(@PathVariable Integer id) {
         try {
-            walkStatusService.deleteWalkStatus(name);
+            walkStatusService.deleteWalkStatus(id);
             return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
         } catch (WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -107,7 +146,7 @@ public class WalkStatusController {
     }
 
 
-    @Operation(summary = "Update the name of existing walk status.")
+    @Operation(summary = "Update existing walk status.")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -118,7 +157,7 @@ public class WalkStatusController {
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot update walk status 'xyz' because it doesnt exist"
+                                            value = "Cannot update walk status with id '15' because it doesnt exist"
                                     )
                             }
                     )),
@@ -127,17 +166,17 @@ public class WalkStatusController {
                                     mediaType = "text/plain",
                                     examples = {
                                             @ExampleObject(
-                                                    value = "Cannot update walk status 'xyz' to 'In progress' because 'In progress' already exists"
+                                                    value = "Cannot update walk status with id 'id' to 'xuz' because 'xuz' already exists"
                                             )
                                     }
                             )),
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{name}/{newName}")
-    public ResponseEntity<Object> updateStatusName(@PathVariable String name, @PathVariable String newName) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody WalkStatusDTO updated) {
         try {
-            WalkStatus status = walkStatusService.updateWalkStatusName(name, newName);
+            WalkStatus status = walkStatusService.updateWalkStatusName(id, updated);
             return ResponseEntity.ok(status);
             // return new ResponseEntity<>("'" + name + "' walk status successfully updated to '" + newName + "'", HttpStatus.OK);
         } catch (WalkStatusUpdateCollisionException e) {

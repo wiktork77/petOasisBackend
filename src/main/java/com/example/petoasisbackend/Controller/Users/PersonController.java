@@ -29,7 +29,7 @@ public class PersonController {
             Person person = request.getPerson();
             personService.addPerson(gsu, person);
             return new ResponseEntity<>(person.getGeneralSystemUser().getLogin() + " added successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -39,7 +39,7 @@ public class PersonController {
         try {
             personService.deletePerson(login);
             return new ResponseEntity<>(login + " added successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
@@ -49,7 +49,7 @@ public class PersonController {
         try {
             personService.updatePerson(login, other);
             return new ResponseEntity<>(login + " updated successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
