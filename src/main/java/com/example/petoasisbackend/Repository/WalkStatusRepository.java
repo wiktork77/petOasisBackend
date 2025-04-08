@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface WalkStatusRepository extends JpaRepository<WalkStatus, Integer> {
     boolean existsByStatus(String status);
     WalkStatus getWalkStatusByStatus(String status);
+
 }

@@ -27,7 +27,6 @@ public class AnimalService {
     @Autowired
     private DogRepository dogRepository;
 
-
     public Animal getAnimal(Long id) throws AnimalDoesntExistException {
         if (!animalRepository.existsById(id)) {
             throw new AnimalDoesntExistException("Cannot get animal with id '" + id + "'" + " because it doesn't exist");

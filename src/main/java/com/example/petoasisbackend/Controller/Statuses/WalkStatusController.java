@@ -2,6 +2,7 @@ package com.example.petoasisbackend.Controller.Statuses;
 
 import com.example.petoasisbackend.DTO.Descriptior.WalkStatusDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
+import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
@@ -83,8 +84,8 @@ public class WalkStatusController {
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
+
 
     @Operation(summary = "Add a new status that a walk can have")
     @ApiResponses(
@@ -111,7 +112,8 @@ public class WalkStatusController {
             return new ResponseEntity<>(status, HttpStatus.CREATED);
         } catch (WalkStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -121,6 +123,14 @@ public class WalkStatusController {
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
                             mediaType = "text/plain"
+                    )),
+                    @ApiResponse(responseCode = "403", description = "Tried to delete core status that's necessary for the system", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot delete core walk status"
+                                    )
+                            }
                     )),
                     @ApiResponse(responseCode = "404", description = "Status with given id not found", content = @Content(
                             mediaType = "text/plain",
@@ -140,6 +150,8 @@ public class WalkStatusController {
             return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
         } catch (WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (WalkStatusCannotBeModifiedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -152,6 +164,14 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkStatus.class)
+                    )),
+                    @ApiResponse(responseCode = "403", description = "Tried to modify core status that's necessary for the system", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot modify core walk status"
+                                    )
+                            }
                     )),
                     @ApiResponse(responseCode = "404", description = "Status name not found", content = @Content(
                             mediaType = "text/plain",
@@ -183,6 +203,8 @@ public class WalkStatusController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (WalkStatusCannotBeModifiedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.DTO.Activity;
+package com.example.petoasisbackend.DTO.Activity.Walk;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

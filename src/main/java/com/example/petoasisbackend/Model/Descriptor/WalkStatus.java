@@ -35,4 +35,8 @@ public class WalkStatus {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
+
+    public WalkStatus(String status) {
+        this.status = status;
+    }
 }
