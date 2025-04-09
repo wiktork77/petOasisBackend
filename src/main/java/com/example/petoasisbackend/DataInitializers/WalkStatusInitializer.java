@@ -4,6 +4,7 @@ import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

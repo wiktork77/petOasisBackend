@@ -1,11 +1,13 @@
 package com.example.petoasisbackend.Controller.Statuses;
 
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatusDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayConciseDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayMinimumDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.WalkStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -19,9 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/status/walk")
@@ -31,7 +31,7 @@ public class WalkStatusController {
     private WalkStatusService walkStatusService;
 
 
-    @Operation(summary = "Get ALL walk statuses")
+    @Operation(summary = "Get all walk statuses")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned list of all walk statuses",
@@ -44,13 +44,9 @@ public class WalkStatusController {
             }
     )
     @GetMapping("/getAll")
-    public ResponseEntity<Object> getAllStatuses() {
-        try {
-            List<WalkStatus> statuses = walkStatusService.getWalkStatuses();
-            return ResponseEntity.ok(statuses);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Object> getAllStatuses(DataDetailLevel level) {
+        List<WalkStatus> statuses = (List<WalkStatus>) walkStatusService.getWalkStatuses(level);
+        return ResponseEntity.ok(statuses);
     }
 
 
@@ -81,8 +77,6 @@ public class WalkStatusController {
             return ResponseEntity.ok(status);
         } catch (WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -92,7 +86,7 @@ public class WalkStatusController {
             value = {
                     @ApiResponse(responseCode = "201", description = "Successfully created a new status", content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = WalkStatus.class)
+                            schema = @Schema(implementation = WalkStatusDisplayMinimumDTO.class)
                     )),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
                             mediaType = "text/plain",
@@ -106,15 +100,13 @@ public class WalkStatusController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> addStatus(@RequestBody WalkStatusDTO walkStatus) {
+    public ResponseEntity<Object> addStatus(@RequestBody WalkStatusDisplayConciseDTO walkStatus) {
         try {
             WalkStatus status = walkStatusService.addWalkStatus(walkStatus);
-            return new ResponseEntity<>(status, HttpStatus.CREATED);
+            WalkStatusDisplayMinimumDTO displayMinimumDTO = WalkStatusDisplayMinimumDTO.fromWalkStatus(status);
+            return new ResponseEntity<>(displayMinimumDTO, HttpStatus.CREATED);
         } catch (WalkStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -152,8 +144,6 @@ public class WalkStatusController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (WalkStatusCannotBeModifiedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -194,7 +184,7 @@ public class WalkStatusController {
             }
     )
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody WalkStatusDTO updated) {
+    public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody WalkStatusDisplayConciseDTO updated) {
         try {
             WalkStatus status = walkStatusService.updateWalkStatusName(id, updated);
             return ResponseEntity.ok(status);
@@ -205,8 +195,6 @@ public class WalkStatusController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (WalkStatusCannotBeModifiedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

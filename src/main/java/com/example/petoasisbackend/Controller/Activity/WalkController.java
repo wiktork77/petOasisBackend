@@ -2,7 +2,8 @@ package com.example.petoasisbackend.Controller.Activity;
 
 
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkAddDTO;
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatusDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkDisplayMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayConciseDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.DataDetail.DataDetailLevelDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
@@ -28,9 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequestMapping("/walk")
@@ -67,7 +65,7 @@ public class WalkController {
             }
     )
     @GetMapping("/getAll")
-    public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) throws DataDetailLevelDoesntExistException {
+    public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) {
         try {
             return new ResponseEntity<>(walkService.getWalks(level), HttpStatus.OK);
         } catch (DataDetailLevelDoesntExistException e) {
@@ -83,7 +81,7 @@ public class WalkController {
             value = {
                     @ApiResponse(responseCode = "201", description = "Successfully added a new walk", content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = Walk.class)
+                            schema = @Schema(implementation = WalkDisplayMinimumDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "One of necessary walk parts not found (animal or person or shelter)", content = @Content(
                             mediaType = "text/plain",
@@ -126,14 +124,14 @@ public class WalkController {
             );
 
             Walk addedWalk = walkService.addWalk(newWalk);
-            return new ResponseEntity<>(addedWalk, HttpStatus.CREATED);
-        } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException e) {
+            WalkDisplayMinimumDTO response = WalkDisplayMinimumDTO.fromWalk(addedWalk);
+
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException |
+                 WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (WalkTimeIntersectException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
-        catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -172,8 +170,6 @@ public class WalkController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -200,15 +196,13 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/status/{walkId}/{status}")
-    public ResponseEntity<String> updateWalkStatus(@PathVariable Long walkId, @RequestBody WalkStatusDTO newStatus) {
+    @PutMapping("/update/status/{walkId}")
+    public ResponseEntity<String> updateWalkStatus(@PathVariable Long walkId, @RequestBody WalkStatusDisplayConciseDTO newStatus) {
         try {
             walkService.updateWalkStatus(walkId, newStatus.getStatus());
             return new ResponseEntity<>("Walk with id '" + walkId + "' status updated to " + newStatus.getStatus(), HttpStatus.OK);
         } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

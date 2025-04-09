@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatusDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayConciseDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayMinimumDTO;
 import com.example.petoasisbackend.DataInitializers.WalkStatusInitializer;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
@@ -8,10 +9,10 @@ import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistExc
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -19,8 +20,18 @@ public class WalkStatusService {
     @Autowired
     private WalkStatusRepository walkStatusRepository;
 
-    public List<WalkStatus> getWalkStatuses() {
-        return walkStatusRepository.findAll();
+    public Object getWalkStatuses(DataDetailLevel level) {
+        List<WalkStatus> data = walkStatusRepository.findAll();
+        System.out.println(level);
+        switch (level) {
+            case VERBOSE -> {return data;}
+            case MINIMUM -> {
+                return data.stream().map(WalkStatusDisplayMinimumDTO::fromWalkStatus);
+            }
+            default -> {
+                return data.stream().map(WalkStatusDisplayConciseDTO::fromWalkStatus);
+            }
+        }
     }
 
     public WalkStatus getWalkStatusById(Integer id) throws WalkStatusDoesntExistException {
@@ -37,7 +48,7 @@ public class WalkStatusService {
         return walkStatusRepository.getWalkStatusByStatus(name);
     }
 
-    public WalkStatus addWalkStatus(WalkStatusDTO status) throws WalkStatusAlreadyExistsException {
+    public WalkStatus addWalkStatus(WalkStatusDisplayConciseDTO status) throws WalkStatusAlreadyExistsException {
         if (walkStatusRepository.existsByStatus(status.getStatus())) {
             throw new WalkStatusAlreadyExistsException("Cannot add new status because '" + status.getStatus() + "' walk status already exists");
         }
@@ -58,7 +69,7 @@ public class WalkStatusService {
         return status;
     }
 
-    public WalkStatus updateWalkStatusName(Integer id, WalkStatusDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
+    public WalkStatus updateWalkStatusName(Integer id, WalkStatusDisplayConciseDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
         if (!walkStatusRepository.existsById(id)) {
             throw new WalkStatusDoesntExistException("Cannot update walk status with id '"  + id + "' because it doesnt exist");
         }
