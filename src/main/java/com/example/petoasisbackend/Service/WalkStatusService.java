@@ -1,7 +1,7 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayConciseDTO;
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusDisplayMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusMinimumDTO;
 import com.example.petoasisbackend.DataInitializers.WalkStatusInitializer;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class WalkStatusService {
@@ -26,19 +27,25 @@ public class WalkStatusService {
         switch (level) {
             case VERBOSE -> {return data;}
             case MINIMUM -> {
-                return data.stream().map(WalkStatusDisplayMinimumDTO::fromWalkStatus);
+                return data.stream().map(WalkStatusMinimumDTO::fromWalkStatus).collect(Collectors.toList());
             }
             default -> {
-                return data.stream().map(WalkStatusDisplayConciseDTO::fromWalkStatus);
+                return data.stream().map(WalkStatusNameDTO::fromWalkStatus).collect(Collectors.toList());
             }
         }
     }
 
-    public WalkStatus getWalkStatusById(Integer id) throws WalkStatusDoesntExistException {
+    public Object getWalkStatusById(Integer id, DataDetailLevel level) throws WalkStatusDoesntExistException {
         if (!walkStatusRepository.existsById(id)) {
             throw new WalkStatusDoesntExistException("Cannot get status because walk status with id '" + id + "' doesnt exist");
         }
-        return walkStatusRepository.findById(id).get();
+        WalkStatus status = walkStatusRepository.findById(id).get();
+
+        switch (level) {
+            case VERBOSE -> {return status;}
+            case MINIMUM -> {return WalkStatusMinimumDTO.fromWalkStatus(status);}
+            default -> {return WalkStatusNameDTO.fromWalkStatus(status);}
+        }
     }
 
     public WalkStatus getWalkStatusByName(String name) throws WalkStatusDoesntExistException {
@@ -48,7 +55,7 @@ public class WalkStatusService {
         return walkStatusRepository.getWalkStatusByStatus(name);
     }
 
-    public WalkStatus addWalkStatus(WalkStatusDisplayConciseDTO status) throws WalkStatusAlreadyExistsException {
+    public WalkStatus addWalkStatus(WalkStatusNameDTO status) throws WalkStatusAlreadyExistsException {
         if (walkStatusRepository.existsByStatus(status.getStatus())) {
             throw new WalkStatusAlreadyExistsException("Cannot add new status because '" + status.getStatus() + "' walk status already exists");
         }
@@ -69,7 +76,7 @@ public class WalkStatusService {
         return status;
     }
 
-    public WalkStatus updateWalkStatusName(Integer id, WalkStatusDisplayConciseDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
+    public WalkStatus updateWalkStatusName(Integer id, WalkStatusNameDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
         if (!walkStatusRepository.existsById(id)) {
             throw new WalkStatusDoesntExistException("Cannot update walk status with id '"  + id + "' because it doesnt exist");
         }

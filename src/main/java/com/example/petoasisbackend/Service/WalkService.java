@@ -1,7 +1,9 @@
 package com.example.petoasisbackend.Service;
 
 
-import com.example.petoasisbackend.DTO.Activity.Walk.WalkDisplayMinimumDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkConciseDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkMediumDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.DataDetail.DataDetailLevelDoesntExistException;
 import com.example.petoasisbackend.Exception.Walk.WalkCannotBeDeletedException;
@@ -22,14 +24,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class WalkService {
     @Autowired
     private WalkRepository walkRepository;
+    @Autowired
     private WalkStatusRepository walkStatusRepository;
-
+    @Autowired
     private AnimalRepository animalRepository;
 
     private List<Walk> getWalks() {
@@ -37,12 +39,7 @@ public class WalkService {
         return data;
     }
 
-    public Object getWalks(DataDetailLevel level) throws DataDetailLevelDoesntExistException {
-
-        if (!Arrays.asList(DataDetailLevel.values()).contains(level)) {
-            throw new DataDetailLevelDoesntExistException("Cannot parse request, data detail level '" + level.name() + "' doesn't exist");
-        }
-
+    public Object getWalks(DataDetailLevel level) {
         List<Walk> data = walkRepository.findAll();
 
         switch (level) {
@@ -61,9 +58,22 @@ public class WalkService {
         }
 
         return data;
-
     }
 
+    public Object getWalkById(Long id, DataDetailLevel level) throws WalkDoesntExistException {
+        if (!walkRepository.existsById(id)) {
+            throw new WalkDoesntExistException("Cannot get walk with id '" + id + "' because it doesn't exist");
+        }
+        Walk walk = walkRepository.findById(id).get();
+
+        switch (level) {
+            case VERBOSE -> {return walk;}
+            case MEDIUM -> {return WalkMediumDTO.fromWalk(walk);}
+            case CONCISE -> {return WalkConciseDTO.fromWalk(walk);}
+            case MINIMUM -> {return WalkMinimumDTO.fromWalk(walk);}
+        }
+        return null;
+    }
 
     public Walk addWalk(Walk walk) {
         return walkRepository.save(walk);
@@ -97,7 +107,7 @@ public class WalkService {
                     "Cannot update walk status of walk with id '" + walkId + "' because walk with this id doesn't exist"
             );
         }
-        Walk walk = walkRepository.getReferenceById(walkId);
+        Walk walk = walkRepository.findById(walkId).get();
         WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(status);
         walk.setWalkStatus(walkStatus);
         walkRepository.save(walk);

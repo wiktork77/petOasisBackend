@@ -25,6 +25,8 @@ public class WalkAddDTO {
         this.endTime = endTime;
     }
 
+    public WalkAddDTO() {}
+
     public static WalkAddDTO fromWalk(Walk walk) {
         return new WalkAddDTO(
                 walk.getPupil().getAnimalId(),

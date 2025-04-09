@@ -4,14 +4,16 @@ import com.example.petoasisbackend.Model.Activity.Walk;
 import lombok.Getter;
 
 @Getter
-public class WalkDisplayMinimumDTO {
+public class WalkMinimumDTO {
     private Long walkId;
 
-    public WalkDisplayMinimumDTO(Long walkId) {
+    public WalkMinimumDTO(Long walkId) {
         this.walkId = walkId;
     }
 
-    public static WalkDisplayMinimumDTO fromWalk(Walk walk) {
-        return new WalkDisplayMinimumDTO(walk.getWalkId());
+    public WalkMinimumDTO() {}
+
+    public static WalkMinimumDTO fromWalk(Walk walk) {
+        return new WalkMinimumDTO(walk.getWalkId());
     }
 }
