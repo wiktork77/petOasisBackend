@@ -41,7 +41,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @GetMapping("/get")
+    @GetMapping("/")
     public ResponseEntity<Object> getAllStatuses(DataDetailLevel level) {
         Object statuses = walkStatusService.getWalkStatuses(level);
         return ResponseEntity.ok(statuses);
@@ -68,7 +68,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> getWalkStatus(@PathVariable Integer id, @RequestParam DataDetailLevel level) {
         try {
             Object status = walkStatusService.getWalkStatusById(id, level);
@@ -100,7 +100,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @GetMapping("/get/by-name/{name}")
+    @GetMapping("/name/{name}")
     public ResponseEntity<Object> getWalkStatusName(@PathVariable String name) {
         try {
             Object status = walkStatusService.getWalkStatusByName(name);

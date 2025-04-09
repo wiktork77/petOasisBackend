@@ -43,11 +43,69 @@ public class HealthStatusController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/get")
-    public Object getAll(DataDetailLevel level) {
-        return healthStatusService.getHealthStatuses(level);
+    @GetMapping("/")
+    public ResponseEntity<Object> getAll(DataDetailLevel level) {
+        Object statuses = healthStatusService.getHealthStatuses(level);
+        return new ResponseEntity<>(statuses, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "Get health statuses with given id and given detail level")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned health status", content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = HealthStatus.class))
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get health status with id '5' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Integer id, DataDetailLevel level) {
+        try {
+            Object status = healthStatusService.getHealthStatusById(id, level);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (HealthStatusDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+
+    @Operation(summary = "Get health status with given name")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned health status", content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = HealthStatus.class))
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get health status with name 'super healthy' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
+    @GetMapping("/name/{name}")
+    public ResponseEntity<Object> getByName(@PathVariable String name) {
+        try {
+            HealthStatus status = healthStatusService.getHealthStatusByName(name);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (HealthStatusDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
 
     @Operation(summary = "Add a new health status")
     @ApiResponses(
@@ -82,10 +140,10 @@ public class HealthStatusController {
     @Operation(summary = "Delete an existing health status")
     @ApiResponses(
             value = {
-                    @ApiResponse(responseCode = "204", description = "", content = @Content(
+                    @ApiResponse(responseCode = "204", description = "Status successfully deleted", content = @Content(
                             mediaType = "text/plain"
                     )),
-                    @ApiResponse(responseCode = "400", description = "", content = @Content(
+                    @ApiResponse(responseCode = "400", description = "Status couldn't be deleted because it would violate data integrity", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
@@ -93,23 +151,23 @@ public class HealthStatusController {
                                     )
                             }
                     )),
-                    @ApiResponse(responseCode = "403", description = "", content = @Content(
+                    @ApiResponse(responseCode = "403", description = "Couldn't delete status because it's predefined, core status", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
-                                            value = ""
+                                            value = "Cannot delete core status"
                                     )
                             }
                     )),
-                    @ApiResponse(responseCode = "404", description = "", content = @Content(
+                    @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
-                                            value = ""
+                                            value = "Cannot delete health status with id '64' because it doesn't exist"
                                     )
                             }
                     )),
-                    @ApiResponse(responseCode = "500", description = "", content = @Content),
+                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
     @DeleteMapping("/delete/{id}")
@@ -128,16 +186,39 @@ public class HealthStatusController {
     }
 
 
-    // TODO: na nowo
     @Operation(summary = "Update an existing health status")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully updated a health status", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = HealthStatus.class)
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update health status with id '72' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update health status with id '4' to 'low healthy' because 'low healthy' already exists"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
+            }
+    )
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody HealthStatusNameDTO statusNameDTO) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody HealthStatusNameDTO statusNameDTO) {
         try {
-            // TODO:
-            System.out.println("toto");
-            return new ResponseEntity<>("", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            HealthStatus status = healthStatusService.updateHealthStatus(id, statusNameDTO);
+            return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (HealthStatusDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (HealthStatusAlreadyExistsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 

@@ -36,6 +36,32 @@ public class HealthStatusService {
         }
     }
 
+    public Object getHealthStatusById(Integer id, DataDetailLevel level) throws HealthStatusDoesntExistException {
+        if (!healthStatusRepository.existsById(id)) {
+            throw new HealthStatusDoesntExistException(
+                    "Cannot get health status with id '" + id + "' because it doesn't exist"
+            );
+        }
+        HealthStatus status = healthStatusRepository.findById(id).get();
+        switch (level) {
+            case VERBOSE -> {return status;}
+            case MINIMUM -> {
+                return HealthStatusMinimumDTO.fromHealthStatus(status);
+            }
+            default -> {
+                return HealthStatusNameDTO.fromHealthStatus(status);
+            }
+        }
+    }
+
+    public HealthStatus getHealthStatusByName(String string) throws HealthStatusDoesntExistException {
+        if (!healthStatusRepository.existsByHealthStatus(string)) {
+            throw new HealthStatusDoesntExistException("Cannot get status with name '" + string + "' because it doesn't exist");
+        }
+        HealthStatus status = healthStatusRepository.findByHealthStatus(string);
+        return status;
+    }
+
     public HealthStatus addHealthStatus(HealthStatus status) throws HealthStatusAlreadyExistsException {
         if (healthStatusRepository.existsByHealthStatus(status.getHealthStatus())) {
             throw new HealthStatusAlreadyExistsException("Cannot add health status '" + status.getHealthStatus() + "' because it already exists");
@@ -55,7 +81,7 @@ public class HealthStatusService {
 
         if (HealthStatusInitializer.coreStatuses.contains(status.getHealthStatus())) {
             throw new HealthStatusCannotBeModifiedException(
-                    "Cannot modify core status"
+                    "Cannot delete core status"
             );
         }
 
@@ -63,15 +89,16 @@ public class HealthStatusService {
         return status;
     }
 
-    public HealthStatus updateAvailabilityStatus(String name, String newName) {
-        if (!healthStatusRepository.existsByHealthStatus(name)) {
-            throw new IllegalArgumentException("Health status doesnt exist");
+    public HealthStatus updateHealthStatus(Integer id, HealthStatusNameDTO statusNameDTO) throws HealthStatusDoesntExistException, HealthStatusAlreadyExistsException {
+        if (!healthStatusRepository.existsById(id)) {
+            throw new HealthStatusDoesntExistException("Cannot update health status with id '" + "' because it doesn't exist");
         }
-        if (healthStatusRepository.existsByHealthStatus(newName)) {
-            throw new IllegalArgumentException("New health status name already exists in the database");
+        if (healthStatusRepository.existsByHealthStatus(statusNameDTO.getHealthStatus())) {
+            throw new HealthStatusAlreadyExistsException("Cannot update health status with id '" + "' to '" + statusNameDTO.getHealthStatus() + "' because '" + statusNameDTO.getHealthStatus() + "' already exists");
         }
-        HealthStatus status = healthStatusRepository.findByHealthStatus(name);
-        status.setHealthStatus(newName);
+
+        HealthStatus status = healthStatusRepository.findById(id).get();
+        status.setHealthStatus(statusNameDTO.getHealthStatus());
         healthStatusRepository.save(status);
         return status;
     }

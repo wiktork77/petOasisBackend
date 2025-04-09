@@ -56,7 +56,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/get")
+    @GetMapping("/")
     public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) {
         return new ResponseEntity<>(walkService.getWalks(level), HttpStatus.OK);
     }
@@ -84,7 +84,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/get/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> getWalk(@PathVariable Long id, DataDetailLevel level) {
         try {
             return new ResponseEntity<>(walkService.getWalkById(id, level), HttpStatus.OK);
