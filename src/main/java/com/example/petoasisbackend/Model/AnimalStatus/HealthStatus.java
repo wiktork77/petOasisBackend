@@ -3,11 +3,13 @@ package com.example.petoasisbackend.Model.AnimalStatus;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class HealthStatus {
 
     @Id
@@ -16,7 +18,6 @@ public class HealthStatus {
 
     @Column(length = 64, unique = true, nullable = false)
     private String healthStatus;
-
 
     @Override
     public boolean equals(Object o) {
@@ -29,5 +30,9 @@ public class HealthStatus {
     @Override
     public int hashCode() {
         return Objects.hash(healthStatus);
+    }
+
+    public HealthStatus(String healthStatus) {
+        this.healthStatus = healthStatus;
     }
 }

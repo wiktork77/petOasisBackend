@@ -3,11 +3,13 @@ package com.example.petoasisbackend.Model.AnimalStatus;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class AvailabilityStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,5 +30,9 @@ public class AvailabilityStatus {
     @Override
     public int hashCode() {
         return Objects.hash(availability);
+    }
+
+    public AvailabilityStatus(String availability) {
+        this.availability = availability;
     }
 }

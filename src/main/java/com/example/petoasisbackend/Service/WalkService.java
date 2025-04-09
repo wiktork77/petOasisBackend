@@ -5,7 +5,6 @@ import com.example.petoasisbackend.DTO.Activity.Walk.WalkConciseDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMediumDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
-import com.example.petoasisbackend.Exception.DataDetail.DataDetailLevelDoesntExistException;
 import com.example.petoasisbackend.Exception.Walk.WalkCannotBeDeletedException;
 import com.example.petoasisbackend.Exception.Walk.WalkDoesntExistException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service

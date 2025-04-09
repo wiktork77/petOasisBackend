@@ -1,8 +1,9 @@
 package com.example.petoasisbackend.Controller.Activity;
 
 
-import com.example.petoasisbackend.DTO.Activity.Walk.WalkAddDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkConciseDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithStatusDTO;
 import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
@@ -43,7 +44,7 @@ public class WalkController {
     @Autowired
     private PersonService personService;
 
-    @Operation(summary = "Get all walks with details depending on given level")
+    @Operation(summary = "Get all walks with given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned list of all walks",
@@ -55,7 +56,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/getAll")
+    @GetMapping("/get")
     public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) {
         return new ResponseEntity<>(walkService.getWalks(level), HttpStatus.OK);
     }
@@ -120,7 +121,7 @@ public class WalkController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody WalkAddDTO walk) {
+    public ResponseEntity<Object> add(@RequestBody WalkConciseDTO walk) {
         try {
             if (!walkService.checkIfAnimalIsAvailableForWalk(walk.getAnimalId(), walk.getStartTime(), walk.getEndTime())) {
                 throw new WalkTimeIntersectException("Cannot add a walk with animal with id '" + walk.getAnimalId() + "' because given time intersects with other walk(s).");
@@ -196,11 +197,7 @@ public class WalkController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
                             mediaType = "text/plain",
-                            examples = {
-                                    @ExampleObject(
-                                            value = "Walk with id '4' status updated to 'finished'"
-                                    )
-                            }
+                            schema = @Schema(implementation = WalkWithStatusDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "Status or walk not found", content = @Content(
                             mediaType = "text/plain",
@@ -217,7 +214,8 @@ public class WalkController {
     public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody WalkStatusNameDTO newStatus) {
         try {
             Walk walk = walkService.updateWalkStatus(walkId, newStatus.getStatus());
-            return new ResponseEntity<>(walk, HttpStatus.OK);
+            WalkWithStatusDTO response = WalkWithStatusDTO.fromWalk(walk);
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

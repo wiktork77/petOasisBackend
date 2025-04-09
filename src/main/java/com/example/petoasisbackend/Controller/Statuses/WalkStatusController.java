@@ -29,7 +29,7 @@ public class WalkStatusController {
     private WalkStatusService walkStatusService;
 
 
-    @Operation(summary = "Get all walk statuses")
+    @Operation(summary = "Get all walk statuses with given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned list of all walk statuses",
@@ -41,7 +41,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @GetMapping("/getAll")
+    @GetMapping("/get")
     public ResponseEntity<Object> getAllStatuses(DataDetailLevel level) {
         Object statuses = walkStatusService.getWalkStatuses(level);
         return ResponseEntity.ok(statuses);
