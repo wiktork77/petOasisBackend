@@ -27,7 +27,7 @@ public class PersonController {
         try {
             GeneralSystemUser gsu = request.getGeneralSystemUser();
             Person person = request.getPerson();
-            personService.addPerson(gsu, person);
+//            personService.addPerson(gsu, person);
             return new ResponseEntity<>(person.getGeneralSystemUser().getLogin() + " added successfully", HttpStatus.OK);
         } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -37,7 +37,7 @@ public class PersonController {
     @DeleteMapping("/delete/{login}")
     public ResponseEntity<String> delete(@PathVariable String login) {
         try {
-            personService.deletePerson(login);
+//            personService.deletePerson(login);
             return new ResponseEntity<>(login + " added successfully", HttpStatus.OK);
         } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -47,7 +47,7 @@ public class PersonController {
     @PutMapping("/update/{login}")
     public ResponseEntity<String> update(@PathVariable String login, @RequestBody Person other) {
         try {
-            personService.updatePerson(login, other);
+//            personService.updatePerson(login, other);
             return new ResponseEntity<>(login + " updated successfully", HttpStatus.OK);
         } catch (Exception e) { // TODO
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -7,6 +7,7 @@ import com.example.petoasisbackend.DataInitializers.HealthStatusInitializer;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusInvalidRequestException;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Repository.HealthStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
@@ -42,15 +43,7 @@ public class HealthStatusService {
             );
         }
         HealthStatus status = healthStatusRepository.findById(id).get();
-        switch (level) {
-            case VERBOSE -> {return status;}
-            case MINIMUM -> {
-                return HealthStatusMinimumDTO.fromHealthStatus(status);
-            }
-            default -> {
-                return HealthStatusNameDTO.fromHealthStatus(status);
-            }
-        }
+        return dataDetailTransformShelter(status, level);
     }
 
     public HealthStatus getHealthStatusByName(String string) throws HealthStatusDoesntExistException {
@@ -61,12 +54,16 @@ public class HealthStatusService {
         return status;
     }
 
-    public HealthStatus addHealthStatus(HealthStatus status) throws HealthStatusAlreadyExistsException {
+    public HealthStatus addHealthStatus(HealthStatusNameDTO status) throws HealthStatusAlreadyExistsException, HealthStatusInvalidRequestException {
         if (healthStatusRepository.existsByHealthStatus(status.getHealthStatus())) {
             throw new HealthStatusAlreadyExistsException("Cannot add health status '" + status.getHealthStatus() + "' because it already exists");
         }
-        healthStatusRepository.save(status);
-        return status;
+        if (status.getHealthStatus() == null || status.getHealthStatus().trim().isEmpty()) {
+            throw new HealthStatusInvalidRequestException("Cannot add health status because the request is not valid");
+        }
+        HealthStatus newStatus = new HealthStatus(status.getHealthStatus());
+        healthStatusRepository.save(newStatus);
+        return newStatus;
     }
 
     public HealthStatus removeHealthStatus(Integer id) throws HealthStatusDoesntExistException, HealthStatusCannotBeModifiedException {
@@ -88,17 +85,32 @@ public class HealthStatusService {
         return status;
     }
 
-    public HealthStatus updateHealthStatus(Integer id, HealthStatusNameDTO statusNameDTO) throws HealthStatusDoesntExistException, HealthStatusAlreadyExistsException {
+    public HealthStatus updateHealthStatus(Integer id, HealthStatusNameDTO statusNameDTO) throws HealthStatusDoesntExistException, HealthStatusAlreadyExistsException, HealthStatusInvalidRequestException {
         if (!healthStatusRepository.existsById(id)) {
-            throw new HealthStatusDoesntExistException("Cannot update health status with id '" + "' because it doesn't exist");
+            throw new HealthStatusDoesntExistException("Cannot update health status with id '" + id + "' because it doesn't exist");
         }
         if (healthStatusRepository.existsByHealthStatus(statusNameDTO.getHealthStatus())) {
-            throw new HealthStatusAlreadyExistsException("Cannot update health status with id '" + "' to '" + statusNameDTO.getHealthStatus() + "' because '" + statusNameDTO.getHealthStatus() + "' already exists");
+            throw new HealthStatusAlreadyExistsException("Cannot update health status with id '" + id + "' to '" + statusNameDTO.getHealthStatus() + "' because '" + statusNameDTO.getHealthStatus() + "' already exists");
+        }
+        if (statusNameDTO.getHealthStatus() == null || statusNameDTO.getHealthStatus().trim().isEmpty()) {
+            throw new HealthStatusInvalidRequestException("Cannot update health status with id '" + id + "' because the request is invalid");
         }
 
         HealthStatus status = healthStatusRepository.findById(id).get();
         status.setHealthStatus(statusNameDTO.getHealthStatus());
         healthStatusRepository.save(status);
         return status;
+    }
+
+    private Object dataDetailTransformShelter(HealthStatus status, DataDetailLevel level) {
+        switch (level) {
+            case VERBOSE -> {return status;}
+            case MINIMUM -> {
+                return HealthStatusMinimumDTO.fromHealthStatus(status);
+            }
+            default -> {
+                return HealthStatusNameDTO.fromHealthStatus(status);
+            }
+        }
     }
 }

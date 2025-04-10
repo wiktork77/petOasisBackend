@@ -17,6 +17,11 @@ public class GSUService {
         return systemUserRepository.findAll();
     }
 
+    public GeneralSystemUser addGSU(GeneralSystemUser generalSystemUser) {
+        GeneralSystemUser systemUser = systemUserRepository.save(generalSystemUser);
+        return systemUser;
+    }
+
     public GeneralSystemUser getGSUByLogin(String login) {
         return systemUserRepository.getGeneralSystemUserByLogin(login);
     }

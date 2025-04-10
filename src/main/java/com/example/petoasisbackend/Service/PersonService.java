@@ -30,50 +30,50 @@ public class PersonService {
         return personRepository.findById(id).get();
     }
 
-    public Person getPersonByLogin(String login) throws PersonDoesntExistException {
-        if (!systemUserRepository.existsByLogin(login)) {
-            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-        }
-        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-        return personRepository.getReferenceById(gsu.getParentId());
-    }
+//    public Person getPersonByLogin(String login) throws PersonDoesntExistException {
+//        if (!systemUserRepository.existsByLogin(login)) {
+//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
+//        }
+//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
+//        return personRepository.getReferenceById(gsu.getParentId());
+//    }
 
-    @Transactional
-    public Person addPerson(GeneralSystemUser generalSystemUser, Person person) throws PersonAlreadyExistsException {
-        if (systemUserRepository.existsByLogin(generalSystemUser.getLogin())) {
-            throw new PersonAlreadyExistsException("User with login '" + generalSystemUser.getLogin() + "' already exists!");
-        }
-        GeneralSystemUser savedGSU = addGSU(generalSystemUser);
-        person.setGeneralSystemUser(savedGSU);
-        Person person1 = personRepository.save(person);
-        savedGSU.setType("Person");
-        savedGSU.setParentId(person1.getPersonId());
-        return person1;
-    }
+//    @Transactional
+//    public Person addPerson(GeneralSystemUser generalSystemUser, Person person) throws PersonAlreadyExistsException {
+//        if (systemUserRepository.existsByLogin(generalSystemUser.getLogin())) {
+//            throw new PersonAlreadyExistsException("User with login '" + generalSystemUser.getLogin() + "' already exists!");
+//        }
+//        GeneralSystemUser savedGSU = addGSU(generalSystemUser);
+//        person.setGeneralSystemUser(savedGSU);
+//        Person person1 = personRepository.save(person);
+//        savedGSU.setType("Person");
+//        savedGSU.setParentId(person1.getPersonId());
+//        return person1;
+//    }
 
-    public Person deletePerson(String login) throws PersonDoesntExistException {
-        if (!systemUserRepository.existsByLogin(login)) {
-            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-        }
-        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-        Person person = personRepository.getReferenceById(gsu.getParentId());
-        personRepository.delete(person);
-        return person;
-    }
+//    public Person deletePerson(String login) throws PersonDoesntExistException {
+//        if (!systemUserRepository.existsByLogin(login)) {
+//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
+//        }
+//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
+//        Person person = personRepository.getReferenceById(gsu.getParentId());
+//        personRepository.delete(person);
+//        return person;
+//    }
 
-    public Person updatePerson(String login, Person other) throws PersonDoesntExistException, PersonAlreadyExistsException {
-        if (!systemUserRepository.existsByLogin(login)) {
-            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-        }
-        if (systemUserRepository.existsByLogin(other.getGeneralSystemUser().getLogin())) {
-            throw new PersonAlreadyExistsException("User with login " + login + " already exists!");
-        }
-        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-        Person originalPerson = personRepository.getReferenceById(gsu.getParentId());
-        originalPerson.inheritFromOtherPerson(other);
-        personRepository.save(originalPerson);
-        return originalPerson;
-    }
+//    public Person updatePerson(String login, Person other) throws PersonDoesntExistException, PersonAlreadyExistsException {
+//        if (!systemUserRepository.existsByLogin(login)) {
+//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
+//        }
+//        if (systemUserRepository.existsByLogin(other.getGeneralSystemUser().getLogin())) {
+//            throw new PersonAlreadyExistsException("User with login " + login + " already exists!");
+//        }
+//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
+//        Person originalPerson = personRepository.getReferenceById(gsu.getParentId());
+//        originalPerson.inheritFromOtherPerson(other);
+//        personRepository.save(originalPerson);
+//        return originalPerson;
+//    }
 
 
     private GeneralSystemUser addGSU(GeneralSystemUser generalSystemUser) {

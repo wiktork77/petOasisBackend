@@ -6,6 +6,7 @@ import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameD
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusInvalidRequestException;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.HealthStatusService;
@@ -110,6 +111,14 @@ public class HealthStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = HealthStatusMinimumDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot add the status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -124,9 +133,10 @@ public class HealthStatusController {
     @PostMapping("/add")
     public ResponseEntity<Object> add(@RequestBody HealthStatusNameDTO status) {
         try {
-            HealthStatus newStatus = new HealthStatus(status.getHealthStatus());
-            healthStatusService.addHealthStatus(newStatus);
+            HealthStatus newStatus = healthStatusService.addHealthStatus(status);
             return new ResponseEntity<>(HealthStatusMinimumDTO.fromHealthStatus(newStatus), HttpStatus.CREATED);
+        } catch (HealthStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (HealthStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -188,6 +198,14 @@ public class HealthStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = HealthStatus.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update the status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
                             examples = {
                                     @ExampleObject(
@@ -210,6 +228,8 @@ public class HealthStatusController {
         try {
             HealthStatus status = healthStatusService.updateHealthStatus(id, statusNameDTO);
             return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (HealthStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (HealthStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (HealthStatusAlreadyExistsException e) {

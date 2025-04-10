@@ -6,6 +6,7 @@ import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.Availabilit
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusInvalidRequestException;
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.AvailabilityStatusService;
@@ -100,6 +101,13 @@ public class AvailabilityStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = AvailabilityStatusMinimumDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update the status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "409", description = "Couldn't add a new status, name conflict", content = @Content(
                             examples = {
                                     @ExampleObject(
@@ -115,6 +123,8 @@ public class AvailabilityStatusController {
         try {
             AvailabilityStatusMinimumDTO response = availabilityStatusService.addAvailabilityStatus(nameDTO);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (AvailabilityStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (AvailabilityStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -176,6 +186,14 @@ public class AvailabilityStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = AvailabilityStatus.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update the status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "403", description = "Cannot modify core status", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -216,6 +234,8 @@ public class AvailabilityStatusController {
         try {
             AvailabilityStatus status = availabilityStatusService.updateAvailabilityStatus(id, statusNameDTO);
             return new ResponseEntity<>(status, HttpStatus.OK);
+        } catch (AvailabilityStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (AvailabilityStatusCannotBeModifiedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (AvailabilityStatusDoesntExistException e) {

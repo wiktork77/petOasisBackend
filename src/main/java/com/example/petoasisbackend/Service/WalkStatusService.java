@@ -3,10 +3,7 @@ package com.example.petoasisbackend.Service;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
 import com.example.petoasisbackend.DataInitializers.WalkStatusInitializer;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
+import com.example.petoasisbackend.Exception.WalkStatus.*;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
@@ -40,12 +37,7 @@ public class WalkStatusService {
             throw new WalkStatusDoesntExistException("Cannot get status because walk status with id '" + id + "' doesnt exist");
         }
         WalkStatus status = walkStatusRepository.findById(id).get();
-
-        switch (level) {
-            case VERBOSE -> {return status;}
-            case MINIMUM -> {return WalkStatusMinimumDTO.fromWalkStatus(status);}
-            default -> {return WalkStatusNameDTO.fromWalkStatus(status);}
-        }
+        return dataDetailTransformStatus(status, level);
     }
 
     public WalkStatus getWalkStatusByName(String name) throws WalkStatusDoesntExistException {
@@ -55,9 +47,12 @@ public class WalkStatusService {
         return walkStatusRepository.getWalkStatusByStatus(name);
     }
 
-    public WalkStatus addWalkStatus(WalkStatusNameDTO status) throws WalkStatusAlreadyExistsException {
+    public WalkStatus addWalkStatus(WalkStatusNameDTO status) throws WalkStatusAlreadyExistsException, WalkStatusInvalidRequestException {
         if (walkStatusRepository.existsByStatus(status.getStatus())) {
             throw new WalkStatusAlreadyExistsException("Cannot add new status because '" + status.getStatus() + "' walk status already exists");
+        }
+        if (status.getStatus() == null || status.getStatus().trim().isEmpty()) {
+            throw new WalkStatusInvalidRequestException("Cannot add new status because the request is not valid");
         }
         WalkStatus newStatus = new WalkStatus();
         newStatus.setStatus(status.getStatus());
@@ -76,13 +71,17 @@ public class WalkStatusService {
         return status;
     }
 
-    public WalkStatus updateWalkStatusName(Integer id, WalkStatusNameDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
+    public WalkStatus updateWalkStatusName(Integer id, WalkStatusNameDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException, WalkStatusInvalidRequestException {
         if (!walkStatusRepository.existsById(id)) {
             throw new WalkStatusDoesntExistException("Cannot update walk status with id '"  + id + "' because it doesnt exist");
         }
         if (walkStatusRepository.existsByStatus(updated.getStatus())) {
             throw new WalkStatusUpdateCollisionException("Cannot update walk status with id '"  + id + "' to '" + updated.getStatus() + "' because '" + updated.getStatus() + "' already exists");
         }
+        if (updated.getStatus() == null || updated.getStatus().trim().isEmpty()) {
+            throw new WalkStatusInvalidRequestException("Cannot update walk status with id '" + id + "' because the request is invalid");
+        }
+
 
         WalkStatus status = walkStatusRepository.findById(id).get();
 
@@ -93,5 +92,13 @@ public class WalkStatusService {
         status.setStatus(updated.getStatus());
         walkStatusRepository.save(status);
         return status;
+    }
+
+    private Object dataDetailTransformStatus(WalkStatus status, DataDetailLevel level) {
+        switch (level) {
+            case VERBOSE -> {return status;}
+            case MINIMUM -> {return WalkStatusMinimumDTO.fromWalkStatus(status);}
+            default -> {return WalkStatusNameDTO.fromWalkStatus(status);}
+        }
     }
 }

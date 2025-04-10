@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.Shelter;
 
 
+import com.example.petoasisbackend.Model.Users.Shelter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,4 +16,28 @@ public class ShelterMediumDTO {
     private String pictureUrl;
     private String phoneNumber;
     private Float rating;
+
+    public ShelterMediumDTO(Long shelterId, String name, String address, String website, String email, String pictureUrl, String phoneNumber, Float rating) {
+        this.shelterId = shelterId;
+        this.name = name;
+        this.address = address;
+        this.website = website;
+        this.email = email;
+        this.pictureUrl = pictureUrl;
+        this.phoneNumber = phoneNumber;
+        this.rating = rating;
+    }
+
+    public static ShelterMediumDTO fromShelter(Shelter shelter) {
+        return new ShelterMediumDTO(
+                shelter.getShelterId(),
+                shelter.getName(),
+                shelter.getAddress(),
+                shelter.getWebsite(),
+                shelter.getEmail(),
+                shelter.getGeneralSystemUser().getPictureUrl(),
+                shelter.getGeneralSystemUser().getPhoneNumber(),
+                shelter.getRating()
+        );
+    }
 }

@@ -2,10 +2,7 @@ package com.example.petoasisbackend.Controller.Statuses;
 
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusUpdateCollisionException;
+import com.example.petoasisbackend.Exception.WalkStatus.*;
 import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.WalkStatusService;
@@ -120,6 +117,14 @@ public class WalkStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkStatusMinimumDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot add new status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -137,6 +142,8 @@ public class WalkStatusController {
             WalkStatus status = walkStatusService.addWalkStatus(walkStatus);
             WalkStatusMinimumDTO displayMinimumDTO = WalkStatusMinimumDTO.fromWalkStatus(status);
             return new ResponseEntity<>(displayMinimumDTO, HttpStatus.CREATED);
+        } catch (WalkStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -197,6 +204,14 @@ public class WalkStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkStatus.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update the status because the request is not valid"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "403", description = "Tried to modify core status that's necessary for the system", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -232,6 +247,8 @@ public class WalkStatusController {
             WalkStatus status = walkStatusService.updateWalkStatusName(id, updated);
             return ResponseEntity.ok(status);
             // return new ResponseEntity<>("'" + name + "' walk status successfully updated to '" + newName + "'", HttpStatus.OK);
+        } catch (WalkStatusInvalidRequestException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusUpdateCollisionException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (WalkStatusDoesntExistException e) {

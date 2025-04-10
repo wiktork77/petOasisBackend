@@ -129,7 +129,7 @@ public class WalkController {
 
             Animal pupil = animalService.getAnimal(walk.getAnimalId());
             Person caretaker = personService.getPersonById(walk.getPersonId());
-            Shelter supervisor = shelterService.getShelterById(walk.getShelterId());
+            Shelter supervisor = (Shelter) shelterService.getShelterById(walk.getShelterId(), DataDetailLevel.VERBOSE);
 
 
             Walk newWalk = new Walk(

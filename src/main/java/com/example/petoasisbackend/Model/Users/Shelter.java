@@ -4,11 +4,13 @@ import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Shelter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,5 +53,13 @@ public class Shelter {
             this.email = other.email;
         }
         this.rating = other.rating;
+    }
+
+    public Shelter(String name, String address, String website, String email, Float rating) {
+        this.name = name;
+        this.address = address;
+        this.website = website;
+        this.email = email;
+        this.rating = rating;
     }
 }

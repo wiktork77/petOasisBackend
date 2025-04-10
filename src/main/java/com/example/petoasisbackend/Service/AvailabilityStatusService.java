@@ -6,6 +6,7 @@ import com.example.petoasisbackend.DataInitializers.AvailabilityStatusInitialize
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusInvalidRequestException;
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Repository.AvailabilityStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
@@ -45,17 +46,7 @@ public class AvailabilityStatusService {
 
         AvailabilityStatus status = availabilityStatusRepository.findById(id).get();
 
-        switch (level) {
-            case VERBOSE -> {
-                return status;
-            }
-            case MINIMUM -> {
-                return AvailabilityStatusMinimumDTO.fromAvailabilityStatus(status);
-            }
-            default -> {
-                return AvailabilityStatusNameDTO.fromAvailabilityStatus(status);
-            }
-        }
+        return dataDetailTransformShelter(status, level);
     }
 
     public AvailabilityStatus getAvailabilityStatusByName(String name) throws AvailabilityStatusDoesntExistException {
@@ -67,11 +58,14 @@ public class AvailabilityStatusService {
         return availabilityStatusRepository.findByAvailability(name);
     }
 
-    public AvailabilityStatusMinimumDTO addAvailabilityStatus(AvailabilityStatusNameDTO nameDTO) throws AvailabilityStatusAlreadyExistsException {
+    public AvailabilityStatusMinimumDTO addAvailabilityStatus(AvailabilityStatusNameDTO nameDTO) throws AvailabilityStatusAlreadyExistsException, AvailabilityStatusInvalidRequestException {
         if (availabilityStatusRepository.existsByAvailability(nameDTO.getAvailability())) {
             throw new AvailabilityStatusAlreadyExistsException(
                     "Cannot add availability status with name '" + nameDTO.getAvailability() + "' because it already exists"
             );
+        }
+        if (nameDTO.getAvailability() == null || nameDTO.getAvailability().trim().isEmpty()) {
+            throw new AvailabilityStatusInvalidRequestException("Cannot add new status because the request is invalid");
         }
         AvailabilityStatus status = new AvailabilityStatus(nameDTO.getAvailability());
         availabilityStatusRepository.save(status);
@@ -97,7 +91,7 @@ public class AvailabilityStatusService {
         return status;
     }
 
-    public AvailabilityStatus updateAvailabilityStatus(Integer id, AvailabilityStatusNameDTO statusNameDTO) throws AvailabilityStatusDoesntExistException, AvailabilityStatusAlreadyExistsException, AvailabilityStatusCannotBeModifiedException {
+    public AvailabilityStatus updateAvailabilityStatus(Integer id, AvailabilityStatusNameDTO statusNameDTO) throws AvailabilityStatusDoesntExistException, AvailabilityStatusAlreadyExistsException, AvailabilityStatusCannotBeModifiedException, AvailabilityStatusInvalidRequestException {
         if (!availabilityStatusRepository.existsById(id)) {
             throw new AvailabilityStatusDoesntExistException(
                     "Cannot update availability status with id '" + id + "' because it doesn't exist"
@@ -110,6 +104,9 @@ public class AvailabilityStatusService {
                             +  "' already exists"
             );
         }
+        if (statusNameDTO.getAvailability() == null || statusNameDTO.getAvailability().trim().isEmpty()) {
+            throw new AvailabilityStatusInvalidRequestException("Cannot update status with id '" + id + "' because the request is invalid");
+        }
         AvailabilityStatus status = availabilityStatusRepository.findById(id).get();
 
         if (AvailabilityStatusInitializer.coreStatuses.contains(status.getAvailability())) {
@@ -121,6 +118,20 @@ public class AvailabilityStatusService {
         availabilityStatusRepository.save(status);
 
         return status;
+    }
+
+    private Object dataDetailTransformShelter(AvailabilityStatus status, DataDetailLevel level) {
+        switch (level) {
+            case VERBOSE -> {
+                return status;
+            }
+            case MINIMUM -> {
+                return AvailabilityStatusMinimumDTO.fromAvailabilityStatus(status);
+            }
+            default -> {
+                return AvailabilityStatusNameDTO.fromAvailabilityStatus(status);
+            }
+        }
     }
 }
 
