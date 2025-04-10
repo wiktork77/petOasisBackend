@@ -147,7 +147,7 @@ public class HealthStatusController {
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot delete health status because it is still referenced by an animal"
+                                            value = "Cannot delete health status referenced by an animal"
                                     )
                             }
                     )),
@@ -177,8 +177,7 @@ public class HealthStatusController {
             return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
         } catch (DataIntegrityViolationException e) {
             return new ResponseEntity<>("Cannot delete health status because it is still referenced by an animal", HttpStatus.BAD_REQUEST);
-        }
-        catch (HealthStatusCannotBeModifiedException e) {
+        } catch (HealthStatusCannotBeModifiedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (HealthStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

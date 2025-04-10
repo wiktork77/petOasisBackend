@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -147,6 +148,14 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
                             mediaType = "text/plain"
                     )),
+                    @ApiResponse(responseCode = "400", description = "Cannot delete walk status referenced by walk", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot delete walk status because it is still referenced by a walk"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "403", description = "Tried to delete core status that's necessary for the system", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -171,6 +180,8 @@ public class WalkStatusController {
         try {
             walkStatusService.deleteWalkStatus(id);
             return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>("Cannot delete walk status because it is still referenced by a walk", HttpStatus.BAD_REQUEST);
         } catch (WalkStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (WalkStatusCannotBeModifiedException e) {

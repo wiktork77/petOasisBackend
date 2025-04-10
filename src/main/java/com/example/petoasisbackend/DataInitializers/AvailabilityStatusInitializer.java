@@ -18,7 +18,7 @@ public class AvailabilityStatusInitializer implements ApplicationRunner {
     public final static List<String> coreStatuses = Arrays.asList(
             "Available",
             "Unavailable",
-            "On a Walk"
+            "On a walk"
     );
     public AvailabilityStatusInitializer(AvailabilityStatusRepository availabilityStatusRepository) {
         this.availabilityStatusRepository = availabilityStatusRepository;

@@ -22,36 +22,4 @@ public class AnimalController {
         return animalService.getAnimals();
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody Animal animal) {
-        try {
-            animalService.addAnimal(animal);
-            return new ResponseEntity<>(animal.getName() + " successfully added!", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable Long id) {
-        try {
-            animalService.removeAnimal(id);
-            return new ResponseEntity<>("Animal with id " + id + " successfully deleted!", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody Animal other) {
-        try {
-            animalService.updateAnimal(id, other);
-            return new ResponseEntity<>("Animal with id " + id + " successfully updated!", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-
 }
