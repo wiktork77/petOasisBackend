@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.DTO.AvailabilityStatus;
+package com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus;
 
 import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import lombok.Getter;

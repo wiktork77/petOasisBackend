@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.DTO.HealthStatus;
+package com.example.petoasisbackend.DTO.Descriptor.HealthStatus;
 
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import lombok.Getter;

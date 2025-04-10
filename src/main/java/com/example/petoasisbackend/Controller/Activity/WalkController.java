@@ -4,7 +4,7 @@ package com.example.petoasisbackend.Controller.Activity;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkConciseDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithStatusDTO;
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;

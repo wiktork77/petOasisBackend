@@ -1,12 +1,11 @@
 package com.example.petoasisbackend.Controller.Statuses;
 
 
-import com.example.petoasisbackend.DTO.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.HealthStatus.HealthStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameDTO;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.HealthStatusService;
@@ -22,9 +21,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/status/health")

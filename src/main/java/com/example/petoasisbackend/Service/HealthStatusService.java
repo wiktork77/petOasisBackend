@@ -1,13 +1,12 @@
 package com.example.petoasisbackend.Service;
 
 
-import com.example.petoasisbackend.DTO.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.HealthStatus.HealthStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameDTO;
 import com.example.petoasisbackend.DataInitializers.HealthStatusInitializer;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
 import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Repository.HealthStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;

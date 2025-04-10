@@ -1,10 +1,9 @@
 package com.example.petoasisbackend.Controller.Users;
 
+import com.example.petoasisbackend.DTO.User.Shelter.ShelterRegisterDTO;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
-import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
-import com.example.petoasisbackend.Request.GSUPersonRequest;
-import com.example.petoasisbackend.Request.GSUShelterRequest;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.ShelterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,40 +19,29 @@ public class ShelterController {
     private ShelterService shelterService;
 
 
-    @GetMapping("/getAll")
-    public List<Shelter> getAll() {
+    @GetMapping("/")
+    public List<Shelter> getAll(@RequestParam DataDetailLevel level) {
         return shelterService.getShelters();
     }
 
+    @GetMapping("/{id}")
+    public Shelter getById(@PathVariable Integer id, @RequestParam DataDetailLevel level) {
+        return null;
+    }
+
+    @GetMapping("/name/{name}")
+    public Shelter getByName(@PathVariable String name, @RequestParam DataDetailLevel level) {
+        return null;
+    }
+
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody GSUShelterRequest request) {
-        try {
-            GeneralSystemUser gsu = request.getGeneralSystemUser();
-            Shelter shelter = request.getShelter();
-            shelterService.addShelter(gsu, shelter);
-            return new ResponseEntity<>(shelter.getName() + " added successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<String> add(@RequestBody ShelterRegisterDTO shelterRegisterDTO) {
+        return null;
     }
 
-    @DeleteMapping("/delete/{login}")
-    public ResponseEntity<String> delete(@PathVariable String login) {
-        try {
-            Shelter shelter = shelterService.deleteShelter(login);
-            return new ResponseEntity<>(shelter.getName() + " deleted successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        return null;
     }
 
-    @PutMapping("/update/{login}")
-    public ResponseEntity<String> update(@PathVariable String login, @RequestBody Shelter other) {
-        try {
-            shelterService.updateShelter(login, other);
-            return new ResponseEntity<>(login + " updated successfully", HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
 }

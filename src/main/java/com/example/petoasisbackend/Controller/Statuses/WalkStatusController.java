@@ -1,7 +1,7 @@
 package com.example.petoasisbackend.Controller.Statuses;
 
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusNameDTO;
-import com.example.petoasisbackend.DTO.Descriptior.WalkStatus.WalkStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
