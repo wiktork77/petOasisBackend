@@ -72,6 +72,7 @@ public class ShelterService {
         return dataDetailTransformShelter(shelter, level);
     }
 
+    @Transactional
     public ShelterMinimumDTO addShelter(ShelterRegisterDTO shelterRegisterDTO) throws ShelterAlreadyExistsException, ShelterInvalidRequestException {
         if (shelterRepository.existsByName(shelterRegisterDTO.getName())) {
             throw new ShelterAlreadyExistsException(

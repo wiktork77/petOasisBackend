@@ -30,7 +30,6 @@ public class GeneralSystemUser {
     @Column(length = 128)
     private String pictureUrl;
 
-    // TODO: change to refer to a new table.
     private String type;
 
     private Long parentId;

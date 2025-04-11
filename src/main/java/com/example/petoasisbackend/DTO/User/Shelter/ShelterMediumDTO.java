@@ -17,7 +17,7 @@ public class ShelterMediumDTO {
     private String phoneNumber;
     private Float rating;
 
-    public ShelterMediumDTO(Long shelterId, String name, String address, String website, String email, String pictureUrl, String phoneNumber, Float rating) {
+    private ShelterMediumDTO(Long shelterId, String name, String address, String website, String email, String pictureUrl, String phoneNumber, Float rating) {
         this.shelterId = shelterId;
         this.name = name;
         this.address = address;

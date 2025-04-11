@@ -1,13 +1,12 @@
 package com.example.petoasisbackend.Controller.Users;
 
 
+import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.GSUService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,8 +17,8 @@ public class GSUController {
     private GSUService gsuService;
 
     @GetMapping("/getAll")
-    public List<GeneralSystemUser> getAll() {
-        return gsuService.getGSU();
+    public List<ModelDTO<GeneralSystemUser>> getAll(@RequestParam DataDetailLevel level) {
+        return gsuService.getGSU(level);
     }
 
     @GetMapping("/get/{login}")

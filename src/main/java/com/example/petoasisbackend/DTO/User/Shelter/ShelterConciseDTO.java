@@ -13,7 +13,7 @@ public class ShelterConciseDTO {
     private Float rating;
     private String pictureUrl;
 
-    public ShelterConciseDTO(Long shelterId, String name, String address, Float rating, String pictureUrl) {
+    private ShelterConciseDTO(Long shelterId, String name, String address, Float rating, String pictureUrl) {
         this.shelterId = shelterId;
         this.name = name;
         this.address = address;

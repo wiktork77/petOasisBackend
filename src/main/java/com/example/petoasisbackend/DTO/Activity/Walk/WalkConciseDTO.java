@@ -17,7 +17,7 @@ public class WalkConciseDTO {
 
     private LocalDateTime endTime;
 
-    public WalkConciseDTO(Long animalId, Long personId, Long shelterId, LocalDateTime startTime, LocalDateTime endTime) {
+    private WalkConciseDTO(Long animalId, Long personId, Long shelterId, LocalDateTime startTime, LocalDateTime endTime) {
         this.animalId = animalId;
         this.personId = personId;
         this.shelterId = shelterId;

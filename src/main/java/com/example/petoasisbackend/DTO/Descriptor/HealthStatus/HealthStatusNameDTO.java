@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class HealthStatusNameDTO {
     private String healthStatus;
 
-    public HealthStatusNameDTO(String healthStatus) {
+    private HealthStatusNameDTO(String healthStatus) {
         this.healthStatus = healthStatus;
     }
 

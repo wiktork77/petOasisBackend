@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class HealthStatusMinimumDTO {
     private Integer healthId;
 
-    public HealthStatusMinimumDTO(Integer healthId) {
+    private HealthStatusMinimumDTO(Integer healthId) {
         this.healthId = healthId;
     }
 

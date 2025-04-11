@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class AvailabilityStatusMinimumDTO {
     private Integer availabilityId;
 
-    public AvailabilityStatusMinimumDTO(Integer availabilityId) {
+    private AvailabilityStatusMinimumDTO(Integer availabilityId) {
         this.availabilityId = availabilityId;
     }
 

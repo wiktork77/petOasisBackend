@@ -7,7 +7,7 @@ import lombok.Getter;
 public class WalkMinimumDTO {
     private Long walkId;
 
-    public WalkMinimumDTO(Long walkId) {
+    private WalkMinimumDTO(Long walkId) {
         this.walkId = walkId;
     }
 

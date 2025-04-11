@@ -12,7 +12,7 @@ public class WalkWithStatusDTO {
     private Long walkId;
     private WalkStatus status;
 
-    public WalkWithStatusDTO(Long walkId, WalkStatus status) {
+    private WalkWithStatusDTO(Long walkId, WalkStatus status) {
         this.walkId = walkId;
         this.status = status;
     }

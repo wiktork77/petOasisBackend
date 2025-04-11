@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class WalkStatusMinimumDTO {
     private Integer statusId;
 
-    public WalkStatusMinimumDTO(Integer statusId) {
+    private WalkStatusMinimumDTO(Integer statusId) {
         this.statusId = statusId;
     }
 

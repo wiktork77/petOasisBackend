@@ -11,7 +11,7 @@ public class ShelterMinimumDTO {
     private Long shelterId;
     private String name;
 
-    public ShelterMinimumDTO(Long shelterId, String name) {
+    private ShelterMinimumDTO(Long shelterId, String name) {
         this.shelterId = shelterId;
         this.name = name;
     }

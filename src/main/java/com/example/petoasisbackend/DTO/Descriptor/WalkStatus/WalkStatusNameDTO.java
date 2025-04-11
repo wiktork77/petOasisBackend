@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class WalkStatusNameDTO {
     private String status;
 
-    public WalkStatusNameDTO(String status) {
+    private WalkStatusNameDTO(String status) {
         this.status = status;
     }
 

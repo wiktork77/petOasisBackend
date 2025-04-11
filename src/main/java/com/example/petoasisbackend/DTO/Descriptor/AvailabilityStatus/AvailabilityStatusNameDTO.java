@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class AvailabilityStatusNameDTO {
     private String availability;
 
-    public AvailabilityStatusNameDTO(String availability) {
+    private AvailabilityStatusNameDTO(String availability) {
         this.availability = availability;
     }
 
