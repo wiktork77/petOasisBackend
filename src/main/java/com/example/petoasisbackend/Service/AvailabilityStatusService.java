@@ -2,12 +2,15 @@ package com.example.petoasisbackend.Service;
 
 import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusMinimumDTO;
 import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusNameDTO;
-import com.example.petoasisbackend.DataInitializers.AvailabilityStatusInitializer;
+import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DataInitializer.AvailabilityStatusInitializer;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusInvalidRequestException;
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.Mapper.AvailabilityStatusMapper;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Repository.AvailabilityStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,24 +23,17 @@ import java.util.stream.Collectors;
 public class AvailabilityStatusService {
     @Autowired
     private AvailabilityStatusRepository availabilityStatusRepository;
+    @Autowired
+    private AvailabilityStatusMapper availabilityStatusMapper;
 
-    public Object getAvailabilityStatuses(DataDetailLevel level) {
+    public List<ModelDTO<AvailabilityStatus>> getAvailabilityStatuses(DataDetailLevel level) {
         List<AvailabilityStatus> statuses = availabilityStatusRepository.findAll();
+        var mapper = availabilityStatusMapper.getMapper(level);
 
-        switch (level) {
-            case VERBOSE -> {
-                return statuses;
-            }
-            case MINIMUM -> {
-                return statuses.stream().map(AvailabilityStatusMinimumDTO::fromAvailabilityStatus).collect(Collectors.toList());
-            }
-            default -> {
-                return statuses.stream().map(AvailabilityStatusNameDTO::fromAvailabilityStatus).collect(Collectors.toList());
-            }
-        }
+        return statuses.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public Object getAvailabilityStatusById(Integer id, DataDetailLevel level) throws AvailabilityStatusDoesntExistException {
+    public ModelDTO<AvailabilityStatus> getAvailabilityStatusById(Integer id, DataDetailLevel level) throws AvailabilityStatusDoesntExistException {
         if (!availabilityStatusRepository.existsById(id)) {
             throw new AvailabilityStatusDoesntExistException(
                     "Cannot get availability status with id '" + id + "' because it doesn't exist"
@@ -45,17 +41,21 @@ public class AvailabilityStatusService {
         }
 
         AvailabilityStatus status = availabilityStatusRepository.findById(id).get();
+        var mapper = availabilityStatusMapper.getMapper(level);
 
-        return dataDetailTransformShelter(status, level);
+        return mapper.apply(status);
     }
 
-    public AvailabilityStatus getAvailabilityStatusByName(String name) throws AvailabilityStatusDoesntExistException {
+    public AvailabilityStatusVerboseDTO getAvailabilityStatusByName(String name) throws AvailabilityStatusDoesntExistException {
         if (!availabilityStatusRepository.existsByAvailability(name)) {
             throw new AvailabilityStatusDoesntExistException(
                     "Cannot get availability status with name '" + name + "' because it doesn't exist"
             );
         }
-        return availabilityStatusRepository.findByAvailability(name);
+
+        AvailabilityStatus status = availabilityStatusRepository.findByAvailability(name);
+
+        return AvailabilityStatusVerboseDTO.fromAvailabilityStatus(status);
     }
 
     public AvailabilityStatusMinimumDTO addAvailabilityStatus(AvailabilityStatusNameDTO nameDTO) throws AvailabilityStatusAlreadyExistsException, AvailabilityStatusInvalidRequestException {
@@ -64,15 +64,18 @@ public class AvailabilityStatusService {
                     "Cannot add availability status with name '" + nameDTO.getAvailability() + "' because it already exists"
             );
         }
+
         if (nameDTO.getAvailability() == null || nameDTO.getAvailability().trim().isEmpty()) {
             throw new AvailabilityStatusInvalidRequestException("Cannot add new status because the request is invalid");
         }
+
         AvailabilityStatus status = new AvailabilityStatus(nameDTO.getAvailability());
         availabilityStatusRepository.save(status);
+
         return AvailabilityStatusMinimumDTO.fromAvailabilityStatus(status);
     }
 
-    public AvailabilityStatus removeAvailabilityStatus(Integer id) throws AvailabilityStatusDoesntExistException, AvailabilityStatusCannotBeModifiedException {
+    public void removeAvailabilityStatus(Integer id) throws AvailabilityStatusDoesntExistException, AvailabilityStatusCannotBeModifiedException {
         if (!availabilityStatusRepository.existsById(id)) {
             throw new AvailabilityStatusDoesntExistException(
                     "Cannot delete availability status with id '" + id + "' because it doesnt exist"
@@ -87,16 +90,15 @@ public class AvailabilityStatusService {
         }
 
         availabilityStatusRepository.delete(status);
-
-        return status;
     }
 
-    public AvailabilityStatus updateAvailabilityStatus(Integer id, AvailabilityStatusNameDTO statusNameDTO) throws AvailabilityStatusDoesntExistException, AvailabilityStatusAlreadyExistsException, AvailabilityStatusCannotBeModifiedException, AvailabilityStatusInvalidRequestException {
+    public AvailabilityStatusVerboseDTO updateAvailabilityStatus(Integer id, AvailabilityStatusNameDTO statusNameDTO) throws AvailabilityStatusDoesntExistException, AvailabilityStatusAlreadyExistsException, AvailabilityStatusCannotBeModifiedException, AvailabilityStatusInvalidRequestException {
         if (!availabilityStatusRepository.existsById(id)) {
             throw new AvailabilityStatusDoesntExistException(
                     "Cannot update availability status with id '" + id + "' because it doesn't exist"
             );
         }
+
         if (availabilityStatusRepository.existsByAvailability(statusNameDTO.getAvailability())) {
             throw new AvailabilityStatusAlreadyExistsException(
                     "Cannot update availability status with id '" + id + "' to '"
@@ -104,9 +106,11 @@ public class AvailabilityStatusService {
                             +  "' already exists"
             );
         }
+
         if (statusNameDTO.getAvailability() == null || statusNameDTO.getAvailability().trim().isEmpty()) {
             throw new AvailabilityStatusInvalidRequestException("Cannot update status with id '" + id + "' because the request is invalid");
         }
+
         AvailabilityStatus status = availabilityStatusRepository.findById(id).get();
 
         if (AvailabilityStatusInitializer.coreStatuses.contains(status.getAvailability())) {
@@ -117,30 +121,6 @@ public class AvailabilityStatusService {
 
         availabilityStatusRepository.save(status);
 
-        return status;
-    }
-
-    private Object dataDetailTransformShelter(AvailabilityStatus status, DataDetailLevel level) {
-        switch (level) {
-            case VERBOSE -> {
-                return status;
-            }
-            case MINIMUM -> {
-                return AvailabilityStatusMinimumDTO.fromAvailabilityStatus(status);
-            }
-            default -> {
-                return AvailabilityStatusNameDTO.fromAvailabilityStatus(status);
-            }
-        }
+        return AvailabilityStatusVerboseDTO.fromAvailabilityStatus(status);
     }
 }
-
-
-//    public AvailabilityStatus removeAvailabilityStatus(Integer id) {
-//        if (!availabilityStatusRepository.existsById(id)) {
-//            throw new IllegalArgumentException("Availability status doesnt exist");
-//        }
-//        AvailabilityStatus status = availabilityStatusRepository.getReferenceById(id);
-//        availabilityStatusRepository.deleteById(id);
-//        return status;
-//    }

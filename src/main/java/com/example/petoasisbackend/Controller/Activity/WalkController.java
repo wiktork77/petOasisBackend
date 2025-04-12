@@ -35,14 +35,6 @@ import org.springframework.web.bind.annotation.*;
 public class WalkController {
     @Autowired
     private WalkService walkService;
-    @Autowired
-    private WalkStatusService walkStatusService;
-    @Autowired
-    private ShelterService shelterService;
-    @Autowired
-    private AnimalService animalService;
-    @Autowired
-    private PersonService personService;
 
     @Operation(summary = "Get all walks with given detail level")
     @ApiResponses(
@@ -120,33 +112,13 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
+
     @PostMapping("/add")
     public ResponseEntity<Object> add(@RequestBody WalkConciseDTO walk) {
         try {
-            if (!walkService.checkIfAnimalIsAvailableForWalk(walk.getAnimalId(), walk.getStartTime(), walk.getEndTime())) {
-                throw new WalkTimeIntersectException("Cannot add a walk with animal with id '" + walk.getAnimalId() + "' because given time intersects with other walk(s).");
-            }
-
-            Animal pupil = animalService.getAnimal(walk.getAnimalId());
-            Person caretaker = personService.getPersonById(walk.getPersonId());
-            Shelter supervisor = (Shelter) shelterService.getShelterById(walk.getShelterId(), DataDetailLevel.VERBOSE);
-
-
-            Walk newWalk = new Walk(
-                    pupil,
-                    caretaker,
-                    supervisor,
-                    walk.getStartTime(),
-                    walk.getEndTime(),
-                    walkStatusService.getWalkStatusByName("Pending")
-            );
-
-            Walk addedWalk = walkService.addWalk(newWalk);
-            WalkMinimumDTO response = WalkMinimumDTO.fromWalk(addedWalk);
-
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException |
-                 WalkStatusDoesntExistException e) {
+            WalkMinimumDTO addedWalk = walkService.addWalk(walk);
+            return new ResponseEntity<>(addedWalk, HttpStatus.CREATED);
+        } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (WalkTimeIntersectException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
@@ -213,9 +185,8 @@ public class WalkController {
     @PutMapping("/update/status/{walkId}")
     public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody WalkStatusNameDTO newStatus) {
         try {
-            Walk walk = walkService.updateWalkStatus(walkId, newStatus.getStatus());
-            WalkWithStatusDTO response = WalkWithStatusDTO.fromWalk(walk);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+            WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, newStatus.getStatus());
+            return new ResponseEntity<>(walk, HttpStatus.OK);
         } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

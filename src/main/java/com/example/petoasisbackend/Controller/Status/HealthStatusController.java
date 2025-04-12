@@ -1,13 +1,16 @@
-package com.example.petoasisbackend.Controller.Statuses;
+package com.example.petoasisbackend.Controller.Status;
 
 
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusInvalidRequestException;
-import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
+import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.HealthStatusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +25,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/status/health")
@@ -42,7 +47,7 @@ public class HealthStatusController {
     )
     @GetMapping("/")
     public ResponseEntity<Object> getAll(DataDetailLevel level) {
-        Object statuses = healthStatusService.getHealthStatuses(level);
+        List<ModelDTO<HealthStatus>> statuses = healthStatusService.getHealthStatuses(level);
         return new ResponseEntity<>(statuses, HttpStatus.OK);
     }
 
@@ -68,7 +73,7 @@ public class HealthStatusController {
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable Integer id, DataDetailLevel level) {
         try {
-            Object status = healthStatusService.getHealthStatusById(id, level);
+            ModelDTO<HealthStatus> status = healthStatusService.getHealthStatusById(id, level);
             return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (HealthStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -97,7 +102,7 @@ public class HealthStatusController {
     @GetMapping("/name/{name}")
     public ResponseEntity<Object> getByName(@PathVariable String name) {
         try {
-            HealthStatus status = healthStatusService.getHealthStatusByName(name);
+            HealthStatusVerboseDTO status = healthStatusService.getHealthStatusByName(name);
             return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (HealthStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -133,8 +138,8 @@ public class HealthStatusController {
     @PostMapping("/add")
     public ResponseEntity<Object> add(@RequestBody HealthStatusNameDTO status) {
         try {
-            HealthStatus newStatus = healthStatusService.addHealthStatus(status);
-            return new ResponseEntity<>(HealthStatusMinimumDTO.fromHealthStatus(newStatus), HttpStatus.CREATED);
+            HealthStatusMinimumDTO newStatus = healthStatusService.addHealthStatus(status);
+            return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
         } catch (HealthStatusInvalidRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (HealthStatusAlreadyExistsException e) {
@@ -206,6 +211,14 @@ public class HealthStatusController {
                                     )
                             }
                     )),
+                    @ApiResponse(responseCode = "403", description = "Cannot modify core status", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot modify core status"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
                             examples = {
                                     @ExampleObject(
@@ -226,10 +239,12 @@ public class HealthStatusController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody HealthStatusNameDTO statusNameDTO) {
         try {
-            HealthStatus status = healthStatusService.updateHealthStatus(id, statusNameDTO);
+            HealthStatusVerboseDTO status = healthStatusService.updateHealthStatus(id, statusNameDTO);
             return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (HealthStatusInvalidRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (AvailabilityStatusCannotBeModifiedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (HealthStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (HealthStatusAlreadyExistsException e) {

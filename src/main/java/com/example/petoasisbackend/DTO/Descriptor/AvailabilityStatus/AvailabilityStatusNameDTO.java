@@ -1,12 +1,13 @@
 package com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus;
 
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class AvailabilityStatusNameDTO {
+public class AvailabilityStatusNameDTO implements ModelDTO<AvailabilityStatus> {
     private String availability;
 
     private AvailabilityStatusNameDTO(String availability) {

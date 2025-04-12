@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.Controller.Users;
+package com.example.petoasisbackend.Controller.User;
 
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;

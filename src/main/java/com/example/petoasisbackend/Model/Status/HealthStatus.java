@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.Model.AnimalStatus;
+package com.example.petoasisbackend.Model.Status;
 
 
 import jakarta.persistence.*;

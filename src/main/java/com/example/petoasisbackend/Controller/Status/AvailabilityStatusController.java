@@ -1,13 +1,14 @@
-package com.example.petoasisbackend.Controller.Statuses;
+package com.example.petoasisbackend.Controller.Status;
 
 
 import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusMinimumDTO;
 import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusVerboseDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusInvalidRequestException;
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.AvailabilityStatusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -86,7 +87,7 @@ public class AvailabilityStatusController {
     @GetMapping("/name/{name}")
     public ResponseEntity<Object> getByName(@RequestParam String name) {
         try {
-            AvailabilityStatus status = availabilityStatusService.getAvailabilityStatusByName(name);
+            AvailabilityStatusVerboseDTO status = availabilityStatusService.getAvailabilityStatusByName(name);
             return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (AvailabilityStatusDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -232,7 +233,7 @@ public class AvailabilityStatusController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody AvailabilityStatusNameDTO statusNameDTO) {
         try {
-            AvailabilityStatus status = availabilityStatusService.updateAvailabilityStatus(id, statusNameDTO);
+            AvailabilityStatusVerboseDTO status = availabilityStatusService.updateAvailabilityStatus(id, statusNameDTO);
             return new ResponseEntity<>(status, HttpStatus.OK);
         } catch (AvailabilityStatusInvalidRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

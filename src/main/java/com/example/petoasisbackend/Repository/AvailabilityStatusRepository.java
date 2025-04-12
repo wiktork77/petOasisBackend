@@ -1,6 +1,6 @@
 package com.example.petoasisbackend.Repository;
 
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

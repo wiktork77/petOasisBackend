@@ -1,12 +1,8 @@
-package com.example.petoasisbackend.Controller.Animals;
+package com.example.petoasisbackend.Controller.Animal;
 
 
-import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Animal.Searchable;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Model.Descriptor.Comment;
-import com.example.petoasisbackend.Request.AnimalCommentRequest;
-import com.example.petoasisbackend.Service.AnimalService;
 import com.example.petoasisbackend.Service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

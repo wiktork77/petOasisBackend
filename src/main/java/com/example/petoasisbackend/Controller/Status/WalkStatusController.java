@@ -1,9 +1,10 @@
-package com.example.petoasisbackend.Controller.Statuses;
+package com.example.petoasisbackend.Controller.Status;
 
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusVerboseDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.*;
-import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.WalkStatusService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -139,9 +140,8 @@ public class WalkStatusController {
     @PostMapping("/add")
     public ResponseEntity<Object> addStatus(@RequestBody WalkStatusNameDTO walkStatus) {
         try {
-            WalkStatus status = walkStatusService.addWalkStatus(walkStatus);
-            WalkStatusMinimumDTO displayMinimumDTO = WalkStatusMinimumDTO.fromWalkStatus(status);
-            return new ResponseEntity<>(displayMinimumDTO, HttpStatus.CREATED);
+            WalkStatusMinimumDTO status = walkStatusService.addWalkStatus(walkStatus);
+            return new ResponseEntity<>(status, HttpStatus.CREATED);
         } catch (WalkStatusInvalidRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusAlreadyExistsException e) {
@@ -244,9 +244,8 @@ public class WalkStatusController {
     public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody WalkStatusNameDTO updated) {
         try {
             System.out.println("hello");
-            WalkStatus status = walkStatusService.updateWalkStatusName(id, updated);
+            WalkStatusVerboseDTO status = walkStatusService.updateWalkStatusName(id, updated);
             return ResponseEntity.ok(status);
-            // return new ResponseEntity<>("'" + name + "' walk status successfully updated to '" + newName + "'", HttpStatus.OK);
         } catch (WalkStatusInvalidRequestException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusUpdateCollisionException e) {

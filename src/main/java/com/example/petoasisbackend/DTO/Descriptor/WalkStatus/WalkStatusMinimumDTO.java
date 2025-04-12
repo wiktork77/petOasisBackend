@@ -1,12 +1,13 @@
 package com.example.petoasisbackend.DTO.Descriptor.WalkStatus;
 
-import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Model.Status.WalkStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class WalkStatusMinimumDTO {
+public class WalkStatusMinimumDTO implements ModelDTO<WalkStatus> {
     private Integer statusId;
 
     private WalkStatusMinimumDTO(Integer statusId) {

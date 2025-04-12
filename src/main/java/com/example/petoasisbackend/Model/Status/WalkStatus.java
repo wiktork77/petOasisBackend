@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.Model.Descriptor;
+package com.example.petoasisbackend.Model.Status;
 
 
 import jakarta.persistence.*;

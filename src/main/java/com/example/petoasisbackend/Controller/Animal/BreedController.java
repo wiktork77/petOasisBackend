@@ -1,7 +1,6 @@
-package com.example.petoasisbackend.Controller.Animals;
+package com.example.petoasisbackend.Controller.Animal;
 
 
-import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.AnimalBreed.CatBreed;
 import com.example.petoasisbackend.Model.AnimalBreed.DogBreed;
 import com.example.petoasisbackend.Service.BreedService;

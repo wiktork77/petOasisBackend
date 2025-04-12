@@ -1,6 +1,6 @@
-package com.example.petoasisbackend.DataInitializers;
+package com.example.petoasisbackend.DataInitializer;
 
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Repository.AvailabilityStatusRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

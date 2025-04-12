@@ -1,13 +1,14 @@
 package com.example.petoasisbackend.DTO.User.Shelter;
 
 
+import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ShelterMediumDTO {
+public class ShelterMediumDTO implements ModelDTO<Shelter> {
     private Long shelterId;
     private String name;
     private String address;

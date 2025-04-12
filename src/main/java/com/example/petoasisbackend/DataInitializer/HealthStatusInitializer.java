@@ -1,7 +1,6 @@
-package com.example.petoasisbackend.DataInitializers;
+package com.example.petoasisbackend.DataInitializer;
 
-import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
-import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.HealthStatusRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

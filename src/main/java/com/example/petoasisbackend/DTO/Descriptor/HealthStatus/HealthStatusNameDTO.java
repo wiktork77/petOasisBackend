@@ -1,12 +1,13 @@
 package com.example.petoasisbackend.DTO.Descriptor.HealthStatus;
 
-import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Model.Status.HealthStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
-public class HealthStatusNameDTO {
+public class HealthStatusNameDTO implements ModelDTO<HealthStatus> {
     private String healthStatus;
 
     private HealthStatusNameDTO(String healthStatus) {

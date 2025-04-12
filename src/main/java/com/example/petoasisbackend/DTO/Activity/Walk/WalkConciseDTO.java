@@ -1,12 +1,13 @@
 package com.example.petoasisbackend.DTO.Activity.Walk;
 
+import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Activity.Walk;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-public class WalkConciseDTO {
+public class WalkConciseDTO implements ModelDTO<Walk> {
     private Long animalId;
 
     private Long personId;

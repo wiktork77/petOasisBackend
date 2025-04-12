@@ -1,18 +1,15 @@
 package com.example.petoasisbackend.Model.Animal;
 
 
-import com.example.petoasisbackend.Model.AnimalStatus.AvailabilityStatus;
-import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
+import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
+import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Model.Users.Shelter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 

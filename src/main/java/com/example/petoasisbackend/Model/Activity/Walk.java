@@ -2,7 +2,7 @@ package com.example.petoasisbackend.Model.Activity;
 
 
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.WalkStatus;
+import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import jakarta.persistence.*;

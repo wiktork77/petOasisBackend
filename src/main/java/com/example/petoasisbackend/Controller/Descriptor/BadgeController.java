@@ -1,7 +1,6 @@
-package com.example.petoasisbackend.Controller.Descriptors;
+package com.example.petoasisbackend.Controller.Descriptor;
 
 
-import com.example.petoasisbackend.Model.AnimalStatus.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.Badge;
 import com.example.petoasisbackend.Service.BadgeService;

@@ -1,11 +1,10 @@
-package com.example.petoasisbackend.Controller.Users;
+package com.example.petoasisbackend.Controller.User;
 
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterMinimumDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterRegisterDTO;
 import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterInvalidRequestException;
-import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.ShelterService;
@@ -20,8 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/shelter")
