@@ -17,6 +17,8 @@ import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.Walk.WalkAddRequest;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Service.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -25,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -93,11 +96,34 @@ public class WalkController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkMinimumDTO.class)
                     )),
-                    @ApiResponse(responseCode = "404", description = "One of necessary walk parts not found (animal or person or shelter)", content = @Content(
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"animalId\": \"must not be blank\",\n" +
+                                                    "  \"personId\": \"must not be blank\",\n" +
+                                                    "  \"shelterId\": \"must not be blank\",\n" +
+                                                    "  \"startTime\": \"must not be blank\",\n" +
+                                                    "  \"endTime\": \"must not be blank\"\n" +
+                                                    "}"
+                                    ),
+                            }
+                    )),
+                    @ApiResponse(responseCode = "404", description = "One of necessary walk parts not found (animal, person or shelter)", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
+                                            name = "Animal doesn't exist",
                                             value = "Cannot get animal with id '52' because it doesn't exist"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Person doesn't exist",
+                                            value = "Cannot get user with id '81' because it doesn't exist!"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Shelter doesn't exist",
+                                            value = "Cannot get shelter with id '9921' because it doesn't exist"
                                     )
                             }
                     )),
@@ -112,11 +138,10 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody WalkConciseDTO walk) {
+    public ResponseEntity<Object> add(@RequestBody @Valid WalkAddRequest request) {
         try {
-            WalkMinimumDTO addedWalk = walkService.addWalk(walk);
+            WalkMinimumDTO addedWalk = walkService.addWalk(request);
             return new ResponseEntity<>(addedWalk, HttpStatus.CREATED);
         } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -171,11 +196,24 @@ public class WalkController {
                             mediaType = "text/plain",
                             schema = @Schema(implementation = WalkWithStatusDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{ \"status\": \"must not be blank\" }"
+                                    ),
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Status or walk not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
+                                            name = "Status doesn't exist",
                                             value = "Cannot update walk status of walk with id '21' because status 'xxx' doesn't exist"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Walk doesn't exist",
+                                            value = "Cannot update walk status of walk with id '91' because walk with this id doesn't exist"
                                     )
                             }
                     )),
@@ -183,9 +221,9 @@ public class WalkController {
             }
     )
     @PutMapping("/update/status/{walkId}")
-    public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody WalkStatusNameDTO newStatus) {
+    public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody @Valid WalkStatusUpdateRequest request) {
         try {
-            WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, newStatus.getStatus());
+            WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, request);
             return new ResponseEntity<>(walk, HttpStatus.OK);
         } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);

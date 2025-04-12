@@ -5,9 +5,13 @@ import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
+@NoArgsConstructor
+@Getter
 public class ShelterVerboseDTO implements ModelDTO<Shelter> {
     private Long shelterId;
     private GeneralSystemUser generalSystemUser;

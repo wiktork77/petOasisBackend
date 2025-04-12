@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,6 +70,18 @@ public class GeneralSystemUser {
         this.pictureUrl = pictureUrl;
         this.type = transformAccountType(type);
         this.parentId = parentId;
+    }
+
+    public static GeneralSystemUser fromShelterAddRequest(ShelterAddRequest request) {
+        return new GeneralSystemUser(
+                request.getLogin(),
+                request.getPassword(),
+                false,
+                request.getPhoneNumber(),
+                request.getPictureUrl(),
+                AccountType.SHELTER,
+                null
+        );
     }
 
     private String transformAccountType(AccountType type) {

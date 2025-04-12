@@ -2,7 +2,6 @@ package com.example.petoasisbackend.Service;
 
 
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DataInitializer.HealthStatusInitializer;
@@ -10,11 +9,12 @@ import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStat
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
-import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusInvalidRequestException;
 import com.example.petoasisbackend.Mapper.HealthStatusMapper;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.HealthStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.HealthStatus.HealthStatusAddRequest;
+import com.example.petoasisbackend.Request.HealthStatus.HealthStatusUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,16 +68,12 @@ public class HealthStatusService {
     }
 
 
-    public HealthStatusMinimumDTO addHealthStatus(HealthStatusNameDTO status) throws HealthStatusAlreadyExistsException, HealthStatusInvalidRequestException {
-        if (healthStatusRepository.existsByHealthStatus(status.getHealthStatus())) {
-            throw new HealthStatusAlreadyExistsException("Cannot add health status '" + status.getHealthStatus() + "' because it already exists");
+    public HealthStatusMinimumDTO addHealthStatus(HealthStatusAddRequest request) throws HealthStatusAlreadyExistsException {
+        if (healthStatusRepository.existsByHealthStatus(request.getHealthStatus())) {
+            throw new HealthStatusAlreadyExistsException("Cannot add health status '" + request.getHealthStatus() + "' because it already exists");
         }
 
-        if (status.getHealthStatus() == null || status.getHealthStatus().trim().isEmpty()) {
-            throw new HealthStatusInvalidRequestException("Cannot add health status because the request is not valid");
-        }
-
-        HealthStatus newStatus = new HealthStatus(status.getHealthStatus());
+        HealthStatus newStatus = new HealthStatus(request.getHealthStatus());
         HealthStatus savedStatus = healthStatusRepository.save(newStatus);
 
         return HealthStatusMinimumDTO.fromHealthStatus(savedStatus);
@@ -101,17 +97,13 @@ public class HealthStatusService {
         healthStatusRepository.delete(status);
     }
 
-    public HealthStatusVerboseDTO updateHealthStatus(Integer id, HealthStatusNameDTO statusNameDTO) throws HealthStatusDoesntExistException, HealthStatusAlreadyExistsException, HealthStatusInvalidRequestException, AvailabilityStatusCannotBeModifiedException {
+    public HealthStatusVerboseDTO updateHealthStatus(Integer id, HealthStatusUpdateRequest request) throws HealthStatusDoesntExistException, HealthStatusAlreadyExistsException, AvailabilityStatusCannotBeModifiedException {
         if (!healthStatusRepository.existsById(id)) {
             throw new HealthStatusDoesntExistException("Cannot update health status with id '" + id + "' because it doesn't exist");
         }
 
-        if (healthStatusRepository.existsByHealthStatus(statusNameDTO.getHealthStatus())) {
-            throw new HealthStatusAlreadyExistsException("Cannot update health status with id '" + id + "' to '" + statusNameDTO.getHealthStatus() + "' because '" + statusNameDTO.getHealthStatus() + "' already exists");
-        }
-
-        if (statusNameDTO.getHealthStatus() == null || statusNameDTO.getHealthStatus().trim().isEmpty()) {
-            throw new HealthStatusInvalidRequestException("Cannot update health status with id '" + id + "' because the request is invalid");
+        if (healthStatusRepository.existsByHealthStatus(request.getHealthStatus())) {
+            throw new HealthStatusAlreadyExistsException("Cannot update health status with id '" + id + "' to '" + request.getHealthStatus() + "' because '" + request.getHealthStatus() + "' already exists");
         }
 
 
@@ -123,7 +115,7 @@ public class HealthStatusService {
             );
         }
 
-        status.setHealthStatus(statusNameDTO.getHealthStatus());
+        status.setHealthStatus(request.getHealthStatus());
         healthStatusRepository.save(status);
 
         return HealthStatusVerboseDTO.fromHealthStatus(status);

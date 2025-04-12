@@ -1,11 +1,12 @@
 package com.example.petoasisbackend.Controller.Status;
 
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusVerboseDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.*;
 import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusAddRequest;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Service.WalkStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -118,14 +120,18 @@ public class WalkStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkStatusMinimumDTO.class)
                     )),
-                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
-                            mediaType = "text/plain",
-                            examples = {
-                                    @ExampleObject(
-                                            value = "Cannot add new status because the request is not valid"
-                                    )
-                            }
-                    )),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid or incomplete add request",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    examples = {
+                                            @ExampleObject(
+                                                    value = "{ \"status\": \"must not be blank\" }"
+                                            ),
+                                    }
+                            )
+                    ),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -138,12 +144,10 @@ public class WalkStatusController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> addStatus(@RequestBody WalkStatusNameDTO walkStatus) {
+    public ResponseEntity<Object> addStatus(@RequestBody @Valid WalkStatusAddRequest request) {
         try {
-            WalkStatusMinimumDTO status = walkStatusService.addWalkStatus(walkStatus);
+            WalkStatusMinimumDTO status = walkStatusService.addWalkStatus(request);
             return new ResponseEntity<>(status, HttpStatus.CREATED);
-        } catch (WalkStatusInvalidRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -204,12 +208,12 @@ public class WalkStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = WalkStatus.class)
                     )),
-                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
-                            mediaType = "text/plain",
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot update the status because the request is not valid"
-                                    )
+                                            value = "{ \"status\": \"must not be blank\" }"
+                                    ),
                             }
                     )),
                     @ApiResponse(responseCode = "403", description = "Tried to modify core status that's necessary for the system", content = @Content(
@@ -241,13 +245,11 @@ public class WalkStatusController {
             }
     )
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody WalkStatusNameDTO updated) {
+    public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody @Valid WalkStatusUpdateRequest request) {
         try {
             System.out.println("hello");
-            WalkStatusVerboseDTO status = walkStatusService.updateWalkStatusName(id, updated);
+            WalkStatusVerboseDTO status = walkStatusService.updateWalkStatusName(id, request);
             return ResponseEntity.ok(status);
-        } catch (WalkStatusInvalidRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (WalkStatusUpdateCollisionException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         } catch (WalkStatusDoesntExistException e) {

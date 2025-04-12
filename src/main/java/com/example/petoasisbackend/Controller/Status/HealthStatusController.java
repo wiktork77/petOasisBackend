@@ -2,16 +2,16 @@ package com.example.petoasisbackend.Controller.Status;
 
 
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
-import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusInvalidRequestException;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.HealthStatus.HealthStatusAddRequest;
+import com.example.petoasisbackend.Request.HealthStatus.HealthStatusUpdateRequest;
 import com.example.petoasisbackend.Service.HealthStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -116,12 +117,12 @@ public class HealthStatusController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = HealthStatusMinimumDTO.class)
                     )),
-                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete add request", content = @Content(
-                            mediaType = "text/plain",
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot add the status because the request is not valid"
-                                    )
+                                            value = "{ \"healthStatus\": \"must not be blank\" }"
+                                    ),
                             }
                     )),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
@@ -136,12 +137,10 @@ public class HealthStatusController {
             }
     )
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody HealthStatusNameDTO status) {
+    public ResponseEntity<Object> add(@RequestBody @Valid HealthStatusAddRequest request) {
         try {
-            HealthStatusMinimumDTO newStatus = healthStatusService.addHealthStatus(status);
+            HealthStatusMinimumDTO newStatus = healthStatusService.addHealthStatus(request);
             return new ResponseEntity<>(newStatus, HttpStatus.CREATED);
-        } catch (HealthStatusInvalidRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (HealthStatusAlreadyExistsException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
@@ -204,11 +203,11 @@ public class HealthStatusController {
                             schema = @Schema(implementation = HealthStatus.class)
                     )),
                     @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
-                            mediaType = "text/plain",
+                            mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
-                                            value = "Cannot update the status because the request is not valid"
-                                    )
+                                            value = "{ \"status\": \"must not be blank\" }"
+                                    ),
                             }
                     )),
                     @ApiResponse(responseCode = "403", description = "Cannot modify core status", content = @Content(
@@ -237,12 +236,10 @@ public class HealthStatusController {
             }
     )
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody HealthStatusNameDTO statusNameDTO) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid HealthStatusUpdateRequest request) {
         try {
-            HealthStatusVerboseDTO status = healthStatusService.updateHealthStatus(id, statusNameDTO);
+            HealthStatusVerboseDTO status = healthStatusService.updateHealthStatus(id, request);
             return new ResponseEntity<>(status, HttpStatus.OK);
-        } catch (HealthStatusInvalidRequestException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (AvailabilityStatusCannotBeModifiedException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (HealthStatusDoesntExistException e) {

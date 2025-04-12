@@ -18,6 +18,8 @@ import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Repository.*;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.Walk.WalkAddRequest;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Tools.Time.Period;
 import com.example.petoasisbackend.Tools.Time.TimeParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,34 +64,34 @@ public class WalkService {
         return mapper.apply(walk);
     }
 
-    public WalkMinimumDTO addWalk(WalkConciseDTO walk) throws AnimalDoesntExistException, WalkTimeIntersectException, PersonDoesntExistException, ShelterDoesntExistException {
-        if (!checkIfAnimalIsAvailableForWalk(walk.getAnimalId(), walk.getStartTime(), walk.getEndTime())) {
-            throw new WalkTimeIntersectException("Cannot add a walk with animal with id '" + walk.getAnimalId() + "' because given time intersects with other walk(s).");
+    public WalkMinimumDTO addWalk(WalkAddRequest request) throws AnimalDoesntExistException, WalkTimeIntersectException, PersonDoesntExistException, ShelterDoesntExistException {
+        if (!animalRepository.existsById(request.getAnimalId())) {
+            throw new AnimalDoesntExistException("Cannot get animal with id '" + request.getAnimalId() + "'" + " because it doesn't exist");
         }
 
-        if (!animalRepository.existsById(walk.getAnimalId())) {
-            throw new AnimalDoesntExistException("Cannot get animal with id '" + walk.getAnimalId() + "'" + " because it doesn't exist");
+        if (!checkIfAnimalIsAvailableForWalk(request.getAnimalId(), request.getStartTime(), request.getEndTime())) {
+            throw new WalkTimeIntersectException("Cannot add a walk with animal with id '" + request.getAnimalId() + "' because given time intersects with other walk(s).");
         }
-        Animal pupil = animalRepository.getReferenceById(walk.getAnimalId());
+        Animal pupil = animalRepository.getReferenceById(request.getAnimalId());
 
-        if (!personRepository.existsById(walk.getPersonId())) {
-            throw new PersonDoesntExistException("User with id " + walk.getPersonId() + " doesn't exist!");
+        if (!personRepository.existsById(request.getPersonId())) {
+            throw new PersonDoesntExistException("Cannot get user with id '" + request.getPersonId() + "' because it doesn't exist!");
         }
-        Person caretaker = personRepository.getReferenceById(walk.getPersonId());
+        Person caretaker = personRepository.getReferenceById(request.getPersonId());
 
-        if (!shelterRepository.existsByShelterId(walk.getShelterId())) {
+        if (!shelterRepository.existsByShelterId(request.getShelterId())) {
             throw new ShelterDoesntExistException(
-                    "Cannot get shelter with id '" + walk.getShelterId() + "' because it doesn't exist"
+                    "Cannot get shelter with id '" + request.getShelterId() + "' because it doesn't exist"
             );
         }
-        Shelter supervisor = shelterRepository.getReferenceById(walk.getShelterId());
+        Shelter supervisor = shelterRepository.getReferenceById(request.getShelterId());
 
         Walk newWalk = new Walk(
                 pupil,
                 caretaker,
                 supervisor,
-                walk.getStartTime(),
-                walk.getEndTime(),
+                request.getStartTime(),
+                request.getEndTime(),
                 walkStatusRepository.getWalkStatusByStatus("Pending")
         );
 
@@ -113,11 +115,11 @@ public class WalkService {
         walkRepository.delete(walk);
     }
 
-    public WalkWithStatusDTO updateWalkStatus(Long walkId, String status) throws WalkStatusDoesntExistException, WalkDoesntExistException {
-        if (!walkStatusRepository.existsByStatus(status)) {
+    public WalkWithStatusDTO updateWalkStatus(Long walkId, WalkStatusUpdateRequest request) throws WalkStatusDoesntExistException, WalkDoesntExistException {
+        if (!walkStatusRepository.existsByStatus(request.getStatus())) {
             throw new WalkStatusDoesntExistException(
                     "Cannot update walk status of walk with id '" + walkId + "' because status '" +
-                            status + "' doesn't exist"
+                            request.getStatus() + "' doesn't exist"
             );
         }
 
@@ -128,20 +130,16 @@ public class WalkService {
         }
 
         Walk walk = walkRepository.findById(walkId).get();
-        WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(status);
+        WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(request.getStatus());
 
         walk.setWalkStatus(walkStatus);
-        walkRepository.save(walk);
+        Walk savedWalk = walkRepository.save(walk);
 
-        return WalkWithStatusDTO.fromWalk(walk);
+
+        return WalkWithStatusDTO.fromWalk(savedWalk);
     }
 
-    public Boolean checkIfAnimalIsAvailableForWalk(Long animalId, LocalDateTime start, LocalDateTime end) throws AnimalDoesntExistException {
-        if (!animalRepository.existsById(animalId)) {
-            throw new AnimalDoesntExistException(
-                    "Cannot check animal walk availability, because animal with id '" + animalId + "' doesn't exist"
-            );
-        }
+    public Boolean checkIfAnimalIsAvailableForWalk(Long animalId, LocalDateTime start, LocalDateTime end) {
 
         TimeParser parser = new TimeParser();
         Period wantedWalkPeriod = new Period(start, end);

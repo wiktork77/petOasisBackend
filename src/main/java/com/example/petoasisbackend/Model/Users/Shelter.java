@@ -2,6 +2,7 @@ package com.example.petoasisbackend.Model.Users;
 
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
+import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,5 +62,16 @@ public class Shelter {
         this.website = website;
         this.email = email;
         this.rating = rating;
+    }
+
+
+    public static Shelter fromShelterAddRequest(ShelterAddRequest request) {
+        return new Shelter(
+                request.getName(),
+                request.getAddress(),
+                request.getWebsite(),
+                request.getEmail(),
+                null
+        );
     }
 }

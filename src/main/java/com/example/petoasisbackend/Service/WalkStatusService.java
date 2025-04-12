@@ -1,6 +1,5 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
 import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
@@ -10,6 +9,8 @@ import com.example.petoasisbackend.Mapper.WalkStatusMapper;
 import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusAddRequest;
+import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,12 +58,9 @@ public class WalkStatusService {
         return status;
     }
 
-    public WalkStatusMinimumDTO addWalkStatus(WalkStatusNameDTO status) throws WalkStatusAlreadyExistsException, WalkStatusInvalidRequestException {
+    public WalkStatusMinimumDTO addWalkStatus(WalkStatusAddRequest status) throws WalkStatusAlreadyExistsException {
         if (walkStatusRepository.existsByStatus(status.getStatus())) {
             throw new WalkStatusAlreadyExistsException("Cannot add new status because '" + status.getStatus() + "' walk status already exists");
-        }
-        if (status.getStatus() == null || status.getStatus().trim().isEmpty()) {
-            throw new WalkStatusInvalidRequestException("Cannot add new status because the request is not valid");
         }
 
         WalkStatus newStatus = new WalkStatus(status.getStatus());
@@ -82,17 +80,13 @@ public class WalkStatusService {
         walkStatusRepository.delete(status);
     }
 
-    public WalkStatusVerboseDTO updateWalkStatusName(Integer id, WalkStatusNameDTO updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException, WalkStatusInvalidRequestException {
+    public WalkStatusVerboseDTO updateWalkStatusName(Integer id, WalkStatusUpdateRequest updated) throws WalkStatusDoesntExistException, WalkStatusUpdateCollisionException, WalkStatusCannotBeModifiedException {
         if (!walkStatusRepository.existsById(id)) {
             throw new WalkStatusDoesntExistException("Cannot update walk status with id '" + id + "' because it doesnt exist");
         }
         if (walkStatusRepository.existsByStatus(updated.getStatus())) {
             throw new WalkStatusUpdateCollisionException("Cannot update walk status with id '" + id + "' to '" + updated.getStatus() + "' because '" + updated.getStatus() + "' already exists");
         }
-        if (updated.getStatus() == null || updated.getStatus().trim().isEmpty()) {
-            throw new WalkStatusInvalidRequestException("Cannot update walk status with id '" + id + "' because the request is invalid");
-        }
-
 
         WalkStatus status = walkStatusRepository.findById(id).get();
 
