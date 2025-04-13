@@ -1,9 +1,0 @@
-POST http://localhost:8080/status/health/add
-Content-Type: application/json
-
-{
-  "healthStatus": "Medium"
-}
-
-###
-#DELETE http://localhost:8080/status/health/delete/Low
