@@ -1,10 +1,21 @@
 package com.example.petoasisbackend.Controller.User;
 
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.Person.PersonMinimumDTO;
+import com.example.petoasisbackend.DTO.User.Person.PersonUpdateDTO;
+import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
+import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
+import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.GSUPersonRequest;
+import com.example.petoasisbackend.Request.Person.PersonAddRequest;
+import com.example.petoasisbackend.Request.Person.PersonUpdateRequest;
 import com.example.petoasisbackend.Service.PersonService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,50 +28,52 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @GetMapping("/getAll")
-    public List<Person> getAll() {
-        return personService.getPersons();
+    @GetMapping("/")
+    public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
+        List<ModelDTO<Person>> people = personService.getPeople(level);
+        return new ResponseEntity<>(people, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Long id, @RequestParam DataDetailLevel level) {
+        try {
+            ModelDTO<Person> person = personService.getPersonById(id, level);
+            return new ResponseEntity<>(person, HttpStatus.OK);
+        } catch (PersonDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> add(@RequestBody GSUPersonRequest request) {
+    public ResponseEntity<Object> add(@RequestBody @Valid PersonAddRequest request) {
         try {
-            GeneralSystemUser gsu = request.getGeneralSystemUser();
-            Person person = request.getPerson();
-//            personService.addPerson(gsu, person);
-            return new ResponseEntity<>(person.getGeneralSystemUser().getLogin() + " added successfully", HttpStatus.OK);
-        } catch (Exception e) { // TODO
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            PersonMinimumDTO response = personService.addPerson(request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (ShelterAlreadyExistsException | UserAlreadyExistsException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
         }
     }
 
-    @DeleteMapping("/delete/{login}")
-    public ResponseEntity<String> delete(@PathVariable String login) {
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid PersonUpdateRequest request) {
         try {
-//            personService.deletePerson(login);
-            return new ResponseEntity<>(login + " added successfully", HttpStatus.OK);
-        } catch (Exception e) { // TODO
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            PersonUpdateDTO response = personService.updatePerson(id, request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (PersonDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/update/{login}")
-    public ResponseEntity<String> update(@PathVariable String login, @RequestBody Person other) {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
-//            personService.updatePerson(login, other);
-            return new ResponseEntity<>(login + " updated successfully", HttpStatus.OK);
-        } catch (Exception e) { // TODO
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            personService.deletePerson(id);
+            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>("Cannot delete person because it is still referenced", HttpStatus.BAD_REQUEST);
+        } catch (PersonDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
-
-
 }
 
-
-
-//try {
-//
-//} catch (IllegalArgumentException e) {
-//
-//}

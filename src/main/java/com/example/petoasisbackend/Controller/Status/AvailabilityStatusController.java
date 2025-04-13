@@ -80,6 +80,7 @@ public class AvailabilityStatusController {
                     schema = @Schema(implementation = AvailabilityStatus.class)
             )),
             @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                    mediaType = "text/plain",
                     examples = {
                             @ExampleObject(
                                     value = "Cannot get availability status with name 'ntava' because it doesn't exist"
@@ -115,6 +116,7 @@ public class AvailabilityStatusController {
                             }
                     )),
                     @ApiResponse(responseCode = "409", description = "Couldn't add a new status, name conflict", content = @Content(
+                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
                                             value = "Cannot add availability status with name 'mystatus' because it already exists"

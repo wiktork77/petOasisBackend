@@ -3,12 +3,11 @@ package com.example.petoasisbackend.Service;
 
 import com.example.petoasisbackend.DTO.Activity.Walk.*;
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DataInitializer.WalkStatusInitializer;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.WalkCannotBeDeletedException;
-import com.example.petoasisbackend.Exception.Walk.WalkDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.WalkTimeIntersectException;
+import com.example.petoasisbackend.Exception.Walk.*;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Mapper.WalkMapper;
 import com.example.petoasisbackend.Model.Activity.Walk;
@@ -21,12 +20,14 @@ import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Walk.WalkAddRequest;
 import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Tools.Time.Period;
-import com.example.petoasisbackend.Tools.Time.TimeParser;
+import com.example.petoasisbackend.Tools.Time.TimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,7 +116,7 @@ public class WalkService {
         walkRepository.delete(walk);
     }
 
-    public WalkWithStatusDTO updateWalkStatus(Long walkId, WalkStatusUpdateRequest request) throws WalkStatusDoesntExistException, WalkDoesntExistException {
+    public WalkWithStatusDTO updateWalkStatus(Long walkId, WalkStatusUpdateRequest request) throws WalkStatusDoesntExistException, WalkDoesntExistException, WalkInvalidStatusChangeException {
         if (!walkStatusRepository.existsByStatus(request.getStatus())) {
             throw new WalkStatusDoesntExistException(
                     "Cannot update walk status of walk with id '" + walkId + "' because status '" +
@@ -132,6 +133,10 @@ public class WalkService {
         Walk walk = walkRepository.findById(walkId).get();
         WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(request.getStatus());
 
+        if (!isStatusChangeValid(walk.getWalkStatus(), walkStatus)) {
+            throw new WalkInvalidStatusChangeException("Invalid walk status change");
+        }
+
         walk.setWalkStatus(walkStatus);
         Walk savedWalk = walkRepository.save(walk);
 
@@ -139,9 +144,35 @@ public class WalkService {
         return WalkWithStatusDTO.fromWalk(savedWalk);
     }
 
+    public WalkWithTimeDTO updateWalkTime(Long walkId, Period period) throws WalkInvalidTimePeriodException, WalkDoesntExistException, WalkCannotBeModifiedException {
+        TimeValidator validator = new TimeValidator();
+        if (!validator.isPeriodValid(period)) {
+            throw new WalkInvalidTimePeriodException("Cannot update period of walk with id '" + walkId + "' because the time period is invalid, endTime must be after startTime");
+        }
+        if (!walkRepository.existsById(walkId)) {
+            throw new WalkDoesntExistException("Cannot update period of walk with id '" + walkId + "' because walk with this id doesn't exist");
+        }
+
+        Walk walk = walkRepository.findById(walkId).get();
+
+        if (!walk.getWalkStatus().getStatus().equals("Pending")) {
+            throw new WalkCannotBeModifiedException("Cannot update period of walk with id '" + walkId + "' because the status is different from 'Pending'");
+        }
+
+        walk.setStartTime(period.getStart());
+        walk.setEndTime(period.getFinish());
+
+        Walk savedWalk = walkRepository.save(walk);
+
+        return WalkWithTimeDTO.fromWalk(savedWalk);
+    }
+
+
+
+
     public Boolean checkIfAnimalIsAvailableForWalk(Long animalId, LocalDateTime start, LocalDateTime end) {
 
-        TimeParser parser = new TimeParser();
+        TimeValidator parser = new TimeValidator();
         Period wantedWalkPeriod = new Period(start, end);
 
         List<Walk> walks = walkRepository.findAll();
@@ -154,8 +185,25 @@ public class WalkService {
                 }
             }
         }
-
         return false;
+    }
+
+    private boolean isStatusChangeValid(WalkStatus current, WalkStatus request) {
+        Map<String, List<String >> possibleChanges = new HashMap<>();
+        List<String> coreStatuses = WalkStatusInitializer.coreStatuses;
+
+        possibleChanges.put(coreStatuses.get(0), List.of(coreStatuses.get(1), coreStatuses.get(3)));
+        possibleChanges.put(coreStatuses.get(1), List.of(coreStatuses.get(2)));
+        possibleChanges.put(coreStatuses.get(2), List.of());
+        possibleChanges.put(coreStatuses.get(3), List.of());
+
+        if (coreStatuses.contains(current.getStatus())) {
+            if (!possibleChanges.get(current.getStatus()).contains(request.getStatus())) {
+                return false;
+            }
+        };
+
+        return true;
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Request.Person.PersonAddRequest;
 import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -25,8 +26,14 @@ public class GeneralSystemUser {
     @Column(nullable = false)
     private Boolean isVerified;
 
+    @Column(nullable = false)
+    private Boolean isBanned = false;
+
     @Column(length = 20, nullable = false)
     private String phoneNumber;
+
+    @Column(length = 64, nullable = false)
+    private String email;
 
     @Column(length = 128)
     private String pictureUrl;
@@ -62,11 +69,12 @@ public class GeneralSystemUser {
         return Objects.hash(login);
     }
 
-    public GeneralSystemUser(String login, String password, Boolean isVerified, String phoneNumber, String pictureUrl, AccountType type, Long parentId) {
+    public GeneralSystemUser(String login, String password, Boolean isVerified, String phoneNumber, String email, String pictureUrl, AccountType type, Long parentId) {
         this.login = login;
         this.password = password;
         this.isVerified = isVerified;
         this.phoneNumber = phoneNumber;
+        this.email = email;
         this.pictureUrl = pictureUrl;
         this.type = transformAccountType(type);
         this.parentId = parentId;
@@ -78,8 +86,22 @@ public class GeneralSystemUser {
                 request.getPassword(),
                 false,
                 request.getPhoneNumber(),
+                request.getEmail(),
                 request.getPictureUrl(),
                 AccountType.SHELTER,
+                null
+        );
+    }
+
+    public static GeneralSystemUser fromPersonAddRequest(PersonAddRequest request) {
+        return new GeneralSystemUser(
+                request.getLogin(),
+                request.getPassword(),
+                false,
+                request.getPhoneNumber(),
+                request.getEmail(),
+                request.getPictureUrl(),
+                AccountType.PERSON,
                 null
         );
     }

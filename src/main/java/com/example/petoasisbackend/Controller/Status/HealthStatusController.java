@@ -219,6 +219,7 @@ public class HealthStatusController {
                             }
                     )),
                     @ApiResponse(responseCode = "404", description = "Status not found", content = @Content(
+                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
                                             value = "Cannot update health status with id '72' because it doesn't exist"
@@ -226,6 +227,7 @@ public class HealthStatusController {
                             }
                     )),
                     @ApiResponse(responseCode = "409", description = "Status with given name already exists", content = @Content(
+                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
                                             value = "Cannot update health status with id '4' to 'low healthy' because 'low healthy' already exists"

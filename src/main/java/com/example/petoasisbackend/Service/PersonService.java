@@ -1,16 +1,27 @@
 package com.example.petoasisbackend.Service;
 
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.Person.PersonMinimumDTO;
+import com.example.petoasisbackend.DTO.User.Person.PersonUpdateDTO;
+import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Person.PersonAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
+import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
+import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
+import com.example.petoasisbackend.Mapper.PersonMapper;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Repository.PersonRepository;
 import com.example.petoasisbackend.Repository.SystemUserRepository;
+import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.Person.PersonAddRequest;
+import com.example.petoasisbackend.Request.Person.PersonUpdateRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PersonService {
@@ -19,65 +30,66 @@ public class PersonService {
     @Autowired
     private SystemUserRepository systemUserRepository;
 
-    public List<Person> getPersons() {
-        return personRepository.findAll();
+    @Autowired
+    private PersonMapper personMapper;
+
+    public List<ModelDTO<Person>> getPeople(DataDetailLevel level) {
+        List<Person> people = personRepository.findAll();
+        var mapper = personMapper.getMapper(level);
+
+        return people.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public Person getPersonById(Long id) throws PersonDoesntExistException {
-        if (!systemUserRepository.existsById(id)) {
-            throw new PersonDoesntExistException("User with id " + id + " doesn't exist!");
+    public ModelDTO<Person> getPersonById(Long id, DataDetailLevel level) throws PersonDoesntExistException {
+        if (!personRepository.existsById(id)) {
+            throw new PersonDoesntExistException("Cannot get person with id '" + id + "' because it doesn't exist");
         }
-        return personRepository.findById(id).get();
+
+        Person person = personRepository.findById(id).get();
+        var mapper = personMapper.getMapper(level);
+
+        return mapper.apply(person);
     }
 
-//    public Person getPersonByLogin(String login) throws PersonDoesntExistException {
-//        if (!systemUserRepository.existsByLogin(login)) {
-//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-//        }
-//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-//        return personRepository.getReferenceById(gsu.getParentId());
-//    }
+    @Transactional
+    public PersonMinimumDTO addPerson(PersonAddRequest request) throws ShelterAlreadyExistsException, UserAlreadyExistsException {
+        if (systemUserRepository.existsByLogin(request.getLogin())) {
+            throw new UserAlreadyExistsException(
+                    "Cannot add user because given login already exists"
+            );
+        }
 
-//    @Transactional
-//    public Person addPerson(GeneralSystemUser generalSystemUser, Person person) throws PersonAlreadyExistsException {
-//        if (systemUserRepository.existsByLogin(generalSystemUser.getLogin())) {
-//            throw new PersonAlreadyExistsException("User with login '" + generalSystemUser.getLogin() + "' already exists!");
-//        }
-//        GeneralSystemUser savedGSU = addGSU(generalSystemUser);
-//        person.setGeneralSystemUser(savedGSU);
-//        Person person1 = personRepository.save(person);
-//        savedGSU.setType("Person");
-//        savedGSU.setParentId(person1.getPersonId());
-//        return person1;
-//    }
+        Person person = Person.fromPersonAddRequest(request);
+        Person savedPerson = personRepository.save(person);
 
-//    public Person deletePerson(String login) throws PersonDoesntExistException {
-//        if (!systemUserRepository.existsByLogin(login)) {
-//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-//        }
-//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-//        Person person = personRepository.getReferenceById(gsu.getParentId());
-//        personRepository.delete(person);
-//        return person;
-//    }
+        GeneralSystemUser gsu = GeneralSystemUser.fromPersonAddRequest(request);
+        gsu.setParentId(savedPerson.getPersonId());
+        GeneralSystemUser savedGsu = systemUserRepository.save(gsu);
 
-//    public Person updatePerson(String login, Person other) throws PersonDoesntExistException, PersonAlreadyExistsException {
-//        if (!systemUserRepository.existsByLogin(login)) {
-//            throw new PersonDoesntExistException("User with login " + login + " doesn't exist!");
-//        }
-//        if (systemUserRepository.existsByLogin(other.getGeneralSystemUser().getLogin())) {
-//            throw new PersonAlreadyExistsException("User with login " + login + " already exists!");
-//        }
-//        GeneralSystemUser gsu = systemUserRepository.getGeneralSystemUserByLogin(login);
-//        Person originalPerson = personRepository.getReferenceById(gsu.getParentId());
-//        originalPerson.inheritFromOtherPerson(other);
-//        personRepository.save(originalPerson);
-//        return originalPerson;
-//    }
+        savedPerson.setGeneralSystemUser(savedGsu);
+        personRepository.save(savedPerson);
 
-
-    private GeneralSystemUser addGSU(GeneralSystemUser generalSystemUser) {
-        return systemUserRepository.save(generalSystemUser);
+        return PersonMinimumDTO.fromPerson(savedPerson);
     }
 
+    public void deletePerson(Long personId) throws PersonDoesntExistException {
+        if (!personRepository.existsById(personId)) {
+            throw new PersonDoesntExistException("Cannot delete person with id '" + personId + "' because it doesn't exist");
+        }
+        personRepository.deleteById(personId);
+    }
+
+    @Transactional
+    public PersonUpdateDTO updatePerson(Long personId, PersonUpdateRequest request) throws PersonDoesntExistException {
+        if (!personRepository.existsById(personId)) {
+            throw new PersonDoesntExistException("Cannot update person with id '" + personId + "' because it doesn't exist");
+        }
+
+        Person person = personRepository.findById(personId).get();
+        person.update(request);
+
+        Person savedPerson = personRepository.save(person);
+
+        return PersonUpdateDTO.fromPerson(savedPerson);
+    }
 }

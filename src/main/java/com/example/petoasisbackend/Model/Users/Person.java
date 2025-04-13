@@ -1,8 +1,11 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Request.Person.PersonAddRequest;
+import com.example.petoasisbackend.Request.Person.PersonUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -10,6 +13,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,33 +32,18 @@ public class Person {
     @Column(nullable = false)
     private LocalDate birthDate;
 
-    @Column(length = 64, nullable = false)
-    private String email;
-
     @Column(length = 1)
-    private String gender;
+    private Gender gender;
 
     @Column(length = 64)
     private String address;
 
-    public void inheritFromOtherPerson(Person other) {
-        if (other.generalSystemUser != null) {
-            this.generalSystemUser.inheritFromOtherGeneralSystemUser(other.generalSystemUser);
-        }
-        if (other.name != null) {
-            this.name = other.name;
-        }
-        if (other.surname != null) {
-            this.surname = other.surname;
-        }
-        if (other.birthDate != null) {
-            this.birthDate = other.birthDate;
-        }
-        if (other.email != null) {
-            this.email = other.email;
-        }
-        this.gender = other.gender;
-        this.address = other.address;
+    public Person(String name, String surname, LocalDate birthDate, Gender gender, String address) {
+        this.name = name;
+        this.surname = surname;
+        this.birthDate = birthDate;
+        this.gender = gender;
+        this.address = address;
     }
 
     @Override
@@ -68,5 +57,23 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(personId, generalSystemUser);
+    }
+
+    public static Person fromPersonAddRequest(PersonAddRequest request) {
+        return new Person(
+                request.getName(),
+                request.getSurname(),
+                request.getBirthDate(),
+                request.getGender(),
+                request.getAddress()
+        );
+    }
+
+    public void update(PersonUpdateRequest request) {
+        this.name = request.getName();
+        this.surname = request.getSurname();
+        this.birthDate = request.getBirthDate();
+        this.gender = request.getGender();
+        this.address = request.getAddress();
     }
 }

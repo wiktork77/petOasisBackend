@@ -3,10 +3,12 @@ package com.example.petoasisbackend.Model.Users;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.Shelter.ShelterUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -30,37 +32,16 @@ public class Shelter {
     @Column(length = 128)
     private String website;
 
-    @Column(length = 64, nullable = false)
-    private String email;
-
     private Float rating;
 
     @OneToMany(mappedBy = "home", cascade = CascadeType.REMOVE)
     private Set<Animal> animals;
 
-    public void inheritFromOtherShelter(Shelter other) {
-        if (other.generalSystemUser != null) {
-            this.generalSystemUser.inheritFromOtherGeneralSystemUser(other.generalSystemUser);
-        }
-        if (other.name != null) {
-            this.name = other.name;
-        }
-        if (other.address != null) {
-            this.address = other.address;
-        }
-        this.website = other.website;
 
-        if (other.email != null) {
-            this.email = other.email;
-        }
-        this.rating = other.rating;
-    }
-
-    public Shelter(String name, String address, String website, String email, Float rating) {
+    public Shelter(String name, String address, String website, Float rating) {
         this.name = name;
         this.address = address;
         this.website = website;
-        this.email = email;
         this.rating = rating;
     }
 
@@ -70,8 +51,13 @@ public class Shelter {
                 request.getName(),
                 request.getAddress(),
                 request.getWebsite(),
-                request.getEmail(),
                 null
         );
+    }
+
+    public void update(ShelterUpdateRequest request) {
+        this.name = request.getName();
+        this.address = request.getAddress();
+        this.website = request.getWebsite();
     }
 }

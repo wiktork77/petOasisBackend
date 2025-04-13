@@ -3,6 +3,8 @@ package com.example.petoasisbackend.Service;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterMinimumDTO;
+import com.example.petoasisbackend.DTO.User.Shelter.ShelterUpdateDTO;
+import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Mapper.ShelterMapper;
@@ -13,6 +15,7 @@ import com.example.petoasisbackend.Repository.ShelterRepository;
 import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.Shelter.ShelterUpdateRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -62,15 +65,14 @@ public class ShelterService {
     }
 
     @Transactional
-    public ShelterMinimumDTO addShelter(ShelterAddRequest request) throws ShelterAlreadyExistsException {
+    public ShelterMinimumDTO addShelter(ShelterAddRequest request) throws ShelterAlreadyExistsException, UserAlreadyExistsException {
         if (shelterRepository.existsByName(request.getName())) {
             throw new ShelterAlreadyExistsException(
-                    "Cannot add shelter because shelter with '" + request.getName()
-                            + "' name already exists"
+                    "Cannot add shelter because shelter with '" + request.getName() + "' name already exists"
             );
         }
         if (systemUserRepository.existsByLogin(request.getLogin())) {
-            throw new ShelterAlreadyExistsException(
+            throw new UserAlreadyExistsException(
                     "Cannot add user because given login already exists"
             );
         }
@@ -87,4 +89,31 @@ public class ShelterService {
 
         return ShelterMinimumDTO.fromShelter(shelter);
     }
+
+    @Transactional
+    public ShelterUpdateDTO updateShelter(Long shelterId, ShelterUpdateRequest request) throws ShelterAlreadyExistsException, ShelterDoesntExistException {
+        if (shelterRepository.existsByName(request.getName())) {
+            throw new ShelterAlreadyExistsException("Cannot update shelter with id '" + shelterId + "' because shelter with name '" + request.getName() + "' already exists");
+        }
+
+        if (!shelterRepository.existsByShelterId(shelterId)) {
+            throw new ShelterDoesntExistException("Cannot update shelter with id '" + shelterId + "' because it doesn't exist");
+        }
+
+        Shelter shelter = shelterRepository.findById(shelterId).get();
+        shelter.update(request);
+
+        Shelter savedShelter = shelterRepository.save(shelter);
+
+        return ShelterUpdateDTO.fromShelter(savedShelter);
+    }
+
+    @Transactional
+    public void deleteShelterById(Long shelterId) throws ShelterDoesntExistException {
+        if (!shelterRepository.existsByShelterId(shelterId)) {
+            throw new ShelterDoesntExistException("Cannot delete shelter with id '" + shelterId + "' because it doesn't exist");
+        }
+        shelterRepository.deleteById(shelterId);
+    }
+
 }

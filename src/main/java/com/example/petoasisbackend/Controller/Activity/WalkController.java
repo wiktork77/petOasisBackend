@@ -1,25 +1,20 @@
 package com.example.petoasisbackend.Controller.Activity;
 
 
-import com.example.petoasisbackend.DTO.Activity.Walk.WalkConciseDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithStatusDTO;
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusNameDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithTimeDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.WalkCannotBeDeletedException;
-import com.example.petoasisbackend.Exception.Walk.WalkDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.WalkTimeIntersectException;
+import com.example.petoasisbackend.Exception.Walk.*;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Activity.Walk;
-import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Users.Person;
-import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Walk.WalkAddRequest;
 import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Service.*;
+import com.example.petoasisbackend.Tools.Time.Period;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -68,7 +63,7 @@ public class WalkController {
                     ),
                     @ApiResponse(responseCode = "404", description = "Walk with given id not found",
                             content = @Content(
-                                    mediaType = "plain/text",
+                                    mediaType = "text/plain",
                                     examples = {
                                             @ExampleObject(
                                                     value = "Cannot get walk with id '2' because it doesn't exist"
@@ -158,7 +153,7 @@ public class WalkController {
                             mediaType = "text/plain"
                     )),
                     @ApiResponse(responseCode = "403", description = "Couldn't delete the walk, it doesn't have correct walk status to be deleted. Only walk with statuses 'Finished' and 'Cancelled' can be deleted.", content = @Content(
-                            mediaType = "plain/text",
+                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
                                             value = "Cannot delete walk with id '2'. Can only delete walks with statuses 'Finished' and 'Cancelled'. Consider changing the status first"
@@ -166,7 +161,7 @@ public class WalkController {
                             }
                     )),
                     @ApiResponse(responseCode = "404", description = "Walk with given id doesn't exist.", content = @Content(
-                            mediaType = "plain/text",
+                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
                                             value = "Cannot delete walk with id '52'. It doesn't exist."
@@ -204,6 +199,14 @@ public class WalkController {
                                     ),
                             }
                     )),
+                    @ApiResponse(responseCode = "403", description = "Status change request not allowed. Possible core changes: Pending->In progress or Cancelled, In Progress -> Finished", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Invalid walk status change"
+                                    ),
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Status or walk not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -225,7 +228,57 @@ public class WalkController {
         try {
             WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, request);
             return new ResponseEntity<>(walk, HttpStatus.OK);
+        } catch (WalkInvalidStatusChangeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Operation(summary = "Change the time period of a particular walk with 'Pending' status.")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully updated time period", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = WalkWithTimeDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "400", description = "Invalid time period", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update period of walk with id '92' because the time period is invalid, endTime must be after startTime"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "403", description = "Walk with this status cannot have time modified", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update period of walk with id '21' because the status is different from 'Pending'"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Walk not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update period of walk with id '123' because walk with this id doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
+    @PutMapping("/update/time/{walkId}")
+    public ResponseEntity<Object> updateWalkTimes(@PathVariable Long walkId, @RequestBody @Valid Period period) {
+        try {
+            WalkWithTimeDTO walk = walkService.updateWalkTime(walkId, period);
+            return new ResponseEntity<>(walk, HttpStatus.OK);
+        } catch (WalkInvalidTimePeriodException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (WalkCannotBeModifiedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        } catch (WalkDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
