@@ -14,17 +14,15 @@ import lombok.NoArgsConstructor;
 public class GSUVerboseDTO implements ModelDTO<GeneralSystemUser> {
     private Long systemUserId;
     private String login;
-    private String password;
     private Boolean isVerified;
     private String phoneNumber;
     private String pictureUrl;
     private String type;
     private Long parentId;
 
-    public GSUVerboseDTO(Long systemUserId, String login, String password, Boolean isVerified, String phoneNumber, String pictureUrl, String type, Long parentId) {
+    public GSUVerboseDTO(Long systemUserId, String login, Boolean isVerified, String phoneNumber, String pictureUrl, String type, Long parentId) {
         this.systemUserId = systemUserId;
         this.login = login;
-        this.password = password;
         this.isVerified = isVerified;
         this.phoneNumber = phoneNumber;
         this.pictureUrl = pictureUrl;
@@ -36,7 +34,6 @@ public class GSUVerboseDTO implements ModelDTO<GeneralSystemUser> {
         return new GSUVerboseDTO(
                 gsu.getSystemUserId(),
                 gsu.getLogin(),
-                gsu.getPassword(),
                 gsu.getIsVerified(),
                 gsu.getPhoneNumber(),
                 gsu.getPictureUrl(),

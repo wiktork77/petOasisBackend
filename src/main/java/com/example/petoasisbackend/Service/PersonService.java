@@ -16,6 +16,7 @@ import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Person.PersonAddRequest;
 import com.example.petoasisbackend.Request.Person.PersonUpdateRequest;
+import com.example.petoasisbackend.Tools.Credentials.Encoder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class PersonService {
     }
 
     @Transactional
-    public PersonMinimumDTO addPerson(PersonAddRequest request) throws ShelterAlreadyExistsException, UserAlreadyExistsException {
+    public PersonMinimumDTO addPerson(PersonAddRequest request) throws UserAlreadyExistsException {
         if (systemUserRepository.existsByLogin(request.getLogin())) {
             throw new UserAlreadyExistsException(
                     "Cannot add user because given login already exists"
@@ -64,6 +65,10 @@ public class PersonService {
 
         GeneralSystemUser gsu = GeneralSystemUser.fromPersonAddRequest(request);
         gsu.setParentId(savedPerson.getPersonId());
+
+        Encoder encoder = new Encoder();
+        gsu.setPassword(encoder.encodePassword(request.getPassword()));
+
         GeneralSystemUser savedGsu = systemUserRepository.save(gsu);
 
         savedPerson.setGeneralSystemUser(savedGsu);

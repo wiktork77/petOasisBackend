@@ -26,9 +26,6 @@ public class GeneralSystemUser {
     @Column(nullable = false)
     private Boolean isVerified;
 
-    @Column(nullable = false)
-    private Boolean isBanned = false;
-
     @Column(length = 20, nullable = false)
     private String phoneNumber;
 
@@ -69,9 +66,8 @@ public class GeneralSystemUser {
         return Objects.hash(login);
     }
 
-    public GeneralSystemUser(String login, String password, Boolean isVerified, String phoneNumber, String email, String pictureUrl, AccountType type, Long parentId) {
+    public GeneralSystemUser(String login, Boolean isVerified, String phoneNumber, String email, String pictureUrl, AccountType type, Long parentId) {
         this.login = login;
-        this.password = password;
         this.isVerified = isVerified;
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -83,7 +79,6 @@ public class GeneralSystemUser {
     public static GeneralSystemUser fromShelterAddRequest(ShelterAddRequest request) {
         return new GeneralSystemUser(
                 request.getLogin(),
-                request.getPassword(),
                 false,
                 request.getPhoneNumber(),
                 request.getEmail(),
@@ -96,7 +91,6 @@ public class GeneralSystemUser {
     public static GeneralSystemUser fromPersonAddRequest(PersonAddRequest request) {
         return new GeneralSystemUser(
                 request.getLogin(),
-                request.getPassword(),
                 false,
                 request.getPhoneNumber(),
                 request.getEmail(),

@@ -1,24 +1,21 @@
 package com.example.petoasisbackend.DTO.User.GSU;
 
-
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Data
+
 @NoArgsConstructor
-public class GSUMinimumDTO implements ModelDTO<GeneralSystemUser> {
+@AllArgsConstructor
+@Getter
+public class GSUConciseDTO implements ModelDTO<GeneralSystemUser> {
     private Long systemUserId;
 
-    private GSUMinimumDTO(Long systemUserId) {
-        this.systemUserId = systemUserId;
-    }
-
-    public static GSUMinimumDTO fromGSU(GeneralSystemUser gsu) {
-        return new GSUMinimumDTO(
+    public static GSUConciseDTO fromGSU(GeneralSystemUser gsu) {
+        return new GSUConciseDTO(
                 gsu.getSystemUserId()
         );
     }
-
 }

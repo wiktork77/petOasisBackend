@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class GSUVerificationDTO implements ModelDTO<GeneralSystemUser> {
+public class GSUVerificationDTO {
     private Long systemUserId;
     private boolean isVerified;
 

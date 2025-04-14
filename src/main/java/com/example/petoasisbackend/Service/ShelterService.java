@@ -16,6 +16,7 @@ import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
 import com.example.petoasisbackend.Request.Shelter.ShelterUpdateRequest;
+import com.example.petoasisbackend.Tools.Credentials.Encoder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,9 +81,13 @@ public class ShelterService {
         Shelter shelter = Shelter.fromShelterAddRequest(request);
         Shelter savedShelter = shelterRepository.save(shelter);
 
-        GeneralSystemUser generalSystemUser = GeneralSystemUser.fromShelterAddRequest(request);
-        generalSystemUser.setParentId(savedShelter.getShelterId());
-        GeneralSystemUser savedGsu = systemUserRepository.save(generalSystemUser);
+        GeneralSystemUser gsu = GeneralSystemUser.fromShelterAddRequest(request);
+        gsu.setParentId(savedShelter.getShelterId());
+
+        Encoder encoder = new Encoder();
+        gsu.setPassword(encoder.encodePassword(request.getPassword()));
+
+        GeneralSystemUser savedGsu = systemUserRepository.save(gsu);
 
         savedShelter.setGeneralSystemUser(savedGsu);
         shelterRepository.save(savedShelter);

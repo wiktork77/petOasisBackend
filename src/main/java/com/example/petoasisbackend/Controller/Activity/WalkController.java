@@ -223,7 +223,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/status/{walkId}")
+    @PatchMapping("/update/status/{walkId}")
     public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody @Valid WalkStatusUpdateRequest request) {
         try {
             WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, request);
@@ -269,7 +269,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/time/{walkId}")
+    @PatchMapping("/update/time/{walkId}")
     public ResponseEntity<Object> updateWalkTimes(@PathVariable Long walkId, @RequestBody @Valid Period period) {
         try {
             WalkWithTimeDTO walk = walkService.updateWalkTime(walkId, period);
