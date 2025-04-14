@@ -1,11 +1,10 @@
 package com.example.petoasisbackend.Request.Person;
 
 import com.example.petoasisbackend.Model.Users.Gender;
+import com.example.petoasisbackend.Validation.Password.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +16,8 @@ public class PersonAddRequest {
     @NotBlank(message = "must not be blank")
     private String login;
 
-    @NotBlank(message = "must not be blank")
+    @ValidPassword
+    @Schema(example = "Password123")
     private String password;
 
     @NotBlank(message = "must not be blank")

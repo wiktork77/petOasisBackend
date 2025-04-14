@@ -2,6 +2,7 @@ package com.example.petoasisbackend.Request.Shelter;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Users.Shelter;
+import com.example.petoasisbackend.Validation.Password.ValidPassword;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -14,7 +15,8 @@ public class ShelterAddRequest {
     @NotBlank(message = "must not be blank")
     private String login;
 
-    @NotBlank(message = "must not be blank")
+    @ValidPassword
+    @Schema(example = "Password123")
     private String password;
 
     @NotBlank(message = "must not be blank")

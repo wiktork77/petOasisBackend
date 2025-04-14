@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Request.GSU.GSUUpdateRequest;
 import com.example.petoasisbackend.Request.Person.PersonAddRequest;
 import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
 import jakarta.persistence.*;
@@ -39,18 +40,10 @@ public class GeneralSystemUser {
 
     private Long parentId;
 
-
-    public void inheritFromOtherGeneralSystemUser(GeneralSystemUser other) {
-        if (other.login != null) {
-            this.login = other.login;
-        }
-        if (other.isVerified != null) {
-            this.isVerified = other.isVerified;
-        }
-        if (other.phoneNumber != null) {
-            this.phoneNumber = other.phoneNumber;
-        }
-        this.pictureUrl = other.pictureUrl;
+    public void update(GSUUpdateRequest request) {
+        this.login = request.getLogin();
+        this.email = request.getEmail();
+        this.phoneNumber = request.getPhoneNumber();
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Walk.WalkAddRequest;
 import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Tools.Time.Period;
-import com.example.petoasisbackend.Tools.Time.TimeValidator;
+import com.example.petoasisbackend.Validation.Time.TimeValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

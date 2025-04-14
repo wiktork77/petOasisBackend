@@ -1,4 +1,6 @@
-package com.example.petoasisbackend.Tools.Time;
+package com.example.petoasisbackend.Validation.Time;
+
+import com.example.petoasisbackend.Tools.Time.Period;
 
 import java.time.ZoneId;
 

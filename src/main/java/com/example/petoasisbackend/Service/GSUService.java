@@ -2,16 +2,16 @@ package com.example.petoasisbackend.Service;
 
 
 import com.example.petoasisbackend.DTO.ModelDTO;
-import com.example.petoasisbackend.DTO.User.GSU.GSUMinimumDTO;
-import com.example.petoasisbackend.DTO.User.GSU.GSUProfilePictureDTO;
-import com.example.petoasisbackend.DTO.User.GSU.GSUVerboseDTO;
-import com.example.petoasisbackend.DTO.User.GSU.GSUVerificationDTO;
+import com.example.petoasisbackend.DTO.User.GSU.*;
+import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.GSU.UserDoesntExistException;
+import com.example.petoasisbackend.Exception.GSU.UserPasswordDoesntMatch;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Mapper.GSUMapper;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
+import com.example.petoasisbackend.Request.GSU.GSUUpdateRequest;
 import com.example.petoasisbackend.Request.GSU.PasswordChangeRequest;
 import com.example.petoasisbackend.Tools.Credentials.Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,16 +72,42 @@ public class GSUService {
         return GSUProfilePictureDTO.fromGSU(savedUser);
     }
 
-    public GSUMinimumDTO changePassword(PasswordChangeRequest request) {
-        return null;
+    public GSUMinimumDTO changePassword(Long id, PasswordChangeRequest request) throws UserPasswordDoesntMatch {
+        if (!matchesPassword(id, request.getOldPassword())) {
+            throw new UserPasswordDoesntMatch("Current password and given password don't match");
+        }
+
+        GeneralSystemUser user = systemUserRepository.findById(id).get();
+        Encoder encoder = new Encoder();
+
+        user.setPassword(encoder.encodePassword(request.getNewPassword()));
+
+        GeneralSystemUser savedUser = systemUserRepository.save(user);
+
+        return GSUMinimumDTO.fromGSU(savedUser);
     }
+
+    public GSUUpdateDTO update(Long id, GSUUpdateRequest request) throws UserDoesntExistException, UserAlreadyExistsException {
+        if (!systemUserRepository.existsById(id)) {
+            throw new UserDoesntExistException("Cannot update profile picture of user with id '" + id + "' because it doesn't exist");
+        }
+
+        if (systemUserRepository.existsByLogin(request.getLogin())) {
+            throw new UserAlreadyExistsException("Cannot update user because given login already exists");
+        }
+
+        GeneralSystemUser gsu = systemUserRepository.findById(id).get();
+        gsu.update(request);
+
+        systemUserRepository.save(gsu);
+
+        return GSUUpdateDTO.fromGSU(gsu);
+    }
+
 
     private Boolean matchesPassword(Long id, String enteredPassword) {
         GeneralSystemUser gsu = systemUserRepository.findById(id).get();
         Encoder encoder = new Encoder();
         return encoder.passwordMatches(enteredPassword, gsu.getPassword());
     }
-
-
-
 }
