@@ -18,7 +18,8 @@ public class HealthStatusInitializer implements ApplicationRunner {
             "Healthy",
             "Under observation",
             "Sick",
-            "Critical"
+            "Critical",
+            "Passed away"
     );
 
     public HealthStatusInitializer(HealthStatusRepository healthStatusRepository) {

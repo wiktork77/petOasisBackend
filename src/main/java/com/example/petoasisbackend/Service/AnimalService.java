@@ -4,7 +4,6 @@ import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Animal.Dog;
-import com.example.petoasisbackend.Model.Animal.Walkable;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.*;
@@ -34,14 +33,6 @@ public class AnimalService {
         return animalRepository.findById(id).get();
     }
 
-    public List<Walkable> getAnimals() {
-        ArrayList<Walkable> animals = new ArrayList<>();
-        List<Cat> cats = catRepository.findAll();
-        List<Dog> dogs = dogRepository.findAll();
-        animals.addAll(cats);
-        animals.addAll(dogs);
-        return animals;
-    }
 
     public Animal addAnimal(Animal animal) {
         AvailabilityStatus availabilityStatus = animal.getAvailabilityStatus();
@@ -65,14 +56,5 @@ public class AnimalService {
         return animal;
     }
 
-    public Animal updateAnimal(Long id, Animal other) {
-        if (!animalRepository.existsById(id)) {
-            throw new IllegalArgumentException("Animal with id " + id + " doesn't exist.");
-        }
-        Animal animal = animalRepository.getReferenceById(id);
-        animal.inheritFromOtherAnimal(other);
-        animalRepository.save(animal);
-        return animal;
-    }
 
 }

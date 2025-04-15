@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Request.User.Person;
 
 import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Request.User.UserAddRequest;
 import com.example.petoasisbackend.Validation.Password.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,32 +13,14 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class PersonAddRequest {
-    @NotBlank(message = "must not be blank")
-    private String login;
-
-    @ValidPassword
-    @Schema(example = "Password123")
-    private String password;
-
-    @NotBlank(message = "must not be blank")
-    @Email(message = "must be a valid email")
-    @Schema(example = "person@example.com", description = "Valid email address")
-    private String email;
-
-    @NotBlank(message = "must not be blank")
-    private String phoneNumber;
-
-    @Schema(example = "http://example.com/picture.jpg")
-    private String pictureUrl;
-
+public class PersonAddRequest extends UserAddRequest {
     @NotBlank(message = "must not be blank")
     private String name;
 
-    private String address;
-
     @NotBlank(message = "must not be blank")
     private String surname;
+
+    private String address;
 
     @NotNull(message = "must not be null")
     @JsonFormat(pattern = "yyyy-MM-dd")

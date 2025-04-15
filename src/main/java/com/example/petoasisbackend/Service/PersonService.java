@@ -6,6 +6,7 @@ import com.example.petoasisbackend.DTO.User.Person.PersonUpdateDTO;
 import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Mapper.User.PersonMapper;
+import com.example.petoasisbackend.Model.Users.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Repository.PersonRepository;
@@ -60,7 +61,8 @@ public class PersonService {
         Person person = Person.fromPersonAddRequest(request);
         Person savedPerson = personRepository.save(person);
 
-        GeneralSystemUser gsu = GeneralSystemUser.fromPersonAddRequest(request);
+        GeneralSystemUser gsu = GeneralSystemUser.fromUserAddRequest(request);
+        gsu.setType(AccountType.PERSON);
         gsu.setParentId(savedPerson.getPersonId());
 
         Encoder encoder = new Encoder();

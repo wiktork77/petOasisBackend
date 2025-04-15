@@ -30,8 +30,10 @@ public class CatBreedInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         for (String b: baseCatBreeds) {
-            CatBreed breed = new CatBreed(b);
-            catBreedRepository.save(breed);
+            if (!catBreedRepository.existsByBreedName(b)) {
+                CatBreed breed = new CatBreed(b);
+                catBreedRepository.save(breed);
+            }
         }
     }
 }

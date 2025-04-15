@@ -7,7 +7,9 @@ import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Model.Users.Shelter;
+import com.example.petoasisbackend.Request.Animal.AnimalAddRequest;
 import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,8 +32,6 @@ public class Animal {
     @Column(length = 48, nullable = false)
     private String name;
 
-    private LocalDate birthDate;
-
     @Column(nullable = false)
     private Float weight;
 
@@ -41,7 +41,7 @@ public class Animal {
     @Column(nullable = false)
     private Float length;
 
-    private Integer age;
+    private LocalDate dateOfBirth;
 
     private Boolean isNeutered;
 
@@ -80,16 +80,16 @@ public class Animal {
 
     @ManyToOne
     @JoinColumn(name = "shelter_id")
+    @JsonIgnoreProperties("animals")
     private Shelter home;
 
 
-    public Animal(String name, LocalDate birthDate, Float weight, Float height, Float length, Integer age, Boolean isNeutered, String description, Gender gender, Boolean enjoysPetting, Float rating, String pictureURL, HealthStatus healthStatus, AvailabilityStatus availabilityStatus, Set<AnimalBadge> animalBadges, Set<AnimalComment> animalComment, AnimalType type, Long parentId, Shelter home) {
+    public Animal(String name, Float weight, Float height, Float length, LocalDate dateOfBirth, Boolean isNeutered, String description, Gender gender, Boolean enjoysPetting, Float rating, String pictureURL, HealthStatus healthStatus, AvailabilityStatus availabilityStatus, Set<AnimalBadge> animalBadges, Set<AnimalComment> animalComment, AnimalType type, Long parentId, Shelter home) {
         this.name = name;
-        this.birthDate = birthDate;
         this.weight = weight;
         this.height = height;
         this.length = length;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.isNeutered = isNeutered;
         this.description = description;
         this.gender = gender;
@@ -118,62 +118,27 @@ public class Animal {
         return Objects.hash(animalId);
     }
 
-    public void inheritFromOtherAnimal(Animal other) {
-        if (other.name != null) {
-            this.name = other.name;
-        }
-        this.birthDate = other.birthDate;
-        if (other.weight != null) {
-            this.weight = other.weight;
-        }
-        if (other.height != null) {
-            this.height = other.height;
-        }
-        if (other.length != null) {
-            this.length = other.length;
-        }
-        this.age = other.age;
-        this.isNeutered = other.isNeutered;
-        if (other.description != null) {
-            this.description = other.description;
-        }
-        if (other.gender != null) {
-            this.gender = other.gender;
-        }
-        if (other.enjoysPetting != null) {
-            this.enjoysPetting = other.enjoysPetting;
-        }
-        this.rating = other.rating;
-        this.pictureURL = other.pictureURL;
-        if (other.healthStatus != null) {
-            this.healthStatus = other.healthStatus;
-        }
-        if (other.availabilityStatus != null) {
-            this.availabilityStatus = other.availabilityStatus;
-        }
-    }
-
-    public static Animal fromDogAddRequest(DogAddRequest request) {
+    public static Animal fromAnimalAddRequest(AnimalAddRequest request) {
         return new Animal(
                 request.getName(),
-                request.getBirthDate(),
                 request.getWeight(),
                 request.getHeight(),
                 request.getLength(),
-                Period.between(request.getBirthDate(), LocalDate.now()).getYears(),
+                request.getDateOfBirth(),
                 request.getIsNeutered(),
                 request.getDescription(),
                 request.getGender(),
                 request.getEnjoysPetting(),
                 null,
                 request.getPictureUrl(),
-                request.getHealthStatus(),
-                request.getAvailabilityStatus(),
+                null,
+                null,
                 Collections.emptySet(),
                 Collections.emptySet(),
-                AnimalType.DOG,
+                null,
                 null,
                 null
+
         );
     }
 }

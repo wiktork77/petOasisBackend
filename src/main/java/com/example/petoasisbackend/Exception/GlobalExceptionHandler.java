@@ -44,6 +44,7 @@ public class GlobalExceptionHandler {
             } else if (msg.contains("Cannot deserialize value of type `java.time.LocalDate`")) {
                 errors.put("birthDate", "must be in format yyyy-MM-dd");
             } else {
+                System.out.println(msg);
                 errors.put("json", "Invalid JSON format");
             }
         } else {

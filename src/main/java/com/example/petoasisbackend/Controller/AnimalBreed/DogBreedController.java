@@ -57,7 +57,7 @@ public class DogBreedController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned dog breed", content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = DogBreedVerboseDTO.class))
+                            schema = @Schema(implementation = DogBreedVerboseDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "Dog breed not found", content = @Content(
                             mediaType = "text/plain",

@@ -77,6 +77,34 @@ public class ShelterController {
         }
     }
 
+    @Operation(summary = "Get animals to belong to given shelter")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned animals", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = Shelter.class)
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Shelter not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get shelter animals with id '217' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
+    @GetMapping("/{id}/animals")
+    public ResponseEntity<Object> getAnimals(@PathVariable Long id) {
+        try {
+            List<Object> response = shelterService.getAnimals(id);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (ShelterDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
     @Operation(summary = "Get a shelter with given name and data details")
     @ApiResponses(
             value = {

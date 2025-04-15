@@ -1,6 +1,8 @@
 package com.example.petoasisbackend.Service;
 
 
+import com.example.petoasisbackend.DTO.Animal.Cat.CatMediumDTO;
+import com.example.petoasisbackend.DTO.Animal.Dog.DogMediumDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterMinimumDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterUpdateDTO;
@@ -8,8 +10,14 @@ import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Mapper.User.ShelterMapper;
+import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Model.Animal.Cat;
+import com.example.petoasisbackend.Model.Animal.Dog;
+import com.example.petoasisbackend.Model.Users.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Shelter;
+import com.example.petoasisbackend.Repository.CatRepository;
+import com.example.petoasisbackend.Repository.DogRepository;
 import com.example.petoasisbackend.Repository.ShelterRepository;
 import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
@@ -20,7 +28,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +40,10 @@ public class ShelterService {
 
     @Autowired
     private ShelterMapper shelterMapper;
+    @Autowired
+    private DogRepository dogRepository;
+    @Autowired
+    private CatRepository catRepository;
 
     public List<ModelDTO<Shelter>> getShelters(DataDetailLevel level) {
         List<Shelter> shelters = shelterRepository.findAll();
@@ -80,7 +92,8 @@ public class ShelterService {
         Shelter shelter = Shelter.fromShelterAddRequest(request);
         Shelter savedShelter = shelterRepository.save(shelter);
 
-        GeneralSystemUser gsu = GeneralSystemUser.fromShelterAddRequest(request);
+        GeneralSystemUser gsu = GeneralSystemUser.fromUserAddRequest(request);
+        gsu.setType(AccountType.SHELTER);
         gsu.setParentId(savedShelter.getShelterId());
 
         Encoder encoder = new Encoder();
@@ -118,6 +131,30 @@ public class ShelterService {
             throw new ShelterDoesntExistException("Cannot delete shelter with id '" + shelterId + "' because it doesn't exist");
         }
         shelterRepository.deleteById(shelterId);
+    }
+
+    public List<Object> getAnimals(Long shelterId) throws ShelterDoesntExistException {
+        if (!shelterRepository.existsByShelterId(shelterId)) {
+            throw new ShelterDoesntExistException("Cannot get shelter animals because shelter with id '" + shelterId + "' doesn't exist");
+        }
+        Shelter shelter = shelterRepository.getReferenceById(shelterId);
+        Set<Animal> animals = shelter.getAnimals();
+
+        List<Object> walkables = new LinkedList<>();
+        for (Animal a : animals) {
+            switch (a.getType()) {
+                case DOG -> {
+                    Dog dog = dogRepository.findById(a.getParentId()).get();
+                    walkables.add(DogMediumDTO.fromDog(dog));
+                }
+                case CAT -> {
+                    Cat cat = catRepository.findById(a.getParentId()).get();
+                    walkables.add(CatMediumDTO.fromCat(cat));
+                }
+            }
+        }
+
+        return walkables;
     }
 
 }

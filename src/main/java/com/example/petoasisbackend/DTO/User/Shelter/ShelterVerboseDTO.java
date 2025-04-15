@@ -22,7 +22,6 @@ public class ShelterVerboseDTO implements ModelDTO<Shelter> {
     private String address;
     private String website;
     private Float rating;
-    private Set<Animal> animals;
 
     public static ShelterVerboseDTO fromShelter(Shelter shelter) {
         return new ShelterVerboseDTO(
@@ -31,8 +30,7 @@ public class ShelterVerboseDTO implements ModelDTO<Shelter> {
                 shelter.getName(),
                 shelter.getAddress(),
                 shelter.getWebsite(),
-                shelter.getRating(),
-                shelter.getAnimals()
+                shelter.getRating()
         );
     }
 }

@@ -4,6 +4,8 @@ package com.example.petoasisbackend.Model.Users;
 import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
 import com.example.petoasisbackend.Request.User.Person.PersonAddRequest;
 import com.example.petoasisbackend.Request.User.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.User.UserAddRequest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,6 +24,7 @@ public class GeneralSystemUser {
     private String login;
 
     @Column(length = 128, nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
@@ -69,26 +72,14 @@ public class GeneralSystemUser {
         this.parentId = parentId;
     }
 
-    public static GeneralSystemUser fromShelterAddRequest(ShelterAddRequest request) {
+    public static GeneralSystemUser fromUserAddRequest(UserAddRequest request) {
         return new GeneralSystemUser(
                 request.getLogin(),
                 false,
                 request.getPhoneNumber(),
                 request.getEmail(),
                 request.getPictureUrl(),
-                AccountType.SHELTER,
-                null
-        );
-    }
-
-    public static GeneralSystemUser fromPersonAddRequest(PersonAddRequest request) {
-        return new GeneralSystemUser(
-                request.getLogin(),
-                false,
-                request.getPhoneNumber(),
-                request.getEmail(),
-                request.getPictureUrl(),
-                AccountType.PERSON,
+                null,
                 null
         );
     }

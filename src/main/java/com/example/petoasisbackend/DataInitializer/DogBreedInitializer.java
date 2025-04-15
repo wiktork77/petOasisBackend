@@ -29,8 +29,10 @@ public class DogBreedInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         for (String b: baseDogBreeds) {
-            DogBreed breed = new DogBreed(b);
-            dogBreedRepository.save(breed);
+            if (!dogBreedRepository.existsByBreedName(b)) {
+                DogBreed breed = new DogBreed(b);
+                dogBreedRepository.save(breed);
+            }
         }
     }
 }

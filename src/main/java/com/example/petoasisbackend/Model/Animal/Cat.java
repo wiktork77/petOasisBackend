@@ -2,12 +2,16 @@ package com.example.petoasisbackend.Model.Animal;
 
 
 import com.example.petoasisbackend.Model.AnimalBreed.CatBreed;
+import com.example.petoasisbackend.Request.Animal.Cat.CatAddRequest;
+import com.example.petoasisbackend.Request.Animal.Cat.CatUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
 @Data
-public class Cat implements Walkable {
+public class Cat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long catId;
@@ -20,7 +24,7 @@ public class Cat implements Walkable {
     private Boolean isDeclawed;
 
     @Column(nullable = false)
-    private Byte vocalizationLevel;
+    private Integer vocalizationLevel;
 
     @Column(length = 48)
     private String favoriteTreat;
@@ -29,19 +33,27 @@ public class Cat implements Walkable {
     @JoinColumn(name = "breed_id")
     private CatBreed catBreed;
 
-    public void inheritFromOtherCat(Cat other) {
-        if (other.animal != null)
-            this.animal.inheritFromOtherAnimal(other.animal);
+    public void update(CatUpdateRequest request) {
+        this.isDeclawed = request.getIsDeclawed();
+        this.vocalizationLevel = request.getVocalizationLevel();
+        this.favoriteTreat = request.getFavoriteTreat();
+    }
 
-        if (other.isDeclawed != null)
-            this.isDeclawed = other.isDeclawed;
+    public Cat(Animal animal, Boolean isDeclawed, Integer vocalizationLevel, String favoriteTreat, CatBreed catBreed) {
+        this.animal = animal;
+        this.isDeclawed = isDeclawed;
+        this.vocalizationLevel = vocalizationLevel;
+        this.favoriteTreat = favoriteTreat;
+        this.catBreed = catBreed;
+    }
 
-        if (other.vocalizationLevel != null)
-            this.vocalizationLevel = other.vocalizationLevel;
-
-        this.favoriteTreat = other.favoriteTreat;
-
-        if (other.catBreed != null)
-            this.catBreed = other.catBreed;
+    public static Cat fromCatAddRequest(CatAddRequest request) {
+        return new Cat(
+                null,
+                request.getIsDeclawed(),
+                request.getVocalizationLevel(),
+                request.getFavoriteTreat(),
+                null
+        );
     }
 }
