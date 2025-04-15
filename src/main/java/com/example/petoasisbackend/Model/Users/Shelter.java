@@ -1,14 +1,12 @@
 package com.example.petoasisbackend.Model.Users;
 
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
-import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
-import com.example.petoasisbackend.Request.Shelter.ShelterUpdateRequest;
+import com.example.petoasisbackend.Request.User.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.User.Shelter.ShelterUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity

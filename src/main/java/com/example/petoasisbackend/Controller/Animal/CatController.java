@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Controller.Animal;
 
 import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Model.Animal.AnimalType;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Request.AnimalCatRequest;
 import com.example.petoasisbackend.Service.AnimalService;
@@ -32,7 +33,7 @@ public class CatController {
         try {
             Cat cat = request.getCat();
             Animal corelatedAnimal = animalService.addAnimal(request.getAnimal());
-            corelatedAnimal.setType("Cat");
+            corelatedAnimal.setType(AnimalType.CAT);
             Cat savedCat = catService.add(corelatedAnimal, cat);
             corelatedAnimal.setParentId(savedCat.getCatId());
             return new ResponseEntity<>(corelatedAnimal.getName() + " successfully added!", HttpStatus.OK);

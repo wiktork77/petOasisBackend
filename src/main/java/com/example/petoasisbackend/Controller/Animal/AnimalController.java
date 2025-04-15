@@ -1,7 +1,7 @@
 package com.example.petoasisbackend.Controller.Animal;
 
 
-import com.example.petoasisbackend.Model.Animal.Searchable;
+import com.example.petoasisbackend.Model.Animal.Walkable;
 import com.example.petoasisbackend.Service.AnimalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ public class AnimalController {
     private AnimalService animalService;
 
     @GetMapping("/getAll")
-    public List<Searchable> getAll() {
+    public List<Walkable> getAll() {
         return animalService.getAnimals();
     }
 

@@ -6,13 +6,12 @@ import com.example.petoasisbackend.DTO.User.GSU.*;
 import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.GSU.UserDoesntExistException;
 import com.example.petoasisbackend.Exception.GSU.UserPasswordDoesntMatch;
-import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
-import com.example.petoasisbackend.Mapper.GSUMapper;
+import com.example.petoasisbackend.Mapper.User.GSUMapper;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.GSU.GSUUpdateRequest;
-import com.example.petoasisbackend.Request.GSU.PasswordChangeRequest;
+import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
+import com.example.petoasisbackend.Request.User.GSU.PasswordChangeRequest;
 import com.example.petoasisbackend.Tools.Credentials.Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -72,7 +71,11 @@ public class GSUService {
         return GSUProfilePictureDTO.fromGSU(savedUser);
     }
 
-    public GSUMinimumDTO changePassword(Long id, PasswordChangeRequest request) throws UserPasswordDoesntMatch {
+    public GSUMinimumDTO changePassword(Long id, PasswordChangeRequest request) throws UserPasswordDoesntMatch, UserDoesntExistException {
+        if (!systemUserRepository.existsById(id)) {
+            throw new UserDoesntExistException("Cannot change password of user with id '" + id + "' because it doesn't exist");
+        }
+
         if (!matchesPassword(id, request.getOldPassword())) {
             throw new UserPasswordDoesntMatch("Current password and given password don't match");
         }
@@ -89,7 +92,7 @@ public class GSUService {
 
     public GSUUpdateDTO update(Long id, GSUUpdateRequest request) throws UserDoesntExistException, UserAlreadyExistsException {
         if (!systemUserRepository.existsById(id)) {
-            throw new UserDoesntExistException("Cannot update profile picture of user with id '" + id + "' because it doesn't exist");
+            throw new UserDoesntExistException("Cannot update user with id '" + id + "' because it doesn't exist");
         }
 
         if (systemUserRepository.existsByLogin(request.getLogin())) {

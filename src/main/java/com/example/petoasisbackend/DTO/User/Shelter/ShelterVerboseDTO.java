@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.Shelter;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.GSU.GSUVerboseDTO;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Shelter;
@@ -16,7 +17,7 @@ import java.util.Set;
 @Getter
 public class ShelterVerboseDTO implements ModelDTO<Shelter> {
     private Long shelterId;
-    private GeneralSystemUser generalSystemUser;
+    private GSUVerboseDTO generalSystemUser;
     private String name;
     private String address;
     private String website;
@@ -26,7 +27,7 @@ public class ShelterVerboseDTO implements ModelDTO<Shelter> {
     public static ShelterVerboseDTO fromShelter(Shelter shelter) {
         return new ShelterVerboseDTO(
                 shelter.getShelterId(),
-                shelter.getGeneralSystemUser(),
+                GSUVerboseDTO.fromGSU(shelter.getGeneralSystemUser()),
                 shelter.getName(),
                 shelter.getAddress(),
                 shelter.getWebsite(),

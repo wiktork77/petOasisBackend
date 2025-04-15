@@ -1,9 +1,9 @@
 package com.example.petoasisbackend.Model.Users;
 
 
-import com.example.petoasisbackend.Request.GSU.GSUUpdateRequest;
-import com.example.petoasisbackend.Request.Person.PersonAddRequest;
-import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
+import com.example.petoasisbackend.Request.User.Person.PersonAddRequest;
+import com.example.petoasisbackend.Request.User.Shelter.ShelterAddRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,7 +36,7 @@ public class GeneralSystemUser {
     @Column(length = 128)
     private String pictureUrl;
 
-    private String type;
+    private AccountType type;
 
     private Long parentId;
 
@@ -65,7 +65,7 @@ public class GeneralSystemUser {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.pictureUrl = pictureUrl;
-        this.type = transformAccountType(type);
+        this.type = type;
         this.parentId = parentId;
     }
 
@@ -93,17 +93,4 @@ public class GeneralSystemUser {
         );
     }
 
-    private String transformAccountType(AccountType type) {
-        switch (type) {
-            case PERSON -> {
-                return "Person";
-            }
-            case SHELTER -> {
-                return "Shelter";
-            }
-            default -> {
-                return null;
-            }
-        }
-    }
 }

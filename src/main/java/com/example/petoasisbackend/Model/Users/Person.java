@@ -1,15 +1,15 @@
 package com.example.petoasisbackend.Model.Users;
 
 
-import com.example.petoasisbackend.Request.Person.PersonAddRequest;
-import com.example.petoasisbackend.Request.Person.PersonUpdateRequest;
+import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Request.User.Person.PersonAddRequest;
+import com.example.petoasisbackend.Request.User.Person.PersonUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Data

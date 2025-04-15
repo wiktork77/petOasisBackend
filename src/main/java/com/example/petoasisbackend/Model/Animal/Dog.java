@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Dog implements Searchable {
+public class Dog implements Walkable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long dogId;
@@ -29,19 +29,4 @@ public class Dog implements Searchable {
     @JoinColumn(name = "breed_id")
     private DogBreed dogBreed;
 
-    public void inheritFromOtherDog(Dog other) {
-        if (other.animal != null)
-            this.animal.inheritFromOtherAnimal(other.animal);
-
-        if (other.isMuzzleRequired != null)
-            this.isMuzzleRequired = other.isMuzzleRequired;
-
-        if (other.barkingLevel != null)
-            this.barkingLevel = other.barkingLevel;
-
-        this.favoriteToy = other.favoriteToy;
-
-        if (other.dogBreed != null)
-            this.dogBreed = other.dogBreed;
-    }
 }

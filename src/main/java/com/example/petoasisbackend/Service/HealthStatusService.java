@@ -1,20 +1,20 @@
 package com.example.petoasisbackend.Service;
 
 
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.HealthStatus.HealthStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.HealthStatus.HealthStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DataInitializer.HealthStatusInitializer;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
-import com.example.petoasisbackend.Mapper.HealthStatusMapper;
+import com.example.petoasisbackend.Mapper.Status.HealthStatusMapper;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.HealthStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.HealthStatus.HealthStatusAddRequest;
-import com.example.petoasisbackend.Request.HealthStatus.HealthStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.HealthStatus.HealthStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.HealthStatus.HealthStatusUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

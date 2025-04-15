@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.GSU;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Model.Users.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -17,10 +18,10 @@ public class GSUVerboseDTO implements ModelDTO<GeneralSystemUser> {
     private Boolean isVerified;
     private String phoneNumber;
     private String pictureUrl;
-    private String type;
+    private AccountType type;
     private Long parentId;
 
-    public GSUVerboseDTO(Long systemUserId, String login, Boolean isVerified, String phoneNumber, String pictureUrl, String type, Long parentId) {
+    public GSUVerboseDTO(Long systemUserId, String login, Boolean isVerified, String phoneNumber, String pictureUrl, AccountType type, Long parentId) {
         this.systemUserId = systemUserId;
         this.login = login;
         this.isVerified = isVerified;

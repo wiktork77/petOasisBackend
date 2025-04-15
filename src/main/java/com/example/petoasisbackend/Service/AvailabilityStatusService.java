@@ -1,17 +1,17 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DataInitializer.AvailabilityStatusInitializer;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
-import com.example.petoasisbackend.Mapper.AvailabilityStatusMapper;
+import com.example.petoasisbackend.Mapper.Status.AvailabilityStatusMapper;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Repository.AvailabilityStatusRepository;
-import com.example.petoasisbackend.Request.AvailabilityStatus.AvailabilityStatusAddRequest;
-import com.example.petoasisbackend.Request.AvailabilityStatus.AvailabilityStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

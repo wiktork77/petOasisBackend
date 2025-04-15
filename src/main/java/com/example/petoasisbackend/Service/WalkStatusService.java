@@ -1,22 +1,20 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DataInitializer.WalkStatusInitializer;
 import com.example.petoasisbackend.Exception.WalkStatus.*;
-import com.example.petoasisbackend.Mapper.WalkStatusMapper;
+import com.example.petoasisbackend.Mapper.Status.WalkStatusMapper;
 import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Repository.WalkStatusRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.WalkStatus.WalkStatusAddRequest;
-import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service

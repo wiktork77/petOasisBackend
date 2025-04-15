@@ -8,8 +8,8 @@ import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsExcepti
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.Shelter.ShelterAddRequest;
-import com.example.petoasisbackend.Request.Shelter.ShelterUpdateRequest;
+import com.example.petoasisbackend.Request.User.Shelter.ShelterAddRequest;
+import com.example.petoasisbackend.Request.User.Shelter.ShelterUpdateRequest;
 import com.example.petoasisbackend.Service.ShelterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

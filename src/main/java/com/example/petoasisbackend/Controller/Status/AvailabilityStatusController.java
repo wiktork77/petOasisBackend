@@ -1,15 +1,15 @@
 package com.example.petoasisbackend.Controller.Status;
 
 
-import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.AvailabilityStatus.AvailabilityStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusAlreadyExistsException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
-import com.example.petoasisbackend.Request.AvailabilityStatus.AvailabilityStatusAddRequest;
-import com.example.petoasisbackend.Request.AvailabilityStatus.AvailabilityStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.AvailabilityStatusService;
 import io.swagger.v3.oas.annotations.Operation;

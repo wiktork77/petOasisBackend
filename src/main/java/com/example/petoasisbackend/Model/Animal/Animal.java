@@ -1,20 +1,27 @@
 package com.example.petoasisbackend.Model.Animal;
 
 
+import com.example.petoasisbackend.Model.Descriptor.Gender;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Model.Users.Shelter;
+import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.util.Collections;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Animal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +41,7 @@ public class Animal {
     @Column(nullable = false)
     private Float length;
 
-    private Byte age;
+    private Integer age;
 
     private Boolean isNeutered;
 
@@ -42,7 +49,7 @@ public class Animal {
     private String description;
 
     @Column(length = 1, nullable = false)
-    private String gender;
+    private Gender gender;
 
     @Column(nullable = false)
     private Boolean enjoysPetting;
@@ -67,8 +74,7 @@ public class Animal {
     @OneToMany(mappedBy = "animal", cascade = CascadeType.REMOVE)
     private Set<AnimalComment> animalComment;
 
-
-    private String type;
+    private AnimalType type;
 
     private Long parentId;
 
@@ -76,6 +82,28 @@ public class Animal {
     @JoinColumn(name = "shelter_id")
     private Shelter home;
 
+
+    public Animal(String name, LocalDate birthDate, Float weight, Float height, Float length, Integer age, Boolean isNeutered, String description, Gender gender, Boolean enjoysPetting, Float rating, String pictureURL, HealthStatus healthStatus, AvailabilityStatus availabilityStatus, Set<AnimalBadge> animalBadges, Set<AnimalComment> animalComment, AnimalType type, Long parentId, Shelter home) {
+        this.name = name;
+        this.birthDate = birthDate;
+        this.weight = weight;
+        this.height = height;
+        this.length = length;
+        this.age = age;
+        this.isNeutered = isNeutered;
+        this.description = description;
+        this.gender = gender;
+        this.enjoysPetting = enjoysPetting;
+        this.rating = rating;
+        this.pictureURL = pictureURL;
+        this.healthStatus = healthStatus;
+        this.availabilityStatus = availabilityStatus;
+        this.animalBadges = animalBadges;
+        this.animalComment = animalComment;
+        this.type = type;
+        this.parentId = parentId;
+        this.home = home;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -123,5 +151,29 @@ public class Animal {
         if (other.availabilityStatus != null) {
             this.availabilityStatus = other.availabilityStatus;
         }
+    }
+
+    public static Animal fromDogAddRequest(DogAddRequest request) {
+        return new Animal(
+                request.getName(),
+                request.getBirthDate(),
+                request.getWeight(),
+                request.getHeight(),
+                request.getLength(),
+                Period.between(request.getBirthDate(), LocalDate.now()).getYears(),
+                request.getIsNeutered(),
+                request.getDescription(),
+                request.getGender(),
+                request.getEnjoysPetting(),
+                null,
+                request.getPictureUrl(),
+                request.getHealthStatus(),
+                request.getAvailabilityStatus(),
+                Collections.emptySet(),
+                Collections.emptySet(),
+                AnimalType.DOG,
+                null,
+                null
+        );
     }
 }

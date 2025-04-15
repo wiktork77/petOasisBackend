@@ -1,54 +1,58 @@
 package com.example.petoasisbackend.Service;
 
 
+import com.example.petoasisbackend.DTO.Animal.Dog.DogMinimumDTO;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.Dog.DogDoesntExistException;
+import com.example.petoasisbackend.Mapper.Animal.DogMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Dog;
 import com.example.petoasisbackend.Model.AnimalBreed.DogBreed;
+import com.example.petoasisbackend.Repository.AnimalRepository;
 import com.example.petoasisbackend.Repository.DogBreedRepository;
 import com.example.petoasisbackend.Repository.DogRepository;
+import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
+import com.example.petoasisbackend.Request.DataDetailLevel;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DogService {
     @Autowired
     private DogRepository dogRepository;
     @Autowired
-    private DogBreedRepository dogBreedRepository;
+    private AnimalRepository animalRepository;
 
-    public List<Dog> getDogs() {
-        return dogRepository.findAll();
+    @Autowired
+    private DogMapper dogMapper;
+
+    public List<ModelDTO<Dog>> getDogs(DataDetailLevel level) {
+        List<Dog> dogs = dogRepository.findAll();
+        var mapper = dogMapper.getMapper(level);
+
+        return dogs.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public Dog add(Animal animal, Dog dog) {
-        DogBreed breed = dog.getDogBreed();
-        if (!dogBreedRepository.existsById(breed.getBreedId())) {
-            throw new IllegalArgumentException(breed.getBreedName() + " breed doesnt exist");
-        }
-        dog.setAnimal(animal);
-        dogRepository.save(dog);
-        return dog;
-    }
-
-    public Dog remove(Long id) {
+    public ModelDTO<Dog> getDogById(Long id, DataDetailLevel level) throws DogDoesntExistException {
         if (!dogRepository.existsById(id)) {
-            throw new IllegalArgumentException("Dog with id " + id  + " doesnt exist");
+            throw new DogDoesntExistException("Cannot get dog with id '" + id + "' because it doesn't exist");
         }
-        Dog dog = dogRepository.getReferenceById(id);
-        dogRepository.delete(dog);
-        return dog;
+
+        Dog dog = dogRepository.findById(id).get();
+        var mapper = dogMapper.getMapper(level);
+
+        return mapper.apply(dog);
     }
 
-    public Dog updateDog(Long id, Dog other) {
-        if (!dogRepository.existsById(id)) {
-            throw new IllegalArgumentException("Dog with id " + id + " doesn't exist.");
-        }
-        Dog dog = dogRepository.getReferenceById(id);
-        dog.inheritFromOtherDog(other);
-        dogRepository.save(dog);
-        return dog;
-    }
+//    @Transactional
+//    public DogMinimumDTO addDog(DogAddRequest request) {
+//
+//    }
+
+
 
 }

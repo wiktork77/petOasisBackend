@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Cat implements Searchable {
+public class Cat implements Walkable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long catId;

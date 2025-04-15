@@ -1,12 +1,12 @@
 package com.example.petoasisbackend.Controller.Status;
 
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.WalkStatus.WalkStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusVerboseDTO;
 import com.example.petoasisbackend.Exception.WalkStatus.*;
 import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.WalkStatus.WalkStatusAddRequest;
-import com.example.petoasisbackend.Request.WalkStatus.WalkStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Service.WalkStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

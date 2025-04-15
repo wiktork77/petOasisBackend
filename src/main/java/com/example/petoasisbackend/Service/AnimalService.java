@@ -4,7 +4,7 @@ import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Animal.Dog;
-import com.example.petoasisbackend.Model.Animal.Searchable;
+import com.example.petoasisbackend.Model.Animal.Walkable;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.*;
@@ -34,8 +34,8 @@ public class AnimalService {
         return animalRepository.findById(id).get();
     }
 
-    public List<Searchable> getAnimals() {
-        ArrayList<Searchable> animals = new ArrayList<>();
+    public List<Walkable> getAnimals() {
+        ArrayList<Walkable> animals = new ArrayList<>();
         List<Cat> cats = catRepository.findAll();
         List<Dog> dogs = dogRepository.findAll();
         animals.addAll(cats);

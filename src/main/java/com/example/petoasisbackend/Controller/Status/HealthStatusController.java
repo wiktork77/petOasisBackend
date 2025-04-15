@@ -1,8 +1,8 @@
 package com.example.petoasisbackend.Controller.Status;
 
 
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.HealthStatus.HealthStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.Status.HealthStatus.HealthStatusMinimumDTO;
+import com.example.petoasisbackend.DTO.Status.HealthStatus.HealthStatusVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusCannotBeModifiedException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusAlreadyExistsException;
@@ -10,8 +10,8 @@ import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusCannotBeMo
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Request.DataDetailLevel;
-import com.example.petoasisbackend.Request.HealthStatus.HealthStatusAddRequest;
-import com.example.petoasisbackend.Request.HealthStatus.HealthStatusUpdateRequest;
+import com.example.petoasisbackend.Request.Status.HealthStatus.HealthStatusAddRequest;
+import com.example.petoasisbackend.Request.Status.HealthStatus.HealthStatusUpdateRequest;
 import com.example.petoasisbackend.Service.HealthStatusService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -53,7 +53,7 @@ public class HealthStatusController {
     }
 
 
-    @Operation(summary = "Get health statuses with given id and given detail level")
+    @Operation(summary = "Get health status with given id and given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned health status", content = @Content(

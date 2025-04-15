@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CatBreedRepository extends JpaRepository<CatBreed, Integer> {
     boolean existsByBreedName(String breedName);
-    CatBreed findCatBreedByBreedName(String breedName);
+    CatBreed findByBreedName(String breedName);
 }
