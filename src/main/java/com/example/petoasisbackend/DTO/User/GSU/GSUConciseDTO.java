@@ -13,9 +13,12 @@ import lombok.NoArgsConstructor;
 public class GSUConciseDTO implements ModelDTO<GeneralSystemUser> {
     private Long systemUserId;
 
+    private String pictureUrl;
+
     public static GSUConciseDTO fromGSU(GeneralSystemUser gsu) {
         return new GSUConciseDTO(
-                gsu.getSystemUserId()
+                gsu.getSystemUserId(),
+                gsu.getPictureUrl()
         );
     }
 }

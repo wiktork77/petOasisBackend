@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.Person;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.GSU.GSUMediumDTO;
 import com.example.petoasisbackend.Model.Descriptor.Gender;
 import com.example.petoasisbackend.Model.Users.Person;
 import lombok.AllArgsConstructor;
@@ -17,19 +18,17 @@ public class PersonMediumDTO implements ModelDTO<Person> {
     private String name;
     private String surname;
     private Gender gender;
-    private String pictureUrl;
     private LocalDate birthDate;
-    private String phoneNumber;
 
+    private GSUMediumDTO gsu;
     public static PersonMediumDTO fromPerson(Person person) {
         return new PersonMediumDTO(
                 person.getPersonId(),
                 person.getName(),
                 person.getSurname(),
                 person.getGender(),
-                person.getGeneralSystemUser().getPictureUrl(),
                 person.getBirthDate(),
-                person.getGeneralSystemUser().getPhoneNumber()
+                GSUMediumDTO.fromGSU(person.getGeneralSystemUser())
         );
     }
 }

@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.Person;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.GSU.GSUConciseDTO;
 import com.example.petoasisbackend.Model.Descriptor.Gender;
 import com.example.petoasisbackend.Model.Users.Person;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,8 @@ public class PersonConciseDTO implements ModelDTO<Person> {
     private String name;
     private String surname;
     private Gender gender;
-    private String pictureUrl;
+
+    private GSUConciseDTO gsu;
 
     public static PersonConciseDTO fromPerson(Person person) {
         return new PersonConciseDTO(
@@ -23,7 +25,7 @@ public class PersonConciseDTO implements ModelDTO<Person> {
                 person.getName(),
                 person.getSurname(),
                 person.getGender(),
-                person.getGeneralSystemUser().getPictureUrl()
+                GSUConciseDTO.fromGSU(person.getGeneralSystemUser())
         );
     }
 }

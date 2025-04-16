@@ -16,22 +16,23 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class PersonVerboseDTO implements ModelDTO<Person> {
     private Long personId;
-    private GSUVerboseDTO generalSystemUser;
     private String name;
     private String surname;
     private LocalDate birthDate;
     private Gender gender;
     private String address;
 
+    private GSUVerboseDTO gsu;
+
     public static PersonVerboseDTO fromPerson(Person person) {
         return new PersonVerboseDTO(
                 person.getPersonId(),
-                GSUVerboseDTO.fromGSU(person.getGeneralSystemUser()),
                 person.getName(),
                 person.getSurname(),
                 person.getBirthDate(),
                 person.getGender(),
-                person.getAddress()
+                person.getAddress(),
+                GSUVerboseDTO.fromGSU(person.getGeneralSystemUser())
         );
     }
 }

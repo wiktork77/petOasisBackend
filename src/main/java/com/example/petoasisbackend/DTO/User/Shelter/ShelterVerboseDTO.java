@@ -17,20 +17,21 @@ import java.util.Set;
 @Getter
 public class ShelterVerboseDTO implements ModelDTO<Shelter> {
     private Long shelterId;
-    private GSUVerboseDTO generalSystemUser;
     private String name;
     private String address;
     private String website;
     private Float rating;
 
+    private GSUVerboseDTO generalSystemUser;
+
     public static ShelterVerboseDTO fromShelter(Shelter shelter) {
         return new ShelterVerboseDTO(
                 shelter.getShelterId(),
-                GSUVerboseDTO.fromGSU(shelter.getGeneralSystemUser()),
                 shelter.getName(),
                 shelter.getAddress(),
                 shelter.getWebsite(),
-                shelter.getRating()
+                shelter.getRating(),
+                GSUVerboseDTO.fromGSU(shelter.getGeneralSystemUser())
         );
     }
 }

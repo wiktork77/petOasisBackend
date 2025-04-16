@@ -12,10 +12,14 @@ import lombok.NoArgsConstructor;
 @Getter
 public class GSUMediumDTO implements ModelDTO<GeneralSystemUser> {
     private Long systemUserId;
+    private String pictureUrl;
+    private String phoneNumber;
 
     public static GSUMediumDTO fromGSU(GeneralSystemUser gsu) {
         return new GSUMediumDTO(
-                gsu.getSystemUserId()
+                gsu.getSystemUserId(),
+                gsu.getPictureUrl(),
+                gsu.getPhoneNumber()
         );
     }
 }

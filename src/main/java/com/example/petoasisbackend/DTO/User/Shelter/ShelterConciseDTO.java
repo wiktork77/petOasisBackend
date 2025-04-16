@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.DTO.User.Shelter;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.DTO.User.GSU.GSUConciseDTO;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,7 +15,8 @@ public class ShelterConciseDTO implements ModelDTO<Shelter> {
     private String name;
     private String address;
     private Float rating;
-    private String pictureUrl;
+
+    private GSUConciseDTO gsu;
 
     public static ShelterConciseDTO fromShelter(Shelter shelter) {
         return new ShelterConciseDTO(
@@ -22,7 +24,7 @@ public class ShelterConciseDTO implements ModelDTO<Shelter> {
                 shelter.getName(),
                 shelter.getAddress(),
                 shelter.getRating(),
-                shelter.getGeneralSystemUser().getPictureUrl()
+                GSUConciseDTO.fromGSU(shelter.getGeneralSystemUser())
         );
     }
 }
