@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Cat;
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalConciseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
@@ -14,21 +15,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CatConciseDTO implements ModelDTO<Cat> {
-    private Long dogId;
-    private String name;
-    private String pictureUrl;
-    private Float rating;
-    private Gender gender;
-    private Set<AnimalBadge> animalBadges;
+    private Long catId;
+
+    private AnimalConciseDTO animal;
 
     public static CatConciseDTO fromCat(Cat cat) {
         return new CatConciseDTO(
                 cat.getCatId(),
-                cat.getAnimal().getName(),
-                cat.getAnimal().getPictureURL(),
-                cat.getAnimal().getRating(),
-                cat.getAnimal().getGender(),
-                cat.getAnimal().getAnimalBadges()
+                AnimalConciseDTO.fromAnimal(cat.getAnimal())
         );
     }
 }

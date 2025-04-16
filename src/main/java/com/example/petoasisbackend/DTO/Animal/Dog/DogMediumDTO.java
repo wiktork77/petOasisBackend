@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Dog;
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalMediumDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedNameDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Animal.Dog;
@@ -19,12 +20,8 @@ public class DogMediumDTO implements ModelDTO<Dog> {
     private Boolean isMuzzleRequired;
     private Integer barkingLevel;
     private DogBreedNameDTO dogBreed;
-    private String name;
-    private String pictureUrl;
-    private Float rating;
-    private Gender gender;
-    private Set<AnimalBadge> animalBadges;
 
+    private AnimalMediumDTO animal;
 
     public static DogMediumDTO fromDog(Dog dog) {
         return new DogMediumDTO(
@@ -32,11 +29,7 @@ public class DogMediumDTO implements ModelDTO<Dog> {
                 dog.getIsMuzzleRequired(),
                 dog.getBarkingLevel(),
                 DogBreedNameDTO.fromDogBreed(dog.getDogBreed()),
-                dog.getAnimal().getName(),
-                dog.getAnimal().getPictureURL(),
-                dog.getAnimal().getRating(),
-                dog.getAnimal().getGender(),
-                dog.getAnimal().getAnimalBadges()
+                AnimalMediumDTO.fromAnimal(dog.getAnimal())
         );
     }
 }

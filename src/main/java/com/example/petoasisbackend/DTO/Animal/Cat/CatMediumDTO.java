@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Cat;
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalMediumDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Cat.CatBreedNameDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedNameDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
@@ -20,23 +21,15 @@ public class CatMediumDTO implements ModelDTO<Cat> {
     private Boolean isDeclawed;
     private Integer vocalizationLevel;
     private CatBreedNameDTO catBreed;
-    private String name;
-    private String pictureUrl;
-    private Float rating;
-    private Gender gender;
-    private Set<AnimalBadge> animalBadges;
 
+    private AnimalMediumDTO animal;
     public static CatMediumDTO fromCat(Cat cat) {
         return new CatMediumDTO(
                 cat.getCatId(),
                 cat.getIsDeclawed(),
                 cat.getVocalizationLevel(),
                 CatBreedNameDTO.fromCatBreed(cat.getCatBreed()),
-                cat.getAnimal().getName(),
-                cat.getAnimal().getPictureURL(),
-                cat.getAnimal().getRating(),
-                cat.getAnimal().getGender(),
-                cat.getAnimal().getAnimalBadges()
+                AnimalMediumDTO.fromAnimal(cat.getAnimal())
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Dog;
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Dog;
@@ -13,20 +14,21 @@ import lombok.NoArgsConstructor;
 @Getter
 public class DogVerboseDTO implements ModelDTO<Dog> {
     private Long dogId;
-    private Animal animal;
     private Boolean isMuzzleRequired;
     private Integer barkingLevel;
     private String favoriteToy;
     private DogBreed dogBreed;
 
+    private AnimalVerboseDTO animal;
+
     public static DogVerboseDTO fromDog(Dog dog) {
         return new DogVerboseDTO(
                 dog.getDogId(),
-                dog.getAnimal(),
                 dog.getIsMuzzleRequired(),
                 dog.getBarkingLevel(),
                 dog.getFavoriteToy(),
-                dog.getDogBreed()
+                dog.getDogBreed(),
+                AnimalVerboseDTO.fromAnimal(dog.getAnimal())
         );
     }
 }

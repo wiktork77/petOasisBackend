@@ -2,39 +2,21 @@ package com.example.petoasisbackend.DTO.Activity.Walk;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Activity.Walk;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class WalkConciseDTO implements ModelDTO<Walk> {
-    private Long animalId;
-
-    private Long personId;
-
-    private Long shelterId;
-
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
-
-    private WalkConciseDTO(Long animalId, Long personId, Long shelterId, LocalDateTime startTime, LocalDateTime endTime) {
-        this.animalId = animalId;
-        this.personId = personId;
-        this.shelterId = shelterId;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
-
-    public WalkConciseDTO() {}
+    private Long walkId;
 
     public static WalkConciseDTO fromWalk(Walk walk) {
         return new WalkConciseDTO(
-                walk.getPupil().getAnimalId(),
-                walk.getCaretaker().getPersonId(),
-                walk.getSupervisor().getShelterId(),
-                walk.getStartTime(),
-                walk.getEndTime()
+                walk.getWalkId()
         );
     }
 }
