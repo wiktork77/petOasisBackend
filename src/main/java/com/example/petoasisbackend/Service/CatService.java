@@ -132,17 +132,17 @@ public class CatService {
         }
 
         if (!catBreedRepository.existsByBreedName(request.getBreedName())) {
-            throw new CatBreedDoesntExist("Cannot change breed of cat with id '" + id + "' to '" + request.getBreedName() + "' because it doesn't exist");
+            throw new CatBreedDoesntExist("Cannot change breed of cat with id '" + id + "' to '" + request.getBreedName() + "' because that breed doesn't exist");
         }
 
         Cat cat = catRepository.findById(id).get();
 
         CatBreed breed = catBreedRepository.findByBreedName(request.getBreedName());
-
         cat.setCatBreed(breed);
-        Cat savedCat = catRepository.save(cat);
 
-        return CatChangeBreedDTO.fromCat(savedCat);
+        catRepository.save(cat);
+
+        return CatChangeBreedDTO.fromCat(cat);
     }
 
     public void delete(Long id) throws CatDoesntExistException {

@@ -1,10 +1,12 @@
 package com.example.petoasisbackend.Service;
 
 
+import com.example.petoasisbackend.DTO.Animal.Dog.DogChangeBreedDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogMinimumDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogUpdateDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.Breed.Cat.CatBreedDoesntExist;
 import com.example.petoasisbackend.Exception.Breed.Dog.DogBreedDoesntExist;
 import com.example.petoasisbackend.Exception.Dog.DogDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
@@ -19,6 +21,7 @@ import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Repository.*;
 import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
+import com.example.petoasisbackend.Request.Animal.Dog.DogChangeBreedRequest;
 import com.example.petoasisbackend.Request.Animal.Dog.DogUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import jakarta.transaction.Transactional;
@@ -121,6 +124,25 @@ public class DogService {
         Dog savedDog = dogRepository.save(dog);
 
         return DogUpdateDTO.fromDog(savedDog);
+    }
+
+    public DogChangeBreedDTO changeBreed(Long id, DogChangeBreedRequest request) throws DogDoesntExistException, CatBreedDoesntExist {
+        if (!dogRepository.existsById(id)) {
+            throw new DogDoesntExistException("Cannot change breed of the dog with id '" + id + "' because it doesn't exist");
+        }
+
+        if (!dogBreedRepository.existsByBreedName(request.getBreedName())) {
+            throw new CatBreedDoesntExist("Cannot change breed of the dog with id '" + id + "' to '" + request.getBreedName() + "' because that breed doesn't exist");
+        }
+
+        Dog dog = dogRepository.findById(id).get();
+
+        DogBreed breed = dogBreedRepository.findByBreedName(request.getBreedName());
+        dog.setDogBreed(breed);
+
+        dogRepository.save(dog);
+
+        return DogChangeBreedDTO.fromDog(dog);
     }
 
     public void delete(Long id) throws DogDoesntExistException {

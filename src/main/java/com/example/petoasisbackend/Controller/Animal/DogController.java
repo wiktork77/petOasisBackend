@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.Controller.Animal;
 
+import com.example.petoasisbackend.DTO.Animal.Dog.DogChangeBreedDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogMinimumDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogUpdateDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogVerboseDTO;
@@ -7,6 +8,7 @@ import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedMinimumDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.AvailabilityStatus.AvailabilityStatusDoesntExistException;
+import com.example.petoasisbackend.Exception.Breed.Cat.CatBreedDoesntExist;
 import com.example.petoasisbackend.Exception.Breed.Dog.DogBreedDoesntExist;
 import com.example.petoasisbackend.Exception.Dog.DogDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
@@ -60,7 +62,7 @@ public class DogController {
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned a dog", content = @Content(
                             mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = DogVerboseDTO.class))
+                            schema = @Schema(implementation = DogVerboseDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "Dog not found", content = @Content(
                             mediaType = "text/plain",
@@ -170,6 +172,7 @@ public class DogController {
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
+                            mediaType = "application/json",
                             schema = @Schema(implementation = DogUpdateDTO.class)
                     )),
                     @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
@@ -213,10 +216,48 @@ public class DogController {
 
 
 
-    // TODO
+    @Operation(summary = "Change the breed of an existing dog")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = DogChangeBreedDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"breedName\": \"must not be blank\"\n" +
+                                                    "}"
+
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Dog or breed not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Dog not found",
+                                            value = "Cannot change breed of dog with id '552' because it doesn't exist"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Cat breed not found",
+                                            value = "Cannot change breed of dog with id '24' to 'Doggo' because that breed doesn't exist"
+                                    ),
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @PatchMapping("/{id}/breed")
     public ResponseEntity<Object> updateBreed(@PathVariable Long id, @RequestBody @Valid DogChangeBreedRequest request) {
-        return null;
+        try {
+            DogChangeBreedDTO response = dogService.changeBreed(id, request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (DogDoesntExistException | CatBreedDoesntExist e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
     @Operation(summary = "Delete an existing dog")
@@ -225,7 +266,7 @@ public class DogController {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
                             mediaType = "text/plain"
                     )),
-                    @ApiResponse(responseCode = "404", description = "Successfully deleted", content = @Content(
+                    @ApiResponse(responseCode = "404", description = "Dog not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
