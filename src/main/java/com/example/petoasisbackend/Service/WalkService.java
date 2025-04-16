@@ -1,13 +1,16 @@
 package com.example.petoasisbackend.Service;
 
-
-import com.example.petoasisbackend.DTO.Activity.Walk.*;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithStatusDTO;
+import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithTimeDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DataInitializer.WalkStatusInitializer;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.*;
+import com.example.petoasisbackend.Exception.Walk.WalkDoesntExistException;
+import com.example.petoasisbackend.Exception.Walk.WalkInvalidStatusChangeException;
+import com.example.petoasisbackend.Exception.Walk.WalkTimeIntersectException;
 import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Mapper.Activity.Walk.WalkMapper;
 import com.example.petoasisbackend.Model.Activity.Walk;
@@ -16,18 +19,18 @@ import com.example.petoasisbackend.Model.Status.WalkStatus;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Repository.*;
-import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Activity.Walk.WalkAddRequest;
+import com.example.petoasisbackend.Request.Activity.Walk.WalkTimeUpdateRequest;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusUpdateRequest;
-import com.example.petoasisbackend.Tools.Time.Period;
-import com.example.petoasisbackend.Validation.Time.TimeValidator;
+import com.example.petoasisbackend.Tools.Time.TimeInterval;
+import com.example.petoasisbackend.Tools.Time.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,26 +38,27 @@ public class WalkService {
     @Autowired
     private WalkRepository walkRepository;
     @Autowired
-    private WalkStatusRepository walkStatusRepository;
-    @Autowired
     private AnimalRepository animalRepository;
-
-    @Autowired
-    private WalkMapper walkMapper;
     @Autowired
     private PersonRepository personRepository;
     @Autowired
     private ShelterRepository shelterRepository;
 
 
-    public List<ModelDTO<Walk>> getWalks(DataDetailLevel level) {
-        List<Walk> data = walkRepository.findAll();
+    @Autowired
+    private WalkMapper walkMapper;
+    @Autowired
+    private WalkStatusRepository walkStatusRepository;
+
+
+    public List<ModelDTO<Walk>> get(DataDetailLevel level) {
+        List<Walk> walks = walkRepository.findAll();
         var mapper = walkMapper.getMapper(level);
 
-        return data.stream().map(mapper).collect(Collectors.toList());
+        return walks.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public ModelDTO<Walk> getWalkById(Long id, DataDetailLevel level) throws WalkDoesntExistException {
+    public ModelDTO<Walk> getById(Long id, DataDetailLevel level) throws WalkDoesntExistException {
         if (!walkRepository.existsById(id)) {
             throw new WalkDoesntExistException("Cannot get walk with id '" + id + "' because it doesn't exist");
         }
@@ -65,29 +69,33 @@ public class WalkService {
         return mapper.apply(walk);
     }
 
-    public WalkMinimumDTO addWalk(WalkAddRequest request) throws AnimalDoesntExistException, WalkTimeIntersectException, PersonDoesntExistException, ShelterDoesntExistException {
+    public WalkMinimumDTO add(WalkAddRequest request) throws AnimalDoesntExistException, PersonDoesntExistException, ShelterDoesntExistException, WalkTimeIntersectException {
         if (!animalRepository.existsById(request.getAnimalId())) {
-            throw new AnimalDoesntExistException("Cannot get animal with id '" + request.getAnimalId() + "'" + " because it doesn't exist");
+            throw new AnimalDoesntExistException("Cannot get animal with id '" + request.getAnimalId() + "' because it doesn't exist");
         }
-
-        if (!checkIfAnimalIsAvailableForWalk(request.getAnimalId(), request.getStartTime(), request.getEndTime())) {
-            throw new WalkTimeIntersectException("Cannot add a walk with animal with id '" + request.getAnimalId() + "' because given time intersects with other walk(s).");
-        }
-        Animal pupil = animalRepository.getReferenceById(request.getAnimalId());
 
         if (!personRepository.existsById(request.getPersonId())) {
-            throw new PersonDoesntExistException("Cannot get user with id '" + request.getPersonId() + "' because it doesn't exist!");
+            throw new PersonDoesntExistException("Cannot get person with id '" + request.getPersonId() + "' because it doesn't exist!");
         }
-        Person caretaker = personRepository.getReferenceById(request.getPersonId());
 
         if (!shelterRepository.existsByShelterId(request.getShelterId())) {
-            throw new ShelterDoesntExistException(
-                    "Cannot get shelter with id '" + request.getShelterId() + "' because it doesn't exist"
-            );
+            throw new ShelterDoesntExistException("Cannot get shelter with id '" + request.getShelterId() + "' because it doesn't exist");
         }
-        Shelter supervisor = shelterRepository.getReferenceById(request.getShelterId());
+        TimeInterval walkInterval = new TimeInterval(request.getStartTime(), request.getEndTime());
 
-        Walk newWalk = new Walk(
+        if (!isPersonCapableOfWalk(request.getPersonId(), walkInterval)) {
+            throw new WalkTimeIntersectException("Cannot add walk because the person has another activity that intersects with given time period");
+        }
+
+        if (!isAnimalCapableOfWalk(request.getAnimalId(), walkInterval)) {
+            throw new WalkTimeIntersectException("Cannot add walk because the animal has another activity that intersects with given time period");
+        }
+
+        Animal pupil = animalRepository.findById(request.getAnimalId()).get();
+        Person caretaker = personRepository.findById(request.getPersonId()).get();
+        Shelter supervisor = shelterRepository.findById(request.getShelterId()).get();
+
+        Walk walk = new Walk(
                 pupil,
                 caretaker,
                 supervisor,
@@ -96,114 +104,105 @@ public class WalkService {
                 walkStatusRepository.getWalkStatusByStatus("Pending")
         );
 
-        Walk savedWalk = walkRepository.save(newWalk);
+        Walk savedWalk = walkRepository.save(walk);
 
         return WalkMinimumDTO.fromWalk(savedWalk);
     }
 
-    public void removeWalk(Long id) throws WalkDoesntExistException, WalkCannotBeDeletedException {
-        List<String> allowedStatuses = List.of("Finished", "Cancelled");
-        if (!walkRepository.existsById(id)) {
-            throw new WalkDoesntExistException("Cannot delete walk with id '" + id + "'. It doesn't exist.");
-        }
-
-        Walk walk = walkRepository.getReferenceById(id);
-
-        if (!allowedStatuses.contains(walk.getWalkStatus().getStatus())) {
-            throw new WalkCannotBeDeletedException("Cannot delete walk with id '" + id + "'. Can only delete walks with statuses 'Finished' and 'Cancelled'. Consider changing the status first");
-        }
-
-        walkRepository.delete(walk);
-    }
-
-    public WalkWithStatusDTO updateWalkStatus(Long walkId, WalkStatusUpdateRequest request) throws WalkStatusDoesntExistException, WalkDoesntExistException, WalkInvalidStatusChangeException {
-        if (!walkStatusRepository.existsByStatus(request.getStatus())) {
-            throw new WalkStatusDoesntExistException(
-                    "Cannot update walk status of walk with id '" + walkId + "' because status '" +
-                            request.getStatus() + "' doesn't exist"
-            );
-        }
-
+    public WalkWithStatusDTO updateStatus(Long walkId, WalkStatusUpdateRequest request) throws WalkDoesntExistException, WalkStatusDoesntExistException, WalkInvalidStatusChangeException {
         if (!walkRepository.existsById(walkId)) {
-            throw new WalkDoesntExistException(
-                    "Cannot update walk status of walk with id '" + walkId + "' because walk with this id doesn't exist"
-            );
+            throw new WalkDoesntExistException("Cannot update walk status of walk with id '" + walkId + "' because walk with this id doesn't exist");
         }
 
-        Walk walk = walkRepository.findById(walkId).get();
-        WalkStatus walkStatus = walkStatusRepository.getWalkStatusByStatus(request.getStatus());
+        if (!walkStatusRepository.existsByStatus(request.getStatus())) {
+            throw new WalkStatusDoesntExistException("Cannot update walk status of walk with id '" + walkId + "' because status '" + request.getStatus() + "' doesn't exist");
+        }
 
-        if (!isStatusChangeValid(walk.getWalkStatus(), walkStatus)) {
+        if (!isStatusChangeValid(walkId, request)) {
             throw new WalkInvalidStatusChangeException("Invalid walk status change");
         }
 
-        walk.setWalkStatus(walkStatus);
-        Walk savedWalk = walkRepository.save(walk);
+        WalkStatus status = walkStatusRepository.getWalkStatusByStatus(request.getStatus());
 
+        Walk walk = walkRepository.findById(walkId).get();
+        walk.setWalkStatus(status);
+        walkRepository.save(walk);
 
-        return WalkWithStatusDTO.fromWalk(savedWalk);
+        return WalkWithStatusDTO.fromWalk(walk);
     }
 
-    public WalkWithTimeDTO updateWalkTime(Long walkId, Period period) throws WalkInvalidTimePeriodException, WalkDoesntExistException, WalkCannotBeModifiedException {
-        TimeValidator validator = new TimeValidator();
-        if (!validator.isPeriodValid(period)) {
-            throw new WalkInvalidTimePeriodException("Cannot update period of walk with id '" + walkId + "' because the time period is invalid, endTime must be after startTime");
-        }
-        if (!walkRepository.existsById(walkId)) {
+    public WalkWithTimeDTO updateTime(Long walkId, WalkTimeUpdateRequest request) throws WalkTimeIntersectException, WalkDoesntExistException {
+        if (walkRepository.existsById(walkId)) {
             throw new WalkDoesntExistException("Cannot update period of walk with id '" + walkId + "' because walk with this id doesn't exist");
         }
 
         Walk walk = walkRepository.findById(walkId).get();
 
-        if (!walk.getWalkStatus().getStatus().equals("Pending")) {
-            throw new WalkCannotBeModifiedException("Cannot update period of walk with id '" + walkId + "' because the status is different from 'Pending'");
+        TimeInterval interval = new TimeInterval(request.getStartTime(), request.getEndTime());
+
+        if (!isPersonCapableOfWalk(walk.getCaretaker().getPersonId(), interval)) {
+            throw new WalkTimeIntersectException("Cannot update walk time because the caretaker has another activity that intersects with given time period");
         }
 
-        walk.setStartTime(period.getStart());
-        walk.setEndTime(period.getFinish());
+        if (!isAnimalCapableOfWalk(walk.getPupil().getAnimalId(), interval)) {
+            throw new WalkTimeIntersectException("Cannot update walk time because the animal has another activity that intersects with given time period");
+        }
 
-        Walk savedWalk = walkRepository.save(walk);
 
-        return WalkWithTimeDTO.fromWalk(savedWalk);
+        return null;
+    }
+
+    public void deleteWalk(Long walkId) throws WalkDoesntExistException {
+        if (!walkRepository.existsById(walkId)) {
+            throw new WalkDoesntExistException("Cannot get walk with id '" + walkId + "' because it doesn't exist");
+        }
     }
 
 
+    private boolean isAnimalCapableOfWalk(Long animalId, TimeInterval requestedInterval) {
+        List<Walk> walks = walkRepository.getWalksByPupil_AnimalId(animalId);
 
+        return isWalkPossible(requestedInterval, walks);
+    }
 
-    public Boolean checkIfAnimalIsAvailableForWalk(Long animalId, LocalDateTime start, LocalDateTime end) {
+    private boolean isPersonCapableOfWalk(Long personId, TimeInterval requestedInterval) {
+        List<Walk> walks = walkRepository.getWalksByCaretaker_PersonId(personId);
 
-        TimeValidator parser = new TimeValidator();
-        Period wantedWalkPeriod = new Period(start, end);
+        return isWalkPossible(requestedInterval, walks);
+    }
 
-        List<Walk> walks = walkRepository.findAll();
-
+    private boolean isWalkPossible(TimeInterval requestedInterval, List<Walk> walks) {
         for (Walk w : walks) {
-            if (w.getPupil().getAnimalId().equals(animalId)) {
-                Period walkPeriod = new Period(w.getStartTime(), w.getEndTime());
-                if (parser.doPeriodsIntersect(wantedWalkPeriod, walkPeriod)) {
-                    return true;
+            if (isWalkActiveOrPlanned(w)) {
+                TimeInterval walkInterval = new TimeInterval(w.getStartTime(), w.getEndTime());
+                if (TimeUtils.doTimeIntervalsIntersect(walkInterval, requestedInterval)) {
+                    return false;
                 }
             }
         }
-        return false;
+        return true;
     }
 
-    private boolean isStatusChangeValid(WalkStatus current, WalkStatus request) {
-        Map<String, List<String >> possibleChanges = new HashMap<>();
+    private boolean isWalkActiveOrPlanned(Walk w) {
+        return !w.getWalkStatus().getStatus().equals("Cancelled")
+                && !w.getWalkStatus().getStatus().equals("Finished");
+    }
+
+    private boolean isStatusChangeValid(Long walkId, WalkStatusUpdateRequest request) {
+        HashMap<String, List<String>> possibleChanges = new HashMap<>();
         List<String> coreStatuses = WalkStatusInitializer.coreStatuses;
 
         possibleChanges.put(coreStatuses.get(0), List.of(coreStatuses.get(1), coreStatuses.get(3)));
         possibleChanges.put(coreStatuses.get(1), List.of(coreStatuses.get(2)));
-        possibleChanges.put(coreStatuses.get(2), List.of());
-        possibleChanges.put(coreStatuses.get(3), List.of());
+        possibleChanges.put(coreStatuses.get(2), Collections.emptyList());
+        possibleChanges.put(coreStatuses.get(3), Collections.emptyList());
 
-        if (coreStatuses.contains(current.getStatus())) {
-            if (!possibleChanges.get(current.getStatus()).contains(request.getStatus())) {
-                return false;
-            }
-        };
+        Walk walk = walkRepository.findById(walkId).get();
 
-        return true;
+        if (!possibleChanges.containsKey(walk.getWalkStatus().getStatus())) {
+            return true;
+        }
+
+        return possibleChanges.get(walk.getWalkStatus().getStatus()).contains(request.getStatus());
     }
-
 }

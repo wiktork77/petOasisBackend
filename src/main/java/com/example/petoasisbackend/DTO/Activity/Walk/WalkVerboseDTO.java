@@ -1,7 +1,10 @@
 package com.example.petoasisbackend.DTO.Activity.Walk;
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusVerboseDTO;
+import com.example.petoasisbackend.DTO.User.Person.PersonVerboseDTO;
+import com.example.petoasisbackend.DTO.User.Shelter.ShelterVerboseDTO;
 import com.example.petoasisbackend.Model.Activity.Walk;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Status.WalkStatus;
@@ -19,9 +22,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WalkVerboseDTO implements ModelDTO<Walk> {
     private Long walkId;
-    private Animal pupil;
-    private Person caretaker;
-    private Shelter supervisor;
+    private AnimalVerboseDTO pupil;
+    private PersonVerboseDTO caretaker;
+    private ShelterVerboseDTO supervisor;
     private WalkStatusVerboseDTO walkStatus;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -29,9 +32,9 @@ public class WalkVerboseDTO implements ModelDTO<Walk> {
     public static WalkVerboseDTO fromWalk(Walk walk) {
         return new WalkVerboseDTO(
                 walk.getWalkId(),
-                walk.getPupil(),
-                walk.getCaretaker(),
-                walk.getSupervisor(),
+                AnimalVerboseDTO.fromAnimal(walk.getPupil()),
+                PersonVerboseDTO.fromPerson(walk.getCaretaker()),
+                ShelterVerboseDTO.fromShelter(walk.getSupervisor()),
                 WalkStatusVerboseDTO.fromWalkStatus(walk.getWalkStatus()),
                 walk.getStartTime(),
                 walk.getEndTime()

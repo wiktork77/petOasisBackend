@@ -4,17 +4,12 @@ package com.example.petoasisbackend.Controller.Activity;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkMinimumDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithStatusDTO;
 import com.example.petoasisbackend.DTO.Activity.Walk.WalkWithTimeDTO;
-import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
-import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
-import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
-import com.example.petoasisbackend.Exception.Walk.*;
-import com.example.petoasisbackend.Exception.WalkStatus.WalkStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Activity.Walk;
+import com.example.petoasisbackend.Request.Activity.Walk.WalkTimeUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Activity.Walk.WalkAddRequest;
 import com.example.petoasisbackend.Request.Status.WalkStatus.WalkStatusUpdateRequest;
 import com.example.petoasisbackend.Service.*;
-import com.example.petoasisbackend.Tools.Time.Period;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,7 +19,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +42,7 @@ public class WalkController {
     )
     @GetMapping("/")
     public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) {
-        return new ResponseEntity<>(walkService.getWalks(level), HttpStatus.OK);
+        return null;
     }
 
 
@@ -76,11 +70,7 @@ public class WalkController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<Object> getWalk(@PathVariable Long id, DataDetailLevel level) {
-        try {
-            return new ResponseEntity<>(walkService.getWalkById(id, level), HttpStatus.OK);
-        } catch (WalkDoesntExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        return null;
     }
 
 
@@ -95,6 +85,7 @@ public class WalkController {
                             mediaType = "application/json",
                             examples = {
                                     @ExampleObject(
+                                            name = "Invalid request data",
                                             value = "{\n" +
                                                     "  \"animalId\": \"must not be blank\",\n" +
                                                     "  \"personId\": \"must not be blank\",\n" +
@@ -103,6 +94,12 @@ public class WalkController {
                                                     "  \"endTime\": \"must not be blank\"\n" +
                                                     "}"
                                     ),
+                                    @ExampleObject(
+                                            name = "Invalid date interval",
+                                            value = "{\n" +
+                                                    "  \"general\": \"endTime must be after startTime\"\n" +
+                                                    "}"
+                                    )
                             }
                     )),
                     @ApiResponse(responseCode = "404", description = "One of necessary walk parts not found (animal, person or shelter)", content = @Content(
@@ -114,7 +111,7 @@ public class WalkController {
                                     ),
                                     @ExampleObject(
                                             name = "Person doesn't exist",
-                                            value = "Cannot get user with id '81' because it doesn't exist!"
+                                            value = "Cannot get person with id '81' because it doesn't exist!"
                                     ),
                                     @ExampleObject(
                                             name = "Shelter doesn't exist",
@@ -135,14 +132,7 @@ public class WalkController {
     )
     @PostMapping("/add")
     public ResponseEntity<Object> add(@RequestBody @Valid WalkAddRequest request) {
-        try {
-            WalkMinimumDTO addedWalk = walkService.addWalk(request);
-            return new ResponseEntity<>(addedWalk, HttpStatus.CREATED);
-        } catch (AnimalDoesntExistException | PersonDoesntExistException | ShelterDoesntExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (WalkTimeIntersectException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-        }
+        return null;
     }
 
 
@@ -173,14 +163,7 @@ public class WalkController {
     )
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> removeWalk(@PathVariable Long id) {
-        try {
-            walkService.removeWalk(id);
-            return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
-        } catch (WalkCannotBeDeletedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        } catch (WalkDoesntExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        return null;
     }
 
 
@@ -223,16 +206,9 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PatchMapping("/update/status/{walkId}")
+    @PatchMapping("/status/{walkId}")
     public ResponseEntity<Object> updateWalkStatus(@PathVariable Long walkId, @RequestBody @Valid WalkStatusUpdateRequest request) {
-        try {
-            WalkWithStatusDTO walk = walkService.updateWalkStatus(walkId, request);
-            return new ResponseEntity<>(walk, HttpStatus.OK);
-        } catch (WalkInvalidStatusChangeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        } catch (WalkStatusDoesntExistException | WalkDoesntExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+        return null;
     }
 
     @Operation(summary = "Change the time period of a particular walk with 'Pending' status.")
@@ -243,11 +219,19 @@ public class WalkController {
                             schema = @Schema(implementation = WalkWithTimeDTO.class)
                     )),
                     @ApiResponse(responseCode = "400", description = "Invalid time period", content = @Content(
-                            mediaType = "text/plain",
                             examples = {
                                     @ExampleObject(
+                                            name = "invalid period",
                                             value = "Cannot update period of walk with id '92' because the time period is invalid, endTime must be after startTime"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Invalid request data",
+                                            value = "{\n" +
+                                                    "  \"start\": \"must not be blank\",\n" +
+                                                    "  \"finish\": \"must not be blank\"\n" +
+                                                    "}"
                                     )
+
                             }
                     )),
                     @ApiResponse(responseCode = "403", description = "Walk with this status cannot have time modified", content = @Content(
@@ -269,18 +253,9 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PatchMapping("/update/time/{walkId}")
-    public ResponseEntity<Object> updateWalkTimes(@PathVariable Long walkId, @RequestBody @Valid Period period) {
-        try {
-            WalkWithTimeDTO walk = walkService.updateWalkTime(walkId, period);
-            return new ResponseEntity<>(walk, HttpStatus.OK);
-        } catch (WalkInvalidTimePeriodException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (WalkCannotBeModifiedException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
-        } catch (WalkDoesntExistException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
+    @PatchMapping("/time/{walkId}")
+    public ResponseEntity<Object> updateWalkTimes(@PathVariable Long walkId, @RequestBody @Valid WalkTimeUpdateRequest request) {
+        return null;
     }
 
 }

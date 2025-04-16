@@ -13,10 +13,14 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class WalkConciseDTO implements ModelDTO<Walk> {
     private Long walkId;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public static WalkConciseDTO fromWalk(Walk walk) {
         return new WalkConciseDTO(
-                walk.getWalkId()
+                walk.getWalkId(),
+                walk.getStartTime(),
+                walk.getEndTime()
         );
     }
 }
