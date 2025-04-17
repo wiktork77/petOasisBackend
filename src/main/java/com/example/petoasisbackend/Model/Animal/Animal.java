@@ -8,6 +8,7 @@ import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.Animal.AnimalAddRequest;
+import com.example.petoasisbackend.Request.Animal.AnimalUpdateRequest;
 import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -105,6 +106,18 @@ public class Animal {
         this.home = home;
     }
 
+    public void update(AnimalUpdateRequest request) {
+        this.name = request.getName();
+        this.weight = request.getWeight();
+        this.height = request.getHeight();
+        this.length = request.getLength();
+        this.dateOfBirth = request.getDateOfBirth();
+        this.isNeutered = request.getIsNeutered();
+        this.gender = request.getGender();
+        this.enjoysPetting = request.getEnjoysPetting();
+        this.description = request.getDescription();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -138,7 +151,6 @@ public class Animal {
                 null,
                 null,
                 null
-
         );
     }
 }

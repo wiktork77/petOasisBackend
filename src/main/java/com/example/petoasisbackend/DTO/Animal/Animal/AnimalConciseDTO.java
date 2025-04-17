@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Animal;
 
+import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.Gender;
@@ -12,7 +13,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnimalConciseDTO {
+public class AnimalConciseDTO implements ModelDTO<Animal> {
     private Long animalId;
     private String name;
     private String pictureUrl;

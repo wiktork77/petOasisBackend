@@ -1,5 +1,6 @@
 package com.example.petoasisbackend.DTO.Animal.Animal;
 
+import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusNameDTO;
 import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusVerboseDTO;
 import com.example.petoasisbackend.Model.Animal.Animal;
@@ -15,7 +16,7 @@ import java.util.Set;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AnimalMediumDTO {
+public class AnimalMediumDTO implements ModelDTO<Animal> {
     private Long animalId;
     private String name;
     private String pictureUrl;
