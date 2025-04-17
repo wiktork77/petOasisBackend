@@ -30,7 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/animal")
+@RequestMapping("/animals")
 public class AnimalController {
     @Autowired
     private AnimalService animalService;
@@ -45,7 +45,7 @@ public class AnimalController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> get(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Animal>> animals = animalService.get(level);
         return new ResponseEntity<>(animals, HttpStatus.OK);

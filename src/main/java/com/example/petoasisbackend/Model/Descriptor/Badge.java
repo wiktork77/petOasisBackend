@@ -1,6 +1,7 @@
 package com.example.petoasisbackend.Model.Descriptor;
 
 
+import com.example.petoasisbackend.Model.Animal.Animal;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
 
 @Entity
 @Data
@@ -17,12 +19,13 @@ public class Badge {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer badgeId;
 
-    @Column(length = 64)
+    @Column(length = 64, unique = true)
     private String badgeName;
 
     @JsonIgnore
     @OneToMany(mappedBy = "badge", cascade = CascadeType.REMOVE)
     private Set<AnimalBadge> badgeAnimals;
+
 
     @Override
     public boolean equals(Object o) {

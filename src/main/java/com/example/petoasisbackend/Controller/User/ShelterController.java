@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/shelter")
+@RequestMapping("/shelters")
 public class ShelterController {
     @Autowired
     private ShelterService shelterService;
@@ -43,7 +43,7 @@ public class ShelterController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Shelter>> shelters = shelterService.getShelters(level);
         return new ResponseEntity<>(shelters, HttpStatus.OK);

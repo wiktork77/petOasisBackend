@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/walk")
+@RequestMapping("/walks")
 public class WalkController {
     @Autowired
     private WalkService walkService;
@@ -52,7 +52,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAllWalks(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Walk>> walks = walkService.get(level);
         return new ResponseEntity<>(walks, HttpStatus.OK);

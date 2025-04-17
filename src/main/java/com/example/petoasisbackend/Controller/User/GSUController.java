@@ -42,7 +42,7 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<GeneralSystemUser>> users = gsuService.getAll(level);
         return new ResponseEntity<>(users, HttpStatus.OK);

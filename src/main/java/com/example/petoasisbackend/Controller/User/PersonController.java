@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/persons")
 public class PersonController {
     @Autowired
     private PersonService personService;
@@ -43,7 +43,7 @@ public class PersonController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Person>> people = personService.getPeople(level);
         return new ResponseEntity<>(people, HttpStatus.OK);

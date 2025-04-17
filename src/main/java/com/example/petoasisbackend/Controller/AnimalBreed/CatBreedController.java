@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/breed/cat")
+@RequestMapping("/breeds/cats")
 public class CatBreedController {
     @Autowired
     private CatBreedService catBreedService;
@@ -47,7 +47,7 @@ public class CatBreedController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<CatBreed>> breeds = catBreedService.getAll(level);
         return new ResponseEntity<>(breeds, HttpStatus.OK);

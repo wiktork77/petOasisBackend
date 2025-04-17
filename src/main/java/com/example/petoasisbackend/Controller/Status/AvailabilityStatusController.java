@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/status/availability")
+@RequestMapping("/statuses/availability")
 public class AvailabilityStatusController {
     @Autowired
     private AvailabilityStatusService availabilityStatusService;
@@ -41,7 +41,7 @@ public class AvailabilityStatusController {
             )),
             @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
     })
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<AvailabilityStatus>> statuses = availabilityStatusService.getAvailabilityStatuses(level);
         return new ResponseEntity<>(statuses, HttpStatus.OK);

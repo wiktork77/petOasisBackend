@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/status/health")
+@RequestMapping("/statuses/health")
 public class HealthStatusController {
     @Autowired
     private HealthStatusService healthStatusService;
@@ -46,7 +46,7 @@ public class HealthStatusController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(DataDetailLevel level) {
         List<ModelDTO<HealthStatus>> statuses = healthStatusService.getHealthStatuses(level);
         return new ResponseEntity<>(statuses, HttpStatus.OK);

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/dog")
+@RequestMapping("/dogs")
 public class DogController {
     @Autowired
     private DogService dogService;
@@ -51,7 +51,7 @@ public class DogController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAll(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Dog>> dogs = dogService.getDogs(level);
         return new ResponseEntity<>(dogs, HttpStatus.OK);

@@ -41,7 +41,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cat")
+@RequestMapping("/cats")
 public class CatController {
     @Autowired
     private CatService catService;
@@ -57,7 +57,7 @@ public class CatController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<List<ModelDTO<Cat>>> get(@RequestParam DataDetailLevel level) {
         List<ModelDTO<Cat>> cats = catService.get(level);
         return new ResponseEntity<>(cats, HttpStatus.OK);

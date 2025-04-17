@@ -23,7 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/status/walk")
+@RequestMapping("/statuses/walk")
 public class WalkStatusController {
 
     @Autowired
@@ -42,7 +42,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<Object> getAllStatuses(DataDetailLevel level) {
         Object statuses = walkStatusService.getWalkStatuses(level);
         return ResponseEntity.ok(statuses);
