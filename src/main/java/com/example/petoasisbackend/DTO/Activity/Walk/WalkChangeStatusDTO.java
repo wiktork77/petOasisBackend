@@ -1,10 +1,10 @@
 package com.example.petoasisbackend.DTO.Activity.Walk;
 
 
+import com.example.petoasisbackend.DTO.Animal.Animal.AnimalAvailabilityDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.Status.WalkStatus.WalkStatusNameDTO;
 import com.example.petoasisbackend.Model.Activity.Walk;
-import com.example.petoasisbackend.Model.Status.WalkStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,14 +12,16 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class WalkWithStatusDTO implements ModelDTO<Walk> {
+public class WalkChangeStatusDTO implements ModelDTO<Walk> {
     private Long walkId;
     private WalkStatusNameDTO status;
+    private AnimalAvailabilityDTO animal;
 
-    public static WalkWithStatusDTO fromWalk(Walk walk) {
-        return new WalkWithStatusDTO(
+    public static WalkChangeStatusDTO fromWalk(Walk walk) {
+        return new WalkChangeStatusDTO(
                 walk.getWalkId(),
-                WalkStatusNameDTO.fromWalkStatus(walk.getWalkStatus())
+                WalkStatusNameDTO.fromWalkStatus(walk.getWalkStatus()),
+                AnimalAvailabilityDTO.fromAnimal(walk.getPupil())
         );
     }
 }

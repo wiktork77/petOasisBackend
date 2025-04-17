@@ -48,6 +48,10 @@ public class GlobalExceptionHandler {
                 errors.put("gender", "must be one of: M, F, U");
             } else if (msg.contains("Cannot deserialize value of type `java.time.LocalDate`")) {
                 errors.put("birthDate", "must be in format yyyy-MM-dd");
+            } else if (msg.contains("Walk") && msg.contains("Request") && msg.contains("endTime")) {
+                errors.put("endTime", "must be in zulu time format");
+            } else if (msg.contains("Walk") && msg.contains("Request") && msg.contains("startTime")) {
+                errors.put("startTime", "must be in zulu time format");
             } else {
                 System.out.println(msg);
                 errors.put("json", "Invalid JSON format");

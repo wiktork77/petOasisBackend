@@ -6,10 +6,11 @@ import jakarta.validation.ConstraintValidatorContext;
 
 import java.time.LocalDateTime;
 
-public class FutureStartTimeValidator implements ConstraintValidator<FutureStartTime, WalkRequest> {
+public class FutureStartTimeValidator implements ConstraintValidator<FutureStartTime, LocalDateTime> {
 
     @Override
-    public boolean isValid(WalkRequest request, ConstraintValidatorContext context) {
-        return request.getStartTime().isAfter(LocalDateTime.now());
+    public boolean isValid(LocalDateTime start, ConstraintValidatorContext context) {
+        if (start == null) return true;
+        return start.isAfter(LocalDateTime.now());
     }
 }

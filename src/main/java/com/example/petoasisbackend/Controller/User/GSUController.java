@@ -99,7 +99,7 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content),
             }
     )
-    @PatchMapping("/verify/{id}")
+    @PatchMapping("/{id}/verify")
     public ResponseEntity<Object> verifyUser(@PathVariable Long id) {
         try {
             GSUVerificationDTO user = gsuService.verify(id);

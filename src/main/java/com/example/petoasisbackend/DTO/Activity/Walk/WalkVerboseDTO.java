@@ -29,6 +29,9 @@ public class WalkVerboseDTO implements ModelDTO<Walk> {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
+    private LocalDateTime actualStartTime;
+
+    private LocalDateTime actualEndTime;
     public static WalkVerboseDTO fromWalk(Walk walk) {
         return new WalkVerboseDTO(
                 walk.getWalkId(),
@@ -37,7 +40,9 @@ public class WalkVerboseDTO implements ModelDTO<Walk> {
                 ShelterVerboseDTO.fromShelter(walk.getSupervisor()),
                 WalkStatusVerboseDTO.fromWalkStatus(walk.getWalkStatus()),
                 walk.getStartTime(),
-                walk.getEndTime()
+                walk.getEndTime(),
+                walk.getActualStartTime(),
+                walk.getActualEndTime()
         );
     }
 

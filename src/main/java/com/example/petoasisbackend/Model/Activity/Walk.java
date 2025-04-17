@@ -37,6 +37,10 @@ public class Walk {
 
     private LocalDateTime endTime;
 
+    private LocalDateTime actualStartTime;
+
+    private LocalDateTime actualEndTime;
+
     public Walk(Animal pupil, Person caretaker, Shelter supervisor, LocalDateTime startTime, LocalDateTime endTime, WalkStatus status) {
         this.pupil = pupil;
         this.caretaker = caretaker;

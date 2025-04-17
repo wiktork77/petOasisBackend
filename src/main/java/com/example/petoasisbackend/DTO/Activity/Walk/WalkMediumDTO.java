@@ -37,6 +37,10 @@ public class WalkMediumDTO implements ModelDTO<Walk> {
 
     private LocalDateTime endTime;
 
+    private LocalDateTime actualStartTime;
+
+    private LocalDateTime actualEndTime;
+
     public static WalkMediumDTO fromWalk(Walk walk) {
         return new WalkMediumDTO(
                 walk.getWalkId(),
@@ -45,7 +49,9 @@ public class WalkMediumDTO implements ModelDTO<Walk> {
                 ShelterMediumDTO.fromShelter(walk.getSupervisor()),
                 WalkStatusNameDTO.fromWalkStatus(walk.getWalkStatus()),
                 walk.getStartTime(),
-                walk.getEndTime()
+                walk.getEndTime(),
+                walk.getActualStartTime(),
+                walk.getActualEndTime()
         );
     }
 }

@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum AccountType {
     PERSON("PERSON"),
-    SHELTER("SHELTER");
+    SHELTER("SHELTER"),
+    WORKER("WORKER");
 
     private final String value;
 
