@@ -5,6 +5,7 @@ import com.example.petoasisbackend.DTO.Animal.Animal.*;
 import com.example.petoasisbackend.DTO.Animal.Cat.CatVerboseDTO;
 import com.example.petoasisbackend.DTO.Animal.Dog.DogVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.Animal.AnimalCannotBeModified;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Animal.Animal;
@@ -186,6 +187,14 @@ public class AnimalController {
                                     ),
                             }
                     )),
+                    @ApiResponse(responseCode = "403", description = "Availabilty change not allowed", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot set availability status because animal with id '71' is on a walk"
+                                    ),
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Animal or status not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -208,6 +217,8 @@ public class AnimalController {
         try {
             AnimalAvailabilityStatusChangeDTO response = animalService.changeAvailabilityStatus(id, request);
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (AnimalCannotBeModified e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
         } catch (HealthStatusDoesntExistException | AnimalDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

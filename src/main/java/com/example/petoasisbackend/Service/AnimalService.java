@@ -5,11 +5,15 @@ import com.example.petoasisbackend.DTO.Animal.Animal.AnimalHealthStatusChangeDTO
 import com.example.petoasisbackend.DTO.Animal.Animal.AnimalPictureChangeDTO;
 import com.example.petoasisbackend.DTO.Animal.Animal.AnimalUpdateDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.Animal.AnimalCannotBeModified;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
+import com.example.petoasisbackend.Mapper.Activity.Walk.WalkFilter;
+import com.example.petoasisbackend.Mapper.Activity.Walk.WalkFilterType;
 import com.example.petoasisbackend.Mapper.Animal.AnimalMapper;
 import com.example.petoasisbackend.Mapper.Animal.CatMapper;
 import com.example.petoasisbackend.Mapper.Animal.DogMapper;
+import com.example.petoasisbackend.Model.Activity.Walk;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Animal.Dog;
@@ -50,6 +54,8 @@ public class AnimalService {
     private HealthStatusRepository healthStatusRepository;
     @Autowired
     private AvailabilityStatusRepository availabilityStatusRepository;
+    @Autowired
+    private WalkRepository walkRepository;
 
     public List<ModelDTO<Animal>> get(DataDetailLevel level) {
         List<Animal> animals = animalRepository.findAll();
@@ -109,7 +115,7 @@ public class AnimalService {
             throw new AnimalDoesntExistException("Cannot change health status of animal with id '" + id + "' because it doesn't exist");
         }
 
-        if (healthStatusRepository.existsByHealthStatus(request.getHealthStatus())) {
+        if (!healthStatusRepository.existsByHealthStatus(request.getHealthStatus())) {
             throw new HealthStatusDoesntExistException(
                     "Cannot change health status of animal with id '" + id
                             + "' to '" + request.getHealthStatus() + "' because the status doesn't exist"
@@ -126,19 +132,26 @@ public class AnimalService {
         return AnimalHealthStatusChangeDTO.fromAnimal(animal);
     }
 
-    public AnimalAvailabilityStatusChangeDTO changeAvailabilityStatus(Long id, AvailabilityStatusUpdateRequest request) throws AnimalDoesntExistException, HealthStatusDoesntExistException {
+    public AnimalAvailabilityStatusChangeDTO changeAvailabilityStatus(Long id, AvailabilityStatusUpdateRequest request) throws AnimalDoesntExistException, HealthStatusDoesntExistException, AnimalCannotBeModified {
         if (!animalRepository.existsById(id)) {
             throw new AnimalDoesntExistException("Cannot change availability status of animal with id '" + id + "' because it doesn't exist");
         }
 
-        if (availabilityStatusRepository.existsByAvailability(request.getAvailability())) {
+        if (!availabilityStatusRepository.existsByAvailability(request.getAvailability())) {
             throw new HealthStatusDoesntExistException(
                     "Cannot change health status of animal with id '" + id
                             + "' to '" + request.getAvailability() + "' because the status doesn't exist"
             );
         }
 
+
         Animal animal = animalRepository.findById(id).get();
+
+        List<Walk> walks = walkRepository.getWalksByPupil_AnimalId(id);
+        List<Walk> filtered = walks.stream().filter(walk -> WalkFilter.filter(walk, WalkFilterType.CURRENT)).toList();
+        if (!filtered.isEmpty()) {
+            throw new AnimalCannotBeModified("Cannot set availability status because animal with id '" +id + "' is on a walk");
+        }
 
         AvailabilityStatus status = availabilityStatusRepository.findByAvailability(request.getAvailability());
 
