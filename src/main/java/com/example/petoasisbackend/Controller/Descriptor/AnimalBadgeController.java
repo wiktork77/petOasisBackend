@@ -1,15 +1,13 @@
 package com.example.petoasisbackend.Controller.Descriptor;
 
-import com.example.petoasisbackend.DTO.Animal.Animal.AnimalMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.AnimalBadge.AnimalBadgeMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.AnimalBadge.AnimalBadgeVerboseDTO;
-import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeVerboseDTO;
+import com.example.petoasisbackend.DTO.Badge.AnimalBadge.AnimalBadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Badge.AnimalBadge.AnimalBadgeVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.AnimalBadge.AnimalBadgeAlreadyAttachedException;
 import com.example.petoasisbackend.Exception.AnimalBadge.AnimalBadgeNotAttachedException;
 import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
+import com.example.petoasisbackend.Model.Badge.AnimalBadge;
 import com.example.petoasisbackend.Request.AnimalBadge.AnimalBadgeAttachRequest;
 import com.example.petoasisbackend.Request.AnimalBadge.AnimalBadgeDetachRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;

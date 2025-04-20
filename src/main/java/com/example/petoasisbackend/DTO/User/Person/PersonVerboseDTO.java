@@ -2,8 +2,7 @@ package com.example.petoasisbackend.DTO.User.Person;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.User.GSU.GSUVerboseDTO;
-import com.example.petoasisbackend.Model.Descriptor.Gender;
-import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import com.example.petoasisbackend.Model.Users.Person;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

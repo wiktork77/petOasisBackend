@@ -1,12 +1,8 @@
 package com.example.petoasisbackend.DTO.User.GSU;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
-import com.example.petoasisbackend.Model.Users.AccountType;
+import com.example.petoasisbackend.Model.Enum.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

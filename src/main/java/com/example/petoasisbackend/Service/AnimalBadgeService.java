@@ -1,17 +1,16 @@
 package com.example.petoasisbackend.Service;
 
-import com.example.petoasisbackend.DTO.Descriptor.AnimalBadge.AnimalBadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Badge.AnimalBadge.AnimalBadgeMinimumDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.AnimalBadge.AnimalBadgeAlreadyAttachedException;
 import com.example.petoasisbackend.Exception.AnimalBadge.AnimalBadgeNotAttachedException;
 import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
-import com.example.petoasisbackend.Mapper.Descriptor.AnimalBadgeMapper;
-import com.example.petoasisbackend.Mapper.Descriptor.BadgeMapper;
+import com.example.petoasisbackend.Mapper.Badge.AnimalBadgeMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadgeId;
-import com.example.petoasisbackend.Model.Descriptor.Badge;
+import com.example.petoasisbackend.Model.Badge.AnimalBadge;
+import com.example.petoasisbackend.Model.Badge.AnimalBadgeId;
+import com.example.petoasisbackend.Model.Badge.Badge;
 import com.example.petoasisbackend.Repository.AnimalBadgeRepository;
 import com.example.petoasisbackend.Repository.AnimalRepository;
 import com.example.petoasisbackend.Repository.BadgeRepository;
@@ -22,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service

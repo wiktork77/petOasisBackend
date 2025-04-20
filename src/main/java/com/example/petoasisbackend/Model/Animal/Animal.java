@@ -1,24 +1,22 @@
 package com.example.petoasisbackend.Model.Animal;
 
 
-import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Model.Comment.AnimalComment;
+import com.example.petoasisbackend.Model.Enum.AnimalType;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
-import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
+import com.example.petoasisbackend.Model.Badge.AnimalBadge;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Request.Animal.AnimalAddRequest;
 import com.example.petoasisbackend.Request.Animal.AnimalUpdateRequest;
-import com.example.petoasisbackend.Request.Animal.Dog.DogAddRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.Period;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
 

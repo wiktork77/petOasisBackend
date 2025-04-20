@@ -1,7 +1,6 @@
 package com.example.petoasisbackend.DataInitializer;
 
-import com.example.petoasisbackend.Model.AnimalBreed.CatBreed;
-import com.example.petoasisbackend.Model.Descriptor.Badge;
+import com.example.petoasisbackend.Model.Badge.Badge;
 import com.example.petoasisbackend.Repository.BadgeRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;

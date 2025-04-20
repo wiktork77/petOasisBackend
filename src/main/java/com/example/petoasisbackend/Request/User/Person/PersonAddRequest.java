@@ -1,8 +1,7 @@
 package com.example.petoasisbackend.Request.User.Person;
 
-import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import com.example.petoasisbackend.Request.User.UserAddRequest;
-import com.example.petoasisbackend.Validation.Password.ValidPassword;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;

@@ -1,12 +1,10 @@
 package com.example.petoasisbackend.DTO.Animal.Animal;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
-import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusNameDTO;
 import com.example.petoasisbackend.DTO.Status.AvailabilityStatus.AvailabilityStatusVerboseDTO;
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
-import com.example.petoasisbackend.Model.Descriptor.Gender;
-import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
+import com.example.petoasisbackend.Model.Badge.AnimalBadge;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

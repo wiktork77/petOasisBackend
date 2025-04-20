@@ -6,7 +6,7 @@ import com.example.petoasisbackend.DTO.User.Person.PersonUpdateDTO;
 import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Person.PersonDoesntExistException;
 import com.example.petoasisbackend.Mapper.User.PersonMapper;
-import com.example.petoasisbackend.Model.Users.AccountType;
+import com.example.petoasisbackend.Model.Enum.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Person;
 import com.example.petoasisbackend.Repository.PersonRepository;

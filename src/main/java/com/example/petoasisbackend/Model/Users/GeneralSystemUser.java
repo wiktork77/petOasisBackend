@@ -1,9 +1,8 @@
 package com.example.petoasisbackend.Model.Users;
 
 
+import com.example.petoasisbackend.Model.Enum.AccountType;
 import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
-import com.example.petoasisbackend.Request.User.Person.PersonAddRequest;
-import com.example.petoasisbackend.Request.User.Shelter.ShelterAddRequest;
 import com.example.petoasisbackend.Request.User.UserAddRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -13,7 +13,7 @@ import com.example.petoasisbackend.Mapper.User.ShelterMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.Animal.Dog;
-import com.example.petoasisbackend.Model.Users.AccountType;
+import com.example.petoasisbackend.Model.Enum.AccountType;
 import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Model.Users.Shelter;
 import com.example.petoasisbackend.Repository.CatRepository;

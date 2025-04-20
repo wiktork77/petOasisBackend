@@ -1,7 +1,7 @@
 package com.example.petoasisbackend.Model.Users;
 
 
-import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import com.example.petoasisbackend.Request.User.Person.PersonAddRequest;
 import com.example.petoasisbackend.Request.User.Person.PersonUpdateRequest;
 import jakarta.persistence.*;

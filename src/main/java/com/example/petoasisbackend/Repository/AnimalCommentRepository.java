@@ -1,11 +1,12 @@
 package com.example.petoasisbackend.Repository;
 
-import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.AnimalComment;
-import com.example.petoasisbackend.Model.Descriptor.AnimalCommentId;
-import com.example.petoasisbackend.Model.Descriptor.Comment;
+import com.example.petoasisbackend.Model.Comment.AnimalComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AnimalCommentRepository extends JpaRepository<AnimalComment, AnimalCommentId> {
-    boolean existsByAnimalAndComment(Animal animal, Comment comment);
+import java.util.List;
+
+public interface AnimalCommentRepository extends JpaRepository<AnimalComment, Long> {
+    List<AnimalComment> getAnimalCommentsByAnimal_AnimalId(Long animalId);
+
+    void deleteAnimalCommentByComment_CommentId(Long commentId);
 }

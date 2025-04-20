@@ -13,7 +13,7 @@ import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExis
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Mapper.Animal.CatMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Animal.AnimalType;
+import com.example.petoasisbackend.Model.Enum.AnimalType;
 import com.example.petoasisbackend.Model.Animal.Cat;
 import com.example.petoasisbackend.Model.AnimalBreed.CatBreed;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;

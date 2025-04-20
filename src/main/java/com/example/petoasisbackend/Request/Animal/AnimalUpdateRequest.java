@@ -1,6 +1,6 @@
 package com.example.petoasisbackend.Request.Animal;
 
-import com.example.petoasisbackend.Model.Descriptor.Gender;
+import com.example.petoasisbackend.Model.Enum.Gender;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor

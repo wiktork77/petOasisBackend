@@ -13,7 +13,7 @@ import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExis
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
 import com.example.petoasisbackend.Mapper.Animal.DogMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Animal.AnimalType;
+import com.example.petoasisbackend.Model.Enum.AnimalType;
 import com.example.petoasisbackend.Model.Animal.Dog;
 import com.example.petoasisbackend.Model.AnimalBreed.DogBreed;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
@@ -28,7 +28,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
