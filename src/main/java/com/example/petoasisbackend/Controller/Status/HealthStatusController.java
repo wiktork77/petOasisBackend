@@ -53,7 +53,7 @@ public class HealthStatusController {
     }
 
 
-    @Operation(summary = "Get health status with given id and given detail level")
+    @Operation(summary = "Get a health status with given id and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned health status", content = @Content(
@@ -136,7 +136,7 @@ public class HealthStatusController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid HealthStatusAddRequest request) {
         try {
             HealthStatusMinimumDTO newStatus = healthStatusService.addHealthStatus(request);
@@ -147,7 +147,7 @@ public class HealthStatusController {
     }
 
 
-    @Operation(summary = "Delete an existing health status")
+    @Operation(summary = "Delete a health status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Status successfully deleted", content = @Content(
@@ -180,7 +180,7 @@ public class HealthStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
             healthStatusService.removeHealthStatus(id);
@@ -195,7 +195,7 @@ public class HealthStatusController {
     }
 
 
-    @Operation(summary = "Update an existing health status")
+    @Operation(summary = "Update a health status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated a health status", content = @Content(
@@ -237,7 +237,7 @@ public class HealthStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid HealthStatusUpdateRequest request) {
         try {
             HealthStatusVerboseDTO status = healthStatusService.updateHealthStatus(id, request);

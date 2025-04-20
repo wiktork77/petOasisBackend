@@ -59,7 +59,7 @@ public class WalkController {
     }
 
 
-    @Operation(summary = "Get a walk with given id, with details depending on the given level")
+    @Operation(summary = "Get a walk with given id and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned walk",
@@ -239,7 +239,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid WalkAddRequest request) {
         try {
             WalkMinimumDTO response = walkService.add(request);
@@ -279,7 +279,7 @@ public class WalkController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> removeWalk(@PathVariable Long id) {
         try {
             walkService.deleteWalk(id);
@@ -343,7 +343,7 @@ public class WalkController {
         }
     }
 
-    @Operation(summary = "Change the time period of a particular walk with 'Pending' status.")
+    @Operation(summary = "Change the time period of a particular walk with 'Pending' status.", description = "The time change is allowed only for walks with pending status.")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated time period", content = @Content(

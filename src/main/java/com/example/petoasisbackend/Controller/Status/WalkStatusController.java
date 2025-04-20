@@ -113,7 +113,7 @@ public class WalkStatusController {
 
 
 
-    @Operation(summary = "Add a new status that a walk can have")
+    @Operation(summary = "Add a new walk status")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "201", description = "Successfully created a new status", content = @Content(
@@ -143,7 +143,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> addStatus(@RequestBody @Valid WalkStatusAddRequest request) {
         try {
             WalkStatusMinimumDTO status = walkStatusService.addWalkStatus(request);
@@ -153,7 +153,7 @@ public class WalkStatusController {
         }
     }
 
-    @Operation(summary = "Remove a status with given name")
+    @Operation(summary = "Remove a walk status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
@@ -186,7 +186,7 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> removeStatus(@PathVariable Integer id) {
         try {
             walkStatusService.deleteWalkStatus(id);
@@ -201,7 +201,7 @@ public class WalkStatusController {
     }
 
 
-    @Operation(summary = "Update existing walk status.")
+    @Operation(summary = "Update a walk status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -244,10 +244,9 @@ public class WalkStatusController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> updateStatusName(@PathVariable Integer id, @RequestBody @Valid WalkStatusUpdateRequest request) {
         try {
-            System.out.println("hello");
             WalkStatusVerboseDTO status = walkStatusService.updateWalkStatusName(id, request);
             return ResponseEntity.ok(status);
         } catch (WalkStatusUpdateCollisionException e) {

@@ -149,7 +149,7 @@ public class AnimalBadgeController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/attach")
+    @PostMapping
     public ResponseEntity<Object> attachBadge(@RequestBody @Valid AnimalBadgeAttachRequest request) {
         try {
             AnimalBadgeMinimumDTO response = animalBadgeService.attachBadge(request);
@@ -202,7 +202,7 @@ public class AnimalBadgeController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @DeleteMapping("/detach")
+    @DeleteMapping
     public ResponseEntity<Object> detachBadge(@RequestBody @Valid AnimalBadgeDetachRequest request) {
         try {
             animalBadgeService.detachBadge(request);

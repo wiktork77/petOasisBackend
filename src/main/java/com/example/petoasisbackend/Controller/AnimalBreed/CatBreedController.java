@@ -53,7 +53,7 @@ public class CatBreedController {
         return new ResponseEntity<>(breeds, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get cat breed with given id and given detail level")
+    @Operation(summary = "Get a cat breed with given id and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned cat breed", content = @Content(
@@ -82,7 +82,7 @@ public class CatBreedController {
     }
 
 
-    @Operation(summary = "Get health status with given name")
+    @Operation(summary = "Get a cat breed with given name")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned cat breed", content = @Content(
@@ -137,7 +137,7 @@ public class CatBreedController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid CatBreedAddRequest request) {
         try {
             CatBreedMinimumDTO response = catBreedService.add(request);
@@ -148,7 +148,7 @@ public class CatBreedController {
     }
 
 
-    @Operation(summary = "Update an existing dog breed")
+    @Operation(summary = "Update a cat breed with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated a cat breed", content = @Content(
@@ -182,7 +182,7 @@ public class CatBreedController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid CatBreedUpdateRequest request) {
         try {
             CatBreedUpdateDTO response = catBreedService.update(id, request);
@@ -195,7 +195,7 @@ public class CatBreedController {
     }
 
 
-    @Operation(summary = "Delete an existing dog breed")
+    @Operation(summary = "Delete a cat breed with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Cat breed successfully deleted", content = @Content(
@@ -220,7 +220,7 @@ public class CatBreedController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
             catBreedService.delete(id);

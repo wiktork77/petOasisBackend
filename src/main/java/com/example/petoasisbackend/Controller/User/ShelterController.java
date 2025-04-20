@@ -3,6 +3,7 @@ package com.example.petoasisbackend.Controller.User;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterMinimumDTO;
 import com.example.petoasisbackend.DTO.User.Shelter.ShelterUpdateDTO;
+import com.example.petoasisbackend.DTO.User.Shelter.ShelterVerboseDTO;
 import com.example.petoasisbackend.Exception.GSU.UserAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterAlreadyExistsException;
 import com.example.petoasisbackend.Exception.Shelter.ShelterDoesntExistException;
@@ -33,7 +34,7 @@ public class ShelterController {
     @Autowired
     private ShelterService shelterService;
 
-    @Operation(summary = "Get all shelters with given data details")
+    @Operation(summary = "Get all shelters with given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned a list of all shelters", content = @Content(
@@ -49,12 +50,12 @@ public class ShelterController {
         return new ResponseEntity<>(shelters, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get a shelter with given id and data details")
+    @Operation(summary = "Get a shelter with given id and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned shelter", content = @Content(
                             mediaType = "application/json",
-                            schema = @Schema(implementation = Shelter.class)
+                            schema = @Schema(implementation = ShelterVerboseDTO.class)
                     )),
                     @ApiResponse(responseCode = "404", description = "Shelter not found", content = @Content(
                             mediaType = "text/plain",
@@ -77,7 +78,7 @@ public class ShelterController {
         }
     }
 
-    @Operation(summary = "Get animals to belong to given shelter")
+    @Operation(summary = "Get all animals that belong to a shelter with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned animals", content = @Content(
@@ -105,7 +106,7 @@ public class ShelterController {
         }
     }
 
-    @Operation(summary = "Get a shelter with given name and data details")
+    @Operation(summary = "Get a shelter with given name and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned shelter", content = @Content(
@@ -133,7 +134,7 @@ public class ShelterController {
         }
     }
 
-    @Operation(summary = "Add a shelter user to the system")
+    @Operation(summary = "Add a new shelter")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "201", description = "Shelter successfully created", content = @Content(
@@ -171,7 +172,7 @@ public class ShelterController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid ShelterAddRequest request) {
         try {
             ShelterMinimumDTO response = shelterService.addShelter(request);
@@ -181,7 +182,7 @@ public class ShelterController {
         }
     }
 
-    @Operation(summary = "Update shelter related data")
+    @Operation(summary = "Update a shelter with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated a shelter", content = @Content(
@@ -207,7 +208,7 @@ public class ShelterController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid ShelterUpdateRequest request) {
         try {
             ShelterUpdateDTO response = shelterService.updateShelter(id, request);
@@ -220,7 +221,7 @@ public class ShelterController {
     }
 
 
-    @Operation(summary = "Delete a shelter user with given id from the system")
+    @Operation(summary = "Delete a shelter with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted a shelter", content = @Content(
@@ -245,7 +246,7 @@ public class ShelterController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         try {
             shelterService.deleteShelterById(id);

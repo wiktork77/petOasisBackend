@@ -136,7 +136,7 @@ public class BadgeController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid BadgeAddRequest request) {
         try {
             BadgeMinimumDTO response = badgeService.add(request);
@@ -147,7 +147,7 @@ public class BadgeController {
     }
 
 
-    @Operation(summary = "Delete an existing badge with given id")
+    @Operation(summary = "Delete a badge with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted a badge", content = @Content(
@@ -172,7 +172,7 @@ public class BadgeController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
             badgeService.delete(id);
@@ -184,7 +184,7 @@ public class BadgeController {
         }
     }
 
-    @Operation(summary = "Update an existing badge with given id")
+    @Operation(summary = "Update a badge with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "201", description = "Successfully updated a badge", content = @Content(
@@ -220,7 +220,7 @@ public class BadgeController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid BadgeUpdateRequest request) {
         try {
             BadgeUpdateDTO response = badgeService.update(id, request);

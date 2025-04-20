@@ -4,11 +4,9 @@ import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedMinimumDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedUpdateDTO;
 import com.example.petoasisbackend.DTO.AnimalBreed.Dog.DogBreedVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
-import com.example.petoasisbackend.DTO.Status.HealthStatus.HealthStatusMinimumDTO;
 import com.example.petoasisbackend.Exception.Breed.Dog.DogBreedAlreadyExists;
 import com.example.petoasisbackend.Exception.Breed.Dog.DogBreedDoesntExist;
 import com.example.petoasisbackend.Model.AnimalBreed.DogBreed;
-import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Request.AnimalBreed.Dog.DogBreedAddRequest;
 import com.example.petoasisbackend.Request.AnimalBreed.Dog.DogBreedUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
@@ -52,7 +50,7 @@ public class DogBreedController {
     }
 
 
-    @Operation(summary = "Get dog breed with given id and given detail level")
+    @Operation(summary = "Get a dog breed with given id and given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned dog breed", content = @Content(
@@ -80,7 +78,7 @@ public class DogBreedController {
         }
     }
 
-    @Operation(summary = "Get health status with given name")
+    @Operation(summary = "Get a dog breed with given name")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned dog breed", content = @Content(
@@ -135,7 +133,7 @@ public class DogBreedController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid DogBreedAddRequest request) {
         try {
             DogBreedMinimumDTO response = dogBreedService.add(request);
@@ -146,7 +144,7 @@ public class DogBreedController {
     }
 
 
-    @Operation(summary = "Update an existing dog breed")
+    @Operation(summary = "Update a dog breed with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated a dog breed", content = @Content(
@@ -180,7 +178,7 @@ public class DogBreedController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid DogBreedUpdateRequest request) {
         try {
             DogBreedUpdateDTO response = dogBreedService.update(id, request);
@@ -193,7 +191,7 @@ public class DogBreedController {
     }
 
 
-    @Operation(summary = "Delete an existing dog breed")
+    @Operation(summary = "Delete a dog breed with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Dog breed successfully deleted", content = @Content(
@@ -218,7 +216,7 @@ public class DogBreedController {
                     @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content),
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         try {
             dogBreedService.delete(id);

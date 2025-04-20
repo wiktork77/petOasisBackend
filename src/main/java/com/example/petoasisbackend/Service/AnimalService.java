@@ -20,6 +20,7 @@ import com.example.petoasisbackend.Model.Animal.Dog;
 import com.example.petoasisbackend.Model.Status.AvailabilityStatus;
 import com.example.petoasisbackend.Model.Status.HealthStatus;
 import com.example.petoasisbackend.Repository.*;
+import com.example.petoasisbackend.Request.Animal.AnimalPictureChangeRequest;
 import com.example.petoasisbackend.Request.Animal.AnimalUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusUpdateRequest;
@@ -97,13 +98,13 @@ public class AnimalService {
         return mixedAnimals;
     }
 
-    public AnimalPictureChangeDTO changePicture(Long id, String url) throws AnimalDoesntExistException {
+    public AnimalPictureChangeDTO changePicture(Long id, AnimalPictureChangeRequest request) throws AnimalDoesntExistException {
         if (!animalRepository.existsById(id)) {
             throw new AnimalDoesntExistException("Cannot change picture of animal with id '" + id + "' because it doesn't exist");
         }
 
         Animal animal = animalRepository.findById(id).get();
-        animal.setPictureURL(url);
+        animal.setPictureURL(request.getUrl());
 
         animalRepository.save(animal);
 

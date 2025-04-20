@@ -155,7 +155,7 @@ public class CatController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid CatAddRequest request) {
         try {
             CatMinimumDTO response = catService.add(request);
@@ -166,7 +166,7 @@ public class CatController {
         }
     }
 
-    @Operation(summary = "Update an existing cat")
+    @Operation(summary = "Update a cat with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -202,7 +202,7 @@ public class CatController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid CatUpdateRequest request) {
         try {
             CatUpdateDTO response = catService.update(id, request);
@@ -212,7 +212,7 @@ public class CatController {
         }
     }
 
-    @Operation(summary = "Change the breed of an existing cat")
+    @Operation(summary = "Change the breed of a cat with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -256,7 +256,7 @@ public class CatController {
         }
     }
 
-    @Operation(summary = "Delete an existing cat with given id")
+    @Operation(summary = "Delete a cat with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
@@ -282,7 +282,7 @@ public class CatController {
 
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
             catService.delete(id);

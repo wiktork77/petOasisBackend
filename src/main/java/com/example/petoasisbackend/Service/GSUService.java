@@ -12,6 +12,7 @@ import com.example.petoasisbackend.Repository.SystemUserRepository;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
 import com.example.petoasisbackend.Request.User.GSU.PasswordChangeRequest;
+import com.example.petoasisbackend.Request.User.GSU.ProfilePictureChangeRequest;
 import com.example.petoasisbackend.Tools.Credentials.Encoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,13 +59,13 @@ public class GSUService {
         return GSUVerificationDTO.fromGSU(savedUser);
     }
 
-    public GSUProfilePictureDTO changeProfilePicture(Long id, String url) throws UserDoesntExistException {
+    public GSUProfilePictureDTO changeProfilePicture(Long id, ProfilePictureChangeRequest request) throws UserDoesntExistException {
         if (!systemUserRepository.existsById(id)) {
             throw new UserDoesntExistException("Cannot change profile picture of user with id '" + id + "' because it doesn't exist");
         }
 
         GeneralSystemUser user = systemUserRepository.findById(id).get();
-        user.setPictureUrl(url);
+        user.setPictureUrl(request.getUrl());
 
         GeneralSystemUser savedUser = systemUserRepository.save(user);
 

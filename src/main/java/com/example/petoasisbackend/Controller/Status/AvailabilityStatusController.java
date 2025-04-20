@@ -47,7 +47,7 @@ public class AvailabilityStatusController {
         return new ResponseEntity<>(statuses, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get availability status with given id and detail level")
+    @Operation(summary = "Get an availability status with given id and detail level")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully returned availability status", content = @Content(
                     mediaType = "application/json",
@@ -73,7 +73,7 @@ public class AvailabilityStatusController {
         }
     }
 
-    @Operation(summary = "Get availability status with given name")
+    @Operation(summary = "Get an availability status with given name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully returned availability status", content = @Content(
                     mediaType = "application/json",
@@ -126,7 +126,7 @@ public class AvailabilityStatusController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid AvailabilityStatusAddRequest request) {
         try {
             AvailabilityStatusMinimumDTO response = availabilityStatusService.addAvailabilityStatus(request);
@@ -137,7 +137,7 @@ public class AvailabilityStatusController {
     }
 
 
-    @Operation(summary = "Delete existing availability status")
+    @Operation(summary = "Delete an availability status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted",content = @Content(
@@ -170,7 +170,7 @@ public class AvailabilityStatusController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
             availabilityStatusService.removeAvailabilityStatus(id);
@@ -185,7 +185,7 @@ public class AvailabilityStatusController {
     }
 
 
-    @Operation(summary = "Update existing availability status")
+    @Operation(summary = "Update an availability status with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -235,7 +235,7 @@ public class AvailabilityStatusController {
                     ))
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid AvailabilityStatusUpdateRequest request) {
         try {
             AvailabilityStatusVerboseDTO status = availabilityStatusService.updateAvailabilityStatus(id, request);

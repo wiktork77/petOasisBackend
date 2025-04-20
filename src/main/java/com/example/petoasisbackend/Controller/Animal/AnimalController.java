@@ -9,6 +9,7 @@ import com.example.petoasisbackend.Exception.Animal.AnimalCannotBeModified;
 import com.example.petoasisbackend.Exception.Animal.AnimalDoesntExistException;
 import com.example.petoasisbackend.Exception.HealthStatus.HealthStatusDoesntExistException;
 import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Request.Animal.AnimalPictureChangeRequest;
 import com.example.petoasisbackend.Request.Animal.AnimalUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.Status.AvailabilityStatus.AvailabilityStatusUpdateRequest;
@@ -108,6 +109,14 @@ public class AnimalController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = AnimalPictureChangeDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{ \"url\": \"must not be blank\" }"
+                                    ),
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Animal not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -119,10 +128,10 @@ public class AnimalController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PatchMapping("/{id}/picture/{url}")
-    public ResponseEntity<Object> changePicture(@PathVariable Long id, @PathVariable String url) {
+    @PatchMapping("/{id}/picture")
+    public ResponseEntity<Object> changePicture(@PathVariable Long id, @RequestBody @Valid AnimalPictureChangeRequest request) {
         try {
-            AnimalPictureChangeDTO response = animalService.changePicture(id, url);
+            AnimalPictureChangeDTO response = animalService.changePicture(id, request);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (AnimalDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
@@ -224,7 +233,7 @@ public class AnimalController {
         }
     }
 
-    @Operation(summary = "Update animal related data")
+    @Operation(summary = "Update an animal with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -274,7 +283,7 @@ public class AnimalController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid AnimalUpdateRequest request) {
         try {
             AnimalUpdateDTO response = animalService.update(id, request);

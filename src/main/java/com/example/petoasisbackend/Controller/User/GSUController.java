@@ -10,6 +10,7 @@ import com.example.petoasisbackend.Model.Users.GeneralSystemUser;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Request.User.GSU.GSUUpdateRequest;
 import com.example.petoasisbackend.Request.User.GSU.PasswordChangeRequest;
+import com.example.petoasisbackend.Request.User.GSU.ProfilePictureChangeRequest;
 import com.example.petoasisbackend.Service.GSUService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,7 +33,7 @@ public class GSUController {
     @Autowired
     private GSUService gsuService;
 
-    @Operation(summary = "Get all users with given data details")
+    @Operation(summary = "Get all users with given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned a list of all users", content = @Content(
@@ -48,7 +49,7 @@ public class GSUController {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @Operation(summary = "Get a user with given id and data details")
+    @Operation(summary = "Get a user with given id and detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned the user", content = @Content(
@@ -99,7 +100,7 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content),
             }
     )
-    @PatchMapping("/{id}/verify")
+    @PostMapping("/{id}/verification")
     public ResponseEntity<Object> verifyUser(@PathVariable Long id) {
         try {
             GSUVerificationDTO user = gsuService.verify(id);
@@ -116,6 +117,14 @@ public class GSUController {
                             mediaType = "application/json",
                             schema = @Schema(implementation = GSUProfilePictureDTO.class)
                     )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{ \"url\": \"must not be blank\" }"
+                                    ),
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Person not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -127,17 +136,17 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content),
             }
     )
-    @PatchMapping("/{id}/profile-picture/{url}")
-    public ResponseEntity<Object> uploadProfilePicture(@PathVariable Long id, @PathVariable String url) {
+    @PatchMapping("/{id}/profile-picture")
+    public ResponseEntity<Object> uploadProfilePicture(@PathVariable Long id, @RequestBody @Valid ProfilePictureChangeRequest request) {
         try {
-            GSUProfilePictureDTO user = gsuService.changeProfilePicture(id, url);
+            GSUProfilePictureDTO user = gsuService.changeProfilePicture(id, request);
             return new ResponseEntity<>(user, HttpStatus.OK);
         } catch (UserDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 
-    @Operation(summary = "Update user related data")
+    @Operation(summary = "Update a user with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -183,7 +192,7 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid GSUUpdateRequest request) {
         try {
             GSUUpdateDTO user = gsuService.update(id, request);
@@ -228,7 +237,7 @@ public class GSUController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content),
             }
     )
-    @PatchMapping("/{id}/password/")
+    @PatchMapping("/{id}/password")
     public ResponseEntity<Object> changePassword(@PathVariable Long id, @RequestBody @Valid PasswordChangeRequest request) {
         try {
             GSUMinimumDTO response = gsuService.changePassword(id, request);

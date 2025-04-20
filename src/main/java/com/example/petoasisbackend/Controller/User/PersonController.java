@@ -33,7 +33,7 @@ public class PersonController {
     @Autowired
     private PersonService personService;
 
-    @Operation(summary = "Get all people with given data details")
+    @Operation(summary = "Get all persons with given detail level")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully returned a list of all shelters", content = @Content(
@@ -77,7 +77,7 @@ public class PersonController {
         }
     }
 
-    @Operation(summary = "Add a person user to the system")
+    @Operation(summary = "Add a new person")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "201", description = "Successfully added", content = @Content(
@@ -119,7 +119,7 @@ public class PersonController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid PersonAddRequest request) {
         try {
             PersonMinimumDTO response = personService.addPerson(request);
@@ -129,7 +129,7 @@ public class PersonController {
         }
     }
 
-    @Operation(summary = "Update person related data")
+    @Operation(summary = "Update a person with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -165,7 +165,7 @@ public class PersonController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid PersonUpdateRequest request) {
         try {
             PersonUpdateDTO response = personService.updatePerson(id, request);
@@ -176,7 +176,7 @@ public class PersonController {
     }
 
 
-    @Operation(summary = "Delete person with given id")
+    @Operation(summary = "Delete a person with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
@@ -202,7 +202,7 @@ public class PersonController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
             personService.deletePerson(id);

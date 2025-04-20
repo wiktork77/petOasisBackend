@@ -158,7 +158,7 @@ public class DogController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Object> add(@RequestBody @Valid DogAddRequest request) {
         try {
             DogMinimumDTO response = dogService.addDog(request);
@@ -169,7 +169,7 @@ public class DogController {
         }
     }
 
-    @Operation(summary = "Update an existing dog")
+    @Operation(summary = "Update a dog with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -205,7 +205,7 @@ public class DogController {
                     @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
             }
     )
-    @PutMapping("/update/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Long id, @RequestBody @Valid DogUpdateRequest request) {
         try {
             DogUpdateDTO response = dogService.update(id, request);
@@ -217,7 +217,7 @@ public class DogController {
 
 
 
-    @Operation(summary = "Change the breed of an existing dog")
+    @Operation(summary = "Change the breed of a dog with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "200", description = "Successfully updated", content = @Content(
@@ -261,7 +261,7 @@ public class DogController {
         }
     }
 
-    @Operation(summary = "Delete an existing dog")
+    @Operation(summary = "Delete a dog with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
@@ -287,7 +287,7 @@ public class DogController {
 
             }
     )
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Long id) {
         try {
             dogService.delete(id);
