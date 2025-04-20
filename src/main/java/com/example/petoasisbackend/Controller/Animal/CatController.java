@@ -34,6 +34,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -269,6 +270,14 @@ public class CatController {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(
                             mediaType = "text/plain"
                     )),
+                    @ApiResponse(responseCode = "400", description = "Cat couldn't be deleted because it would violate data integrity", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot delete cat because it is referenced by something else"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Cat not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -286,6 +295,8 @@ public class CatController {
         try {
             catService.delete(id);
             return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>("Cannot delete cat because it is referenced by something else", HttpStatus.BAD_REQUEST);
         } catch (CatDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

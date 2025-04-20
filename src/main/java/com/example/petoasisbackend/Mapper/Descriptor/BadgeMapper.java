@@ -1,8 +1,8 @@
 package com.example.petoasisbackend.Mapper.Descriptor;
 
-import com.example.petoasisbackend.DTO.Descriptor.BadgeMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.BadgeNameDTO;
-import com.example.petoasisbackend.DTO.Descriptor.BadgeVerboseDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeNameDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Mapper.DetailLevelMapper;
 import com.example.petoasisbackend.Model.Descriptor.Badge;

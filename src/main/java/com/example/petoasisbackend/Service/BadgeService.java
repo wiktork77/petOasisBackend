@@ -1,18 +1,13 @@
 package com.example.petoasisbackend.Service;
 
 
-import com.example.petoasisbackend.DTO.Descriptor.BadgeMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.BadgeUpdateDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeUpdateDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.Badge.BadgeAlreadyExists;
 import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
 import com.example.petoasisbackend.Mapper.Descriptor.BadgeMapper;
-import com.example.petoasisbackend.Model.Animal.Animal;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
-import com.example.petoasisbackend.Model.Descriptor.AnimalBadgeId;
 import com.example.petoasisbackend.Model.Descriptor.Badge;
-import com.example.petoasisbackend.Repository.AnimalBadgeRepository;
-import com.example.petoasisbackend.Repository.AnimalRepository;
 import com.example.petoasisbackend.Repository.BadgeRepository;
 import com.example.petoasisbackend.Request.Badge.BadgeAddRequest;
 import com.example.petoasisbackend.Request.Badge.BadgeUpdateRequest;

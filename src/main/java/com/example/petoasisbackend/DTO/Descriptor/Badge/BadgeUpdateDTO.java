@@ -1,19 +1,18 @@
-package com.example.petoasisbackend.DTO.Descriptor;
+package com.example.petoasisbackend.DTO.Descriptor.Badge;
 
-import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Descriptor.Badge;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor
+@Getter
 @AllArgsConstructor
-public class BadgeNameDTO implements ModelDTO<Badge> {
+public class BadgeUpdateDTO {
     private String badgeName;
 
-    public static BadgeNameDTO fromBadge(Badge badge) {
-        return new BadgeNameDTO(
+    public static BadgeUpdateDTO fromBadge(Badge badge) {
+        return new BadgeUpdateDTO(
                 badge.getBadgeName()
         );
     }

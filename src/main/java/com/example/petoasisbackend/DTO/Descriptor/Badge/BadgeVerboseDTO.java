@@ -1,4 +1,4 @@
-package com.example.petoasisbackend.DTO.Descriptor;
+package com.example.petoasisbackend.DTO.Descriptor.Badge;
 
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Model.Descriptor.Badge;

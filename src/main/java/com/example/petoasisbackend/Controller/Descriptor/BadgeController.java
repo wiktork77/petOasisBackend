@@ -1,9 +1,9 @@
 package com.example.petoasisbackend.Controller.Descriptor;
 
 
-import com.example.petoasisbackend.DTO.Descriptor.BadgeMinimumDTO;
-import com.example.petoasisbackend.DTO.Descriptor.BadgeUpdateDTO;
-import com.example.petoasisbackend.DTO.Descriptor.BadgeVerboseDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeUpdateDTO;
+import com.example.petoasisbackend.DTO.Descriptor.Badge.BadgeVerboseDTO;
 import com.example.petoasisbackend.DTO.ModelDTO;
 import com.example.petoasisbackend.Exception.Badge.BadgeAlreadyExists;
 import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -152,6 +153,14 @@ public class BadgeController {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted a badge", content = @Content(
                             mediaType = "text/plain"
                     )),
+                    @ApiResponse(responseCode = "400", description = "Badge couldn't be deleted because it would violate data integrity", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot delete badge because it is referenced by something else"
+                                    )
+                            }
+                    )),
                     @ApiResponse(responseCode = "404", description = "Badge not found", content = @Content(
                             mediaType = "text/plain",
                             examples = {
@@ -168,6 +177,8 @@ public class BadgeController {
         try {
             badgeService.delete(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DataIntegrityViolationException e) {
+            return new ResponseEntity<>("Cannot delete badge because it is referenced by something else", HttpStatus.BAD_REQUEST);
         } catch (BadgeDoesntExistException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }

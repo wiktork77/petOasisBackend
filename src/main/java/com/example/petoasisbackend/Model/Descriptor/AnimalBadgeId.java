@@ -1,5 +1,7 @@
 package com.example.petoasisbackend.Model.Descriptor;
 
+import com.example.petoasisbackend.Request.AnimalBadge.AnimalBadgeAttachRequest;
+import com.example.petoasisbackend.Request.AnimalBadge.AnimalBadgeDetachRequest;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -31,5 +33,19 @@ public class AnimalBadgeId implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(animal, badge);
+    }
+
+    public static AnimalBadgeId fromAnimalBadgeDetachRequest(AnimalBadgeDetachRequest request) {
+        return new AnimalBadgeId(
+                request.getAnimalId(),
+                request.getBadgeId()
+        );
+    }
+
+    public static AnimalBadgeId fromAnimalBadgeAttachRequest(AnimalBadgeAttachRequest request) {
+        return new AnimalBadgeId(
+                request.getAnimalId(),
+                request.getBadgeId()
+        );
     }
 }
