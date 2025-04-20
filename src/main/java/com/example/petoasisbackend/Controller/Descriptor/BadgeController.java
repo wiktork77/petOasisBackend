@@ -1,14 +1,31 @@
 package com.example.petoasisbackend.Controller.Descriptor;
 
 
+import com.example.petoasisbackend.DTO.Descriptor.BadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.BadgeUpdateDTO;
+import com.example.petoasisbackend.DTO.Descriptor.BadgeVerboseDTO;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.Badge.BadgeAlreadyExists;
+import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
+import com.example.petoasisbackend.Model.Descriptor.Badge;
 import com.example.petoasisbackend.Request.Badge.BadgeAddRequest;
-import com.example.petoasisbackend.Request.Badge.BadgeAnimalRequest;
 import com.example.petoasisbackend.Request.Badge.BadgeUpdateRequest;
 import com.example.petoasisbackend.Request.DataDetailLevel;
 import com.example.petoasisbackend.Service.BadgeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/badges")
@@ -17,105 +34,192 @@ public class BadgeController {
     private BadgeService badgeService;
 
 
+    @Operation(summary = "Get badges with given detail level")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned a list of all badges", content = @Content(
+                            mediaType = "application/json",
+                            array = @ArraySchema(schema = @Schema(implementation = BadgeVerboseDTO.class))
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @GetMapping
     public ResponseEntity<Object> get(@RequestParam DataDetailLevel level) {
-        return null;
+        List<ModelDTO<Badge>> badges = badgeService.getAll(level);
+        return new ResponseEntity<>(badges, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get a badge with given id and detail level")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned a badge", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = BadgeVerboseDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Badge not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get badge with id '821' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<Object> getById(@PathVariable Integer id, @RequestParam DataDetailLevel level) {
-        return null;
+        try {
+            ModelDTO<Badge> badge = badgeService.getById(id, level);
+            return new ResponseEntity<>(badge, HttpStatus.OK);
+        } catch (BadgeDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
+    @Operation(summary = "Get a badge with given name and detail level")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "Successfully returned a badge", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = BadgeVerboseDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Badge not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot get badge with name 'bdg' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @GetMapping("/name/{name}")
     public ResponseEntity<Object> getByName(@PathVariable String name, @RequestParam DataDetailLevel level) {
-        return null;
+        try {
+            ModelDTO<Badge> badge = badgeService.getByName(name, level);
+            return new ResponseEntity<>(badge, HttpStatus.OK);
+        } catch (BadgeDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
+
+    @Operation(summary = "Add a new badge")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "201", description = "Successfully added a badge", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = BadgeMinimumDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"badgeName\": \"must not be blank\"\n" +
+                                                    "}"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "409", description = "Badge already exists", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot add badge with name 'Good boy' because it already exists"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @PostMapping("/add")
-    public ResponseEntity<Object> add(@RequestBody BadgeAddRequest request) {
-        return null;
+    public ResponseEntity<Object> add(@RequestBody @Valid BadgeAddRequest request) {
+        try {
+            BadgeMinimumDTO response = badgeService.add(request);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (BadgeAlreadyExists e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
+
+    @Operation(summary = "Delete an existing badge with given id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "204", description = "Successfully deleted a badge", content = @Content(
+                            mediaType = "text/plain"
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Badge not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot delete badge with id '14' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        return null;
+        try {
+            badgeService.delete(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (BadgeDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
     }
 
+    @Operation(summary = "Update an existing badge with given id")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "201", description = "Successfully updated a badge", content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = BadgeUpdateDTO.class)
+                    )),
+                    @ApiResponse(responseCode = "400", description = "Invalid or incomplete update request", content = @Content(
+                            mediaType = "application/json",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "{\n" +
+                                                    "  \"badgeName\": \"must not be blank\"\n" +
+                                                    "}"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "404", description = "Badge not found", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update badge with id '42' because it doesn't exist"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "409", description = "Badge already exists", content = @Content(
+                            mediaType = "text/plain",
+                            examples = {
+                                    @ExampleObject(
+                                            value = "Cannot update badge because badge with name 'Good boy' already exists"
+                                    )
+                            }
+                    )),
+                    @ApiResponse(responseCode = "500", description = "Server couldn't parse the request", content = @Content)
+            }
+    )
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody BadgeUpdateRequest request) {
-        return null;
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody @Valid BadgeUpdateRequest request) {
+        try {
+            BadgeUpdateDTO response = badgeService.update(id, request);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (BadgeDoesntExistException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (BadgeAlreadyExists e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
+        }
     }
 
-    @PostMapping("/assign/animal")
-    public ResponseEntity<Object> assignToAnimal(@RequestBody BadgeAnimalRequest request) {
-        return null;
-    }
-
-    @DeleteMapping("/detach/animal")
-    public ResponseEntity<Object> detachFromAnimal(@RequestBody BadgeAnimalRequest request) {
-        return null;
-    }
-
-//    @GetMapping("/getAll")
-//    public List<Badge> getAll() {
-//        return badgeService.getBadges();
-//    }
-//
-//    @GetMapping("/getAllAssigned")
-//    public List<AnimalBadge> getAllAssigned() {
-//        return badgeService.getAssignedBadges();
-//    }
-//
-//    @PostMapping("/add")
-//    public ResponseEntity<String> add(@RequestBody Badge badge) {
-//        try {
-//            badgeService.addBadge(badge);
-//            return new ResponseEntity<>(badge.getBadgeName() + " badge added successfully", HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//    @PostMapping("/assign/{animalId}/{badgeName}")
-//    public ResponseEntity<String> assignBadge(@PathVariable Long animalId, @PathVariable String badgeName) {
-//        try {
-//            badgeService.assignBadge(animalId, badgeName);
-//            return new ResponseEntity<>("Successfully assigned " + badgeName + " to animal with id " + animalId, HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//    @PostMapping("/cancel/{animalId}/{badgeName}")
-//    public ResponseEntity<String> cancelBadge(@PathVariable Long animalId, @PathVariable String badgeName) {
-//        try {
-//            badgeService.cancelBadge(animalId, badgeName);
-//            return new ResponseEntity<>("Successfully cancelled " + badgeName + " from animal with id " + animalId, HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//
-//    @DeleteMapping("/delete/{name}")
-//    public ResponseEntity<String> delete(@PathVariable String name) {
-//        try {
-//            badgeService.deleteBadge(name);
-//            return new ResponseEntity<>(name + " badge deleted successfully", HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
-//
-//    @PutMapping("/update/{name}/{newName}")
-//    public ResponseEntity<String> update(@PathVariable String name, @PathVariable String newName) {
-//        try {
-//            Badge badge = badgeService.updateBadgeName(name, newName);
-//            return new ResponseEntity<>(name + " badge updated to " + newName, HttpStatus.OK);
-//        } catch (IllegalArgumentException e) {
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
 }

@@ -1,6 +1,12 @@
 package com.example.petoasisbackend.Service;
 
 
+import com.example.petoasisbackend.DTO.Descriptor.BadgeMinimumDTO;
+import com.example.petoasisbackend.DTO.Descriptor.BadgeUpdateDTO;
+import com.example.petoasisbackend.DTO.ModelDTO;
+import com.example.petoasisbackend.Exception.Badge.BadgeAlreadyExists;
+import com.example.petoasisbackend.Exception.Badge.BadgeDoesntExistException;
+import com.example.petoasisbackend.Mapper.Descriptor.BadgeMapper;
 import com.example.petoasisbackend.Model.Animal.Animal;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadge;
 import com.example.petoasisbackend.Model.Descriptor.AnimalBadgeId;
@@ -8,94 +14,86 @@ import com.example.petoasisbackend.Model.Descriptor.Badge;
 import com.example.petoasisbackend.Repository.AnimalBadgeRepository;
 import com.example.petoasisbackend.Repository.AnimalRepository;
 import com.example.petoasisbackend.Repository.BadgeRepository;
+import com.example.petoasisbackend.Request.Badge.BadgeAddRequest;
+import com.example.petoasisbackend.Request.Badge.BadgeUpdateRequest;
+import com.example.petoasisbackend.Request.DataDetailLevel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class BadgeService {
     @Autowired
     private BadgeRepository badgeRepository;
+
     @Autowired
-    private AnimalBadgeRepository animalBadgeRepository;
-    @Autowired
-    private AnimalRepository animalRepository;
+    private BadgeMapper badgeMapper;
 
-    public List<Badge> getBadges() {
-        return badgeRepository.findAll();
+    public List<ModelDTO<Badge>> getAll(DataDetailLevel level) {
+        List<Badge> badges = badgeRepository.findAll();
+        var mapper = badgeMapper.getMapper(level);
+
+        return badges.stream().map(mapper).collect(Collectors.toList());
     }
 
-    public List<AnimalBadge> getAssignedBadges() {
-        return animalBadgeRepository.findAll();
+    public ModelDTO<Badge> getById(Integer id, DataDetailLevel level) throws BadgeDoesntExistException {
+        if (!badgeRepository.existsById(id)) {
+            throw new BadgeDoesntExistException("Cannot get badge with id '" + id + "' because it doesn't exist");
+        }
+
+        Badge badge = badgeRepository.findById(id).get();
+        var mapper = badgeMapper.getMapper(level);
+
+        return mapper.apply(badge);
     }
 
-    public AnimalBadge assignBadge(Long animalId, String badgeName) {
-        if (!animalRepository.existsById(animalId)) {
-            throw new IllegalArgumentException("Animal doesn't exist!");
-        }
-        if (!badgeRepository.existsByBadgeName(badgeName)) {
-            throw new IllegalArgumentException("Badge doesn't exist!");
-        }
-        Animal animal = animalRepository.getReferenceById(animalId);
-        Badge badge = badgeRepository.getBadgeByBadgeName(badgeName);
-        if (animalBadgeRepository.existsByAnimalAndBadge(animal, badge)) {
-            throw new IllegalArgumentException("Badge already assigned.");
-        }
-        AnimalBadge animalBadge = new AnimalBadge();
-        animalBadge.setAnimal(animal);
-        animalBadge.setBadge(badge);
-
-        return animalBadgeRepository.save(animalBadge);
-    }
-
-    public AnimalBadge cancelBadge(Long animalId, String badgeName) {
-        if (!animalRepository.existsById(animalId)) {
-            throw new IllegalArgumentException("Animal doesn't exist!");
-        }
-        if (!badgeRepository.existsByBadgeName(badgeName)) {
-            throw new IllegalArgumentException("Badge doesn't exist!");
-        }
-        Animal animal = animalRepository.getReferenceById(animalId);
-        Badge badge = badgeRepository.getBadgeByBadgeName(badgeName);
-        if (!animalBadgeRepository.existsByAnimalAndBadge(animal, badge)) {
-            throw new IllegalArgumentException("Badge not assigned, cannot cancel.");
-        }
-        AnimalBadge animalBadge = animalBadgeRepository.findById(new AnimalBadgeId(animalId, badge.getBadgeId())).get();
-        animalBadgeRepository.delete(animalBadge);
-        return animalBadge;
-    }
-
-
-    public Badge addBadge(Badge badge) {
-        if (badgeRepository.existsByBadgeName(badge.getBadgeName())) {
-            throw new IllegalArgumentException(badge.getBadgeName() + " badge already exists!");
-        }
-        badgeRepository.save(badge);
-        return badge;
-    }
-
-    public Badge deleteBadge(String badgeName) {
-        if (!badgeRepository.existsByBadgeName(badgeName)) {
-            throw new IllegalArgumentException(badgeName + " badge doesn't exist!");
-        }
-        Badge badge = badgeRepository.getBadgeByBadgeName(badgeName);
-        badgeRepository.delete(badge);
-        return badge;
-    }
-
-    public Badge updateBadgeName(String name, String newName) {
+    public ModelDTO<Badge> getByName(String name, DataDetailLevel level) throws BadgeDoesntExistException {
         if (!badgeRepository.existsByBadgeName(name)) {
-            throw new IllegalArgumentException("Badge doesnt exist");
+            throw new BadgeDoesntExistException("Cannot get badge with name '" + name + "' because it doesn't exist");
         }
-        if (badgeRepository.existsByBadgeName(newName)) {
-            throw new IllegalArgumentException("New badge name already exists");
-        }
+
         Badge badge = badgeRepository.getBadgeByBadgeName(name);
-        badge.setBadgeName(newName);
-        badgeRepository.save(badge);
-        return badge;
+        var mapper = badgeMapper.getMapper(level);
+
+        return mapper.apply(badge);
     }
 
+    public BadgeMinimumDTO add(BadgeAddRequest request) throws BadgeAlreadyExists {
+        if (badgeRepository.existsByBadgeName(request.getBadgeName())) {
+            throw new BadgeAlreadyExists("Cannot add badge with name '" + request.getBadgeName() + "' because it already exists");
+        }
 
+        Badge badge = Badge.fromBadgeAddRequest(request);
+
+        badgeRepository.save(badge);
+
+        return BadgeMinimumDTO.fromBadge(badge);
+    }
+
+    public BadgeUpdateDTO update(Integer id, BadgeUpdateRequest request) throws BadgeAlreadyExists, BadgeDoesntExistException {
+        if (!badgeRepository.existsById(id)) {
+            throw new BadgeDoesntExistException("Cannot update badge with id '" + id + "' because it doesn't exist");
+        }
+
+        if (badgeRepository.existsByBadgeName(request.getBadgeName())) {
+            throw new BadgeAlreadyExists("Cannot update badge because badge with name '" + request.getBadgeName() + "' already exists");
+        }
+
+        Badge badge = badgeRepository.findById(id).get();
+        badge.update(request);
+
+        badgeRepository.save(badge);
+
+        return BadgeUpdateDTO.fromBadge(badge);
+    }
+
+    public void delete(Integer id) throws BadgeDoesntExistException {
+        if (!badgeRepository.existsById(id)) {
+            throw new BadgeDoesntExistException("Cannot delete badge with id '" + id + "' because it doesn't exist");
+        }
+
+        badgeRepository.deleteById(id);
+    }
 }

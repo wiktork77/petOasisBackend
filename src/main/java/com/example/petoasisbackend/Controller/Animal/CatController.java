@@ -263,7 +263,7 @@ public class CatController {
         }
     }
 
-    @Operation(summary = "Delete an existing cat")
+    @Operation(summary = "Delete an existing cat with given id")
     @ApiResponses(
             value = {
                     @ApiResponse(responseCode = "204", description = "Successfully deleted", content = @Content(

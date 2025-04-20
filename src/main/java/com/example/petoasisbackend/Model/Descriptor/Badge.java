@@ -2,9 +2,12 @@ package com.example.petoasisbackend.Model.Descriptor;
 
 
 import com.example.petoasisbackend.Model.Animal.Animal;
+import com.example.petoasisbackend.Request.Badge.BadgeAddRequest;
+import com.example.petoasisbackend.Request.Badge.BadgeUpdateRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ import java.util.function.Function;
 
 @Entity
 @Data
+@NoArgsConstructor
 public class Badge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,8 +39,23 @@ public class Badge {
         return Objects.equals(badgeId, badge.badgeId);
     }
 
+    public Badge(String badgeName) {
+        this.badgeName = badgeName;
+    }
+
+    public void update(BadgeUpdateRequest request) {
+        this.badgeName = request.getBadgeName();
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(badgeId);
+    }
+
+
+    public static Badge fromBadgeAddRequest(BadgeAddRequest request) {
+        return new Badge(
+                request.getBadgeName()
+        );
     }
 }
