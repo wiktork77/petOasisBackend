@@ -48,8 +48,7 @@ After cloning the repository, navigate to the root directory and run the followi
 3. `docker compose up`
 
 This process will set up and run the application along with the required database within containers.
-The Application is running on port 18080. 
-After successful launch it should be available at [`http://localhost:18080/swagger-ui.html`](http://localhost:18080/swagger-ui.html)
+The Application is running on port 18080.  After successful launch it should be available at [`http://localhost:18080/swagger-ui.html`](http://localhost:18080/swagger-ui.html)
 
 ### Method 2 - IntelliJ
 
