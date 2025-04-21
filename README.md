@@ -2,7 +2,7 @@
 
 ## 🎯 Project Objective
 
-The aim of this project was to develop a **REST API** using Spring Boot, serving as the backend for the PetOasis application.  
+The aim of this project was to develop a **REST API** using Spring Boot, serving as the backend for the Pet Oasis application.  
 The primary goal was to create a web-based system that connects animal shelters with individuals interested in spending time with animals, such as by taking them for walks.  
 The core objective is to **facilitate easier interaction with animals in shelters**.  
 The application is designed to handle essential requests related to users, animals, and shelters, and enable **interaction between these core elements** of the system.
