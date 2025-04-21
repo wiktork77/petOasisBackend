@@ -1,4 +1,4 @@
-# PetOasis - Backend API
+# Pet Oasis - Backend API
 
 ## 🎯 Project Objective
 
